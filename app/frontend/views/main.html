@@ -1,0 +1,16 @@
+{% extends "common/base.html" %} {% block style %}
+<style></style>
+{% endblock %} {% block content %}
+<div x-data="main_data()">
+  <h1>Welcome to the Main Page</h1>
+  <p>This is the main content area.</p>
+</div>
+
+{% endblock %} {% block script %}
+<script>
+  function main_data() {
+    return {};
+  }
+</script>
+
+{% endblock %}
