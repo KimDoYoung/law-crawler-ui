@@ -1,0 +1,483 @@
+{
+    "configurations": [
+      {
+        "type": "debugpy",
+        "name": "Python: Current File",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${file}",
+        "console": "integratedTerminal",
+        "env": {
+          "LAW_CRAWLER_EXE_DIR": "c:/law-crawler/exe",
+          "PYTHONPATH": "${workspaceFolder}"
+        }
+      },
+      {
+        "type": "debugpy",
+        "name": "Python: comwel-work",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "comwel", "work", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },        
+      {
+        "type": "debugpy",
+        "name": "Python: nhis_edi-psd",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "nhis_edi", "psd", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },         
+            {
+        "type": "debugpy",
+        "name": "Python: nhis_edi-news",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "nhis_edi", "news", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      }, 
+      {
+        "type": "debugpy",
+        "name": "Python: nps-MN24001000",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "nps", "MN24001000", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },          
+      {
+        "type": "debugpy",
+        "name": "Python: nps-MN24000897",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "nps", "MN24000897", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },      
+      {
+        "type": "debugpy",
+        "name": "Python: nps-MN24000898",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "nps", "MN24000898", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },            
+      {
+        "type": "debugpy",
+        "name": "Python: nps-MN24001492",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "nps", "MN24001492", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },      
+      {
+        "type": "debugpy",
+        "name": "Python: minimumwage-news",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "minimumwage", "news", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },
+      {
+        "type": "debugpy",
+        "name": "Python: minimumwage-promotion",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "minimumwage", "promotion", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },               
+      {
+        "type": "debugpy",
+        "name": "Python: wetax-J030201M01",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "wetax", "J030201M01", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },           
+      {
+        "type": "debugpy",
+        "name": "Python: wetax-J030103M01",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "wetax", "J030103M01", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },        
+      {
+        "type": "debugpy",
+        "name": "Python: nts-2205",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "nts", "menu_2205", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },            
+      {
+        "type": "debugpy",
+        "name": "Python: nts-2206",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "nts", "menu_2206", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },            
+      {
+        "type": "debugpy",
+        "name": "Python: nts-6420",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "nts", "menu_6420", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },            
+      {
+        "type": "debugpy",
+        "name": "Python: insure4-ntcn",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "insure4", "ntcn", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },         
+      {
+        "type": "debugpy",
+        "name": "Python: moel-revision",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "moel", "revision", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },            
+      {
+        "type": "debugpy",
+        "name": "Python: moel-lawmaking",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "moel", "lawmaking", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },            
+      {
+        "type": "debugpy",
+        "name": "Python: moel-instruction",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "moel", "instruction", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },            
+      {
+        "type": "debugpy",
+        "name": "Python: moel-policydata",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "moel", "policydata", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },            
+      {
+        "type": "debugpy",
+        "name": "Python: moel-report",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "moel", "report", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },            
+
+      {
+        "type": "debugpy",
+        "name": "Python: acrc-a10402010000",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "acrc", "a10402010000", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },            
+      {
+        "type": "debugpy",
+        "name": "Python: acrc-a10503030000",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "acrc", "a10503030000", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },        
+      {
+        "type": "debugpy",
+        "name": "Python: lawmaking",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "lawmaking", "menu_2", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },       
+      {
+        "type": "debugpy",
+        "name": "Python: 1t1",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "lawgokr", "law_1_t1", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      }, 
+      {
+        "type": "debugpy",
+        "name": "Python: 1t2",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "lawgokr", "law_1_t2", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },             
+      {
+        "type": "debugpy",
+        "name": "Python: 5t1",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "lawgokr", "law_5_t1", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },             
+      {
+        "type": "debugpy",
+        "name": "Python: taxlaw_1M",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "taxlaw", "USESTI001M", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },
+      {
+        "type": "debugpy",
+        "name": "Python: taxlaw_2M",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "taxlaw", "USESTI002M", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },    
+      {
+        "type": "debugpy",
+        "name": "Python: moef300",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "moef", "menu_7050300", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },
+      {
+        "type": "debugpy",
+        "name": "Python: moef100",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "moef", "menu_4010100", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },
+      {
+        "type": "debugpy",
+        "name": "Python: moef200",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "moef", "menu_7090200", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },            
+      {
+        "type": "debugpy",
+        "name": "Python: moleg",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "moleg", "a10104010000", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },      
+      {
+        "type": "debugpy",
+        "name": "Python: better75",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "better", "menu_11_117_75", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },
+      {
+        "type": "debugpy",
+        "name": "Python: better195",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "better", "menu_11_74_195", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },
+      {
+        "type": "debugpy",
+        "name": "Python: kofia4",
+        "request": "launch",
+        "justMyCode": true,
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "kofia", "menu_4", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },
+      {
+        "type": "debugpy",
+        "name": "Python: kofia5",
+        "request": "launch",
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "kofia", "menu_5", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },
+      {
+        "type": "debugpy",
+        "name": "Python: kofia6",
+        "request": "launch",
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "kofia", "menu_6", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },
+      {
+        "type": "debugpy",
+        "name": "Python: 200488",
+        "request": "launch",
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "fss", "menu_200488", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },
+      {
+        "type": "debugpy",
+        "name": "Python: 200489",
+        "request": "launch",
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "fss", "menu_200489", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },
+      {
+        "type": "debugpy",
+        "name": "Python: 200218",
+        "request": "launch",
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "fss", "menu_200218", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      },
+      {        
+        "type": "debugpy",
+        "name": "Python: 040200",
+        "request": "launch",
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "fsc", "po040200", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+        
+      },
+      {        
+        "type": "debugpy",
+        "name": "Python: 040301",
+        "request": "launch",
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "fsc", "po040301", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }        
+      },
+      {
+        "type": "debugpy",
+        "name": "Python: 010101",
+        "request": "launch",
+        "program": "${workspaceFolder}/src/main.py",
+        "args": [ "fsc", "no010101", "INITIALIZE"],
+        "env": {
+          "PYTHONPATH": "${workspaceFolder}/src"
+        }
+      }
+    ]
+  }
