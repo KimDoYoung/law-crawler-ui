@@ -115,24 +115,4 @@ async function deleteFetch(url, data) {
     return callKiwiApi(url, 'DELETE', data);
 }
 
-/**
- * 키움 API 호출 함수
- * 
- * @param {string} api_id - 키움 API ID (예: 'ka10001', 'au10001')
- * @param {Object} payload - API 파라미터 데이터
- * @param {string} contYn - 연속조회 여부 ('Y' 또는 'N', 기본값: 'N')
- * @param {string} nextKey - 연속조회 키 (옵션)
- * @returns {Promise<Object>} - 키움 API 응답 데이터
- */
-async function callKiwoomApi(api_id, payload, contYn = 'N', nextKey = null) {
-    const requestData = {
-        api_id : api_id,
-        cont_yn: contYn,
-        next_key: nextKey,
-        payload: payload
-    };
-    
-    const url = `/api/v1/kiwoom/${api_id}`;
-    return postFetch(url, requestData);
-}
 

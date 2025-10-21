@@ -5,28 +5,18 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from backend.core.kiwi7_db import create_kiwi7_db
 from backend.core.logger import get_logger
 from backend.core.config import config
-from backend.core.jwtmiddleware import JWTAuthMiddleware
-from backend.api.v1.endpoints.settings_routes import router as settings_router
-from backend.api.v1.endpoints.home_routes import router as home_router
-from backend.api.v1.endpoints.kiwoom_routes import router as kiwoom_router
-from backend.api.v1.endpoints.kdemon_routes import router as kdemon_router
-from backend.api.v1.endpoints.scheduler_routes import router as scheduler_router
-from backend.api.v1.endpoints.stock_routes import router as stock_router
-from backend.api.v1.endpoints.mystock_routes import router as mystock_router
-from backend.api.v1.endpoints.diary_routes import router as diary_router
+from backend.api.endpoints.home_routes import router as home_router
 
 from backend.core.exception_handler import add_exception_handlers
-from backend.domains.kscheduler.k_scheduler import KScheduler
 
 
 logger = get_logger(__name__)
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title="Kiwi7 - 주식매매(개인용)", version="0.0.1")
+    app = FastAPI(title="Law Crawler UI - 주식매매(개인용)", version="0.0.1")
     add_middlewares(app)
     add_routes(app)
     add_event_handlers(app)
@@ -68,7 +58,7 @@ def add_static_files(app: FastAPI):
 
 
 async def startup_event():
-    """Kiwi7 application  시작"""
+    """Law Crawler UI application  시작"""
     logger.info("---------------------------------")
     logger.info("Startup 프로세스 시작")
     logger.info("---------------------------------")
