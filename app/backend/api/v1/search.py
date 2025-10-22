@@ -26,25 +26,41 @@ async def get_sites():
         return []
 
 
-@router.get("/results", response_model=list)
+@router.get("/results")
 async def search_results(
     sites: str = Query("", description="쉼표로 구분된 사이트 코드 목록"),
-    keyword: str = Query("", description="검색 키워드")
+    keyword: str = Query("", description="검색 키워드"),
+    page: int = Query(1, description="페이지 번호 (1부터 시작)", ge=1),
+    pagesize: int = Query(10, description="페이지당 항목 수", ge=10, le=100)
 ):
     """
-    키워드 기반 데이터 검색
+    키워드 기반 데이터 검색 (페이징 지원)
 
     Args:
-        sites: 쉼표로 구분된 사이트 코드 (예: "CODE1,CODE2")
-        keyword: 검색 키워드
+        sites: 쉼표로 구분된 사이트 코드 (예: "CODE1,CODE2"), 빈 문자열이면 모든 사이트
+        keyword: 검색 키워드 (선택사항)
+        page: 페이지 번호 (기본값: 1)
+        pagesize: 페이지당 항목 수 (기본값: 30, 범위: 10-100)
 
     Returns:
-        검색 결과 리스트
+        {
+            "items": [검색 결과],
+            "total": 전체 항목 수,
+            "page": 현재 페이지,
+            "pagesize": 페이지당 항목 수,
+            "total_pages": 전체 페이지 수
+        }
     """
     try:
         site_list = [s.strip() for s in sites.split(",") if s.strip()] if sites else []
-        results = search_data(site_names=site_list, keyword=keyword)
+        results = search_data(site_names=site_list, keyword=keyword, page=page, pagesize=pagesize)
         return results
     except Exception as e:
         logger.error(f"❌ 데이터 검색 실패: {e}")
-        return []
+        return {
+            "items": [],
+            "total": 0,
+            "page": page,
+            "pagesize": pagesize,
+            "total_pages": 0
+        }

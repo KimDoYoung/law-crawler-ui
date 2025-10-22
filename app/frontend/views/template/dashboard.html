@@ -1,5 +1,14 @@
 {% extends "common/base.html" %}
 
+{% block style %}
+<style>
+  .css_title_blue {
+    color: rgb(3, 97, 179) !important;
+    font-weight: bold !important;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 <div x-data="dashboardData()">
   <!-- 페이지 제목 -->
@@ -47,8 +56,30 @@
   <div class="bg-white rounded-lg shadow-sm p-4">
     <h2 class="text-xl font-bold text-gray-800 mb-4">📋 수집된 데이터 조회</h2>
 
-    <!-- 기간 선택 버튼 및 필터 -->
-    <div class="flex flex-col gap-2 mb-6">
+    <!-- 메인 탭 네비게이션 -->
+    <div class="border-b border-gray-200 mb-6">
+      <div class="flex gap-4">
+        <button
+          @click="mainTab = 'results'"
+          :class="mainTab === 'results' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
+          class="px-4 py-2 font-semibold transition-colors"
+        >
+          🔍 검색결과
+        </button>
+        <button
+          @click="mainTab = 'details'"
+          :class="mainTab === 'details' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
+          class="px-4 py-2 font-semibold transition-colors"
+        >
+          📄 상세정보
+        </button>
+      </div>
+    </div>
+
+    <!-- 검색결과 탭 -->
+    <div x-show="mainTab === 'results'">
+      <!-- 기간 선택 버튼 및 필터 -->
+      <div class="flex flex-col gap-2 mb-6">
       <!-- 기간 선택 버튼 및 필터 섹션 (한 줄) -->
       <div class="flex gap-3 items-center">
         <!-- 기간 선택 버튼 -->
@@ -107,7 +138,7 @@
 
           <!-- 필터 초기화 버튼 -->
           <button
-            @click="clearFilters()"
+            @click="mainTab = 'results'; clearFilters()"
             class="px-3 py-1.5 bg-gray-400 text-white rounded font-semibold hover:bg-gray-500 transition-colors text-sm"
           >
             초기화
@@ -138,13 +169,13 @@
             <th class="border border-gray-300 px-4 py-2 text-left">제목</th>
             <th class="border border-gray-300 px-4 py-2 text-left">등록일</th>
             <th class="border border-gray-300 px-4 py-2 text-left">수집일시</th>
+            <th class="border border-gray-300 px-4 py-2 text-center">원본열기</th>
           </tr>
         </thead>
         <tbody>
           <template x-for="(row, index) in filteredTableData" :key="`${row.site_name}-${row.page_id}-${row.real_seq}-${index}`">
             <tr
-              class="border-b border-gray-200 hover:bg-blue-50 cursor-pointer"
-              @click="selectRow(row)"
+              class="border-b border-gray-200 hover:bg-blue-50"
             >
               <td class="border border-gray-300 px-4 py-2">
                 <a
@@ -165,19 +196,40 @@
                 </a>
               </td>
               <td class="border border-gray-300 px-4 py-2 max-w-xs truncate">
-                <a
-                  :href="row.org_url"
-                  target="_blank"
-                  class="text-blue-500 hover:underline"
-                >
-                  <span x-text="row.title"></span>
-                </a>
+                <span
+                  class="cursor-pointer text-gray-700 hover:text-blue-500"
+                  @click.prevent="
+                    console.log('🔵 클릭 이벤트 시작');
+                    console.log('🔵 현재 this:', this);
+                    console.log('🔵 현재 mainTab:', mainTab);
+                    document.querySelectorAll('.css_title_blue').forEach(el => el.classList.remove('css_title_blue'));
+                    $el.classList.add('css_title_blue');
+                    selectedRow = row;
+                    activeTab = 'rendered';
+                    mainTab = 'details';
+                    console.log('🔵 할당 후 mainTab:', mainTab);
+                    $nextTick(() => {
+                      console.log('🔵 $nextTick 후 mainTab:', mainTab);
+                    });
+                  "
+                  :title="row.title"
+                  x-text="row.title"
+                ></span>
               </td>
               <td class="border border-gray-300 px-4 py-2">
                 <span x-text="row.registration_date || '-'"></span>
               </td>
               <td class="border border-gray-300 px-4 py-2">
                 <span x-text="row.collection_date"></span>
+              </td>
+              <td class="border border-gray-300 px-4 py-2 text-center">
+                <a
+                  :href="row.org_url"
+                  target="_blank"
+                  class="text-blue-500 hover:underline"
+                >
+                  원본열기
+                </a>
               </td>
             </tr>
           </template>
@@ -193,138 +245,196 @@
         <p x-show="tableData.length > 0">필터 조건에 맞는 데이터가 없습니다.</p>
       </div>
     </div>
-  </div>
 
-  <!-- 상세 정보 (행 선택 시) -->
-  <div x-show="selectedRow" class="bg-white rounded-lg shadow-sm p-4 mt-3">
-    <h2 class="text-xl font-bold text-gray-800 mb-4">📄 상세 정보</h2>
-
-    <div x-show="selectedRow" class="space-y-3">
-      <div>
-        <strong class="text-gray-700">사이트:</strong>
-        <a
-          :href="selectedRow.site_url"
-          target="_blank"
-          class="text-blue-500 hover:underline ml-2"
-        >
-          <span x-text="selectedRow.site_name"></span>
-        </a>
-      </div>
-      <div>
-        <strong class="text-gray-700">페이지:</strong>
-        <a
-          :href="selectedRow.detail_url"
-          target="_blank"
-          class="text-blue-500 hover:underline ml-2"
-        >
-          <span x-text="selectedRow.page_id"></span>
-        </a>
-      </div>
-      <div>
-        <strong class="text-gray-700">제목:</strong>
-        <a
-          :href="selectedRow.org_url"
-          target="_blank"
-          class="text-blue-500 hover:underline ml-2"
-        >
-          <span x-text="selectedRow.title"></span>
-        </a>
-      </div>
-      <div>
-        <strong class="text-gray-700">등록일:</strong>
-        <span class="ml-2" x-text="selectedRow.registration_date || '-'"></span>
-      </div>
-      <div>
-        <strong class="text-gray-700">수집일시:</strong>
-        <span class="ml-2" x-text="selectedRow.collection_date"></span>
-      </div>
-    </div>
-
-    <!-- 탭 네비게이션 -->
-    <div class="mt-6 border-b border-gray-200">
-      <div class="flex gap-4">
-        <button
-          @click="activeTab = 'rendered'"
-          :class="activeTab === 'rendered' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
-          class="px-4 py-2 font-semibold transition-colors"
-        >
-          📄 렌더링 보기
+    <!-- 상세정보 탭 테스트 -->
+    <div style="border: 3px solid red; padding: 20px; margin: 20px 0; background: #fff0f0;">
+      <h3 style="color: red; font-weight: bold; font-size: 18px;">🔴 TEST: mainTab과 selectedRow 상태</h3>
+      <p>mainTab = <span x-text="mainTab" style="color: red; font-weight: bold; font-size: 16px;"></span></p>
+      <p>selectedRow 있음? <span x-text="selectedRow ? 'YES' : 'NO'" style="color: red; font-weight: bold; font-size: 16px;"></span></p>
+      <p>조건 (mainTab === 'details' && selectedRow)?
+        <span x-text="(mainTab === 'details' && selectedRow) ? 'TRUE (보여야함)' : 'FALSE (안보임)'" style="color: red; font-weight: bold; font-size: 16px;"></span>
+      </p>
+      <div style="margin-top: 10px;">
+        <button @click="mainTab = 'details'; console.log('🟢 TEST 버튼으로 mainTab 변경:', mainTab)" style="background: green; color: white; padding: 8px 16px; border: none; cursor: pointer; font-weight: bold;">
+          TEST: mainTab을 details로 변경
         </button>
-        <button
-          @click="activeTab = 'html'"
-          :class="activeTab === 'html' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
-          class="px-4 py-2 font-semibold transition-colors"
-        >
-          🧾 HTML 코드 보기
-        </button>
-        <button
-          @click="activeTab = 'attachments'"
-          :class="activeTab === 'attachments' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
-          class="px-4 py-2 font-semibold transition-colors"
-        >
-          📥 첨부파일 (<span x-text="selectedRow.attachment_count || '0'"></span
-          >)
+        <button @click="mainTab = 'results'; console.log('🟡 TEST 버튼으로 mainTab 변경:', mainTab)" style="background: orange; color: white; padding: 8px 16px; border: none; cursor: pointer; font-weight: bold; margin-left: 10px;">
+          TEST: mainTab을 results로 변경
         </button>
       </div>
     </div>
 
-    <!-- 탭 콘텐츠 -->
-    <div class="mt-4">
-      <!-- 렌더링 보기 -->
-      <div x-show="activeTab === 'rendered'" class="prose prose-sm max-w-none">
-        <div x-html="selectedRow.summary"></div>
-      </div>
+    <!-- 상세정보 탭 -->
+    <div x-show="mainTab === 'details' && selectedRow" class="space-y-4">
+      <h2 class="text-xl font-bold text-gray-800 mb-4">📄 상세 정보</h2>
 
-      <!-- HTML 코드 보기 -->
-      <div
-        x-show="activeTab === 'html'"
-        class="bg-gray-100 p-4 rounded-lg overflow-x-auto"
-      >
-        <pre
-          class="text-xs text-gray-700"
-        ><code x-text="selectedRow.summary"></code></pre>
-      </div>
-
-      <!-- 첨부파일 -->
-      <div x-show="activeTab === 'attachments'">
-        <p class="text-sm text-gray-600 mb-3">📎 첨부파일 목록:</p>
-        <div
-          x-show="(!selectedRow.attachments || selectedRow.attachments.length === 0)"
-          class="text-blue-600 text-sm"
-        >
-          첨부파일이 없습니다.
-        </div>
-        <div
-          x-show="selectedRow.attachments && selectedRow.attachments.length > 0"
-          class="space-y-2"
-        >
-          <template
-            x-for="attachment in selectedRow.attachments"
-            :key="attachment.name"
+      <div class="space-y-3 mb-6">
+        <div>
+          <strong class="text-gray-700">사이트:</strong>
+          <a
+            :href="selectedRow?.site_url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-blue-500 hover:underline ml-2"
           >
-            <div class="flex items-center gap-2 p-2 bg-gray-100 rounded-lg">
-              <i class="bi bi-file-earmark"></i>
-              <a
-                :href="attachment.url"
-                :download="attachment.name"
-                class="text-blue-500 hover:underline flex-1"
-              >
-                <span x-text="attachment.name"></span>
-              </a>
-              <button
-                @click="downloadAttachment(attachment.url, attachment.name)"
-                class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
-              >
-                📥 다운로드
-              </button>
-            </div>
-          </template>
+            <span x-text="selectedRow?.site_name"></span>
+          </a>
+        </div>
+        <div>
+          <strong class="text-gray-700">페이지:</strong>
+          <a
+            :href="selectedRow?.detail_url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-blue-500 hover:underline ml-2"
+          >
+            <span x-text="selectedRow?.page_id"></span>
+          </a>
+        </div>
+        <div>
+          <strong class="text-gray-700">제목:</strong>
+          <span class="ml-2" x-text="selectedRow?.title"></span>
+        </div>
+        <div>
+          <strong class="text-gray-700">등록일:</strong>
+          <span class="ml-2" x-text="selectedRow?.registration_date || '-'"></span>
+        </div>
+        <div>
+          <strong class="text-gray-700">수집일시:</strong>
+          <span class="ml-2" x-text="selectedRow?.collection_date"></span>
+        </div>
+        <div class="flex items-center gap-3">
+          <strong class="text-gray-700">링크:</strong>
+          <a
+            :href="selectedRow?.org_url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-block px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors"
+          >
+            <i class="bi bi-box-arrow-up-right"></i> 원본 사이트 열기
+          </a>
+          <button
+            type="button"
+            @click="mainTab = 'results'"
+            class="inline-block px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-colors"
+          >
+            <i class="bi bi-list"></i> 리스트로 돌아가기
+          </button>
         </div>
       </div>
+
+      <!-- 탭 네비게이션 -->
+      <div class="mt-6 border-b border-gray-200">
+        <div class="flex gap-4">
+          <button
+            @click="activeTab = 'rendered'"
+            :class="activeTab === 'rendered' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
+            class="px-4 py-2 font-semibold transition-colors"
+          >
+            📄 렌더링 보기
+          </button>
+          <button
+            @click="activeTab = 'html'"
+            :class="activeTab === 'html' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
+            class="px-4 py-2 font-semibold transition-colors"
+          >
+            🧾 HTML 코드 보기
+          </button>
+          <button
+            @click="activeTab = 'attachments'"
+            :class="activeTab === 'attachments' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
+            class="px-4 py-2 font-semibold transition-colors"
+          >
+            📥 첨부파일 (<span x-text="selectedRow?.attachment_count || '0'"></span>)
+          </button>
+        </div>
+      </div>
+
+      <!-- 탭 콘텐츠 -->
+      <div class="mt-4">
+        <!-- 렌더링 보기 -->
+        <div class="prose prose-sm max-w-none">
+          <div style="border: 2px solid green; padding: 15px; background: #ffffcc; margin-bottom: 20px;">
+            <p style="color: green; font-weight: bold; font-size: 16px;">
+              ✅ DEBUG INFO:<br/>
+              activeTab = <span x-text="activeTab" style="color: red; font-weight: bold;"></span><br/>
+              summary 길이 = <span x-text="selectedRow?.summary?.length || 0" style="color: red; font-weight: bold;"></span><br/>
+              selectedRow 존재 = <span x-text="selectedRow ? 'YES' : 'NO'" style="color: red; font-weight: bold;"></span>
+            </p>
+          </div>
+
+          <div style="border: 2px solid purple; padding: 10px; background: #f5f5f5; margin-bottom: 10px;">
+            <strong style="color: purple;">렌더링 된 HTML 콘텐츠:</strong>
+          </div>
+          <div x-html="selectedRow?.summary"></div>
+        </div>
+
+        <!-- HTML 코드 보기 (조건 제거) -->
+        <div style="margin-top: 30px; border-top: 2px solid #ccc; padding-top: 20px;">
+          <h3 style="color: #333; margin-bottom: 10px;">🧾 HTML 코드 보기</h3>
+          <div class="bg-gray-100 p-4 rounded-lg overflow-x-auto relative">
+            <button
+              @click="copyToClipboard(selectedRow?.summary)"
+              class="absolute top-2 right-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+              title="클립보드 복사"
+            >
+              <i class="bi bi-clipboard"></i>
+            </button>
+            <pre
+              class="text-xs text-gray-700"
+            ><code x-text="selectedRow?.summary"></code></pre>
+          </div>
+        </div>
+
+        <!-- 첨부파일 -->
+        <div style="margin-top: 30px; border-top: 2px solid #ccc; padding-top: 20px;">
+          <h3 style="color: #333; margin-bottom: 10px;">📎 첨부파일</h3>
+          <p class="text-sm text-gray-600 mb-3">첨부파일 목록:</p>
+          <div
+            x-show="(!selectedRow?.attachments || selectedRow?.attachments.length === 0)"
+            class="text-blue-600 text-sm"
+          >
+            첨부파일이 없습니다.
+          </div>
+          <div
+            x-show="selectedRow?.attachments && selectedRow?.attachments.length > 0"
+            class="space-y-2"
+          >
+            <template
+              x-for="attachment in selectedRow?.attachments || []"
+              :key="attachment.name"
+            >
+              <div class="flex items-center gap-2 p-2 bg-gray-100 rounded-lg">
+                <i class="bi bi-file-earmark"></i>
+                <a
+                  :href="attachment.url"
+                  :download="attachment.name"
+                  class="text-blue-500 hover:underline flex-1"
+                >
+                  <span x-text="attachment.name"></span>
+                </a>
+                <button
+                  @click="downloadAttachment(attachment.url, attachment.name)"
+                  class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
+                >
+                  📥 다운로드
+                </button>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 선택된 행이 없을 경우 메시지 -->
+    <div x-show="mainTab === 'details' && !selectedRow" class="text-center py-8 text-gray-500">
+      <p>검색결과 탭에서 항목을 선택하세요.</p>
     </div>
   </div>
 </div>
-{% endblock %} {% block script %}
+{% endblock %}
+
+{% block script %}
 <script>
   function dashboardData() {
     return {
@@ -337,6 +447,7 @@
         error_count: 0,
       },
       selectedPeriod: "today",
+      mainTab: "results",
       activeTab: "rendered",
       isLoading: false,
       tableData: [],
@@ -348,7 +459,8 @@
 
       init() {
         this.loadDashboardMetrics();
-        this.loadData("today");
+        this.selectedPeriod = "3days";  // 3일을 기본값으로 설정
+        this.loadData("3days");  // 3일 데이터 로드
       },
 
       async loadDashboardMetrics() {
@@ -363,7 +475,13 @@
       },
 
       async loadData(period) {
+        // CSS 클래스 제거
+        document.querySelectorAll('.css_title_blue').forEach(el => {
+          el.classList.remove('css_title_blue');
+        });
+
         this.isLoading = true;
+        this.mainTab = 'results'; // 데이터 로드 시 검색결과 탭으로 전환
         try {
           const response = await fetch(
             `/api/v1/dashboard/data?period=${period}`
@@ -408,14 +526,55 @@
       },
 
       clearFilters() {
+        // CSS 클래스 제거
+        document.querySelectorAll('.css_title_blue').forEach(el => {
+          el.classList.remove('css_title_blue');
+        });
+
         this.filterSite = "";
         this.filterTitle = "";
         this.applyFilters();
       },
 
-      selectRow(row) {
+      selectRow(row, titleElement) {
+        console.log("🔷 selectRow 시작");
+        console.log("📍 row 객체:", row);
+
+        // 이전에 적용된 CSS 제거
+        document.querySelectorAll('.css_title_blue').forEach(el => {
+          el.classList.remove('css_title_blue');
+        });
+
+        // 새로 클릭한 제목 span에 CSS 클래스 적용
+        if (titleElement) {
+          titleElement.classList.add('css_title_blue');
+        }
+
+        // ⭐ Alpine.js 반응성을 위해 개별 속성 할당 사용 (Object.assign 대신)
+        console.log("📍 상태 업데이트 중...");
         this.selectedRow = row;
         this.activeTab = "rendered";
+        this.mainTab = "details";
+
+        console.log("✅ 상태 업데이트 완료");
+        console.log("   mainTab:", this.mainTab);
+        console.log("   activeTab:", this.activeTab);
+        console.log("   selectedRow 있음:", this.selectedRow ? "YES" : "NO");
+
+        // 다시 한번 확인
+        setTimeout(() => {
+          console.log("⏰ setTimeout 후 상태:");
+          console.log("   mainTab:", this.mainTab);
+          console.log("   selectedRow 있음:", this.selectedRow ? "YES" : "NO");
+        }, 100);
+      },
+
+      copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+          alert("📋 클립보드에 복사되었습니다!");
+        }).catch(() => {
+          alert("❌ 복사 실패했습니다.");
+        });
       },
 
       downloadAttachment(url, name) {

@@ -278,6 +278,9 @@ def get_site_and_code_dict():
 def search_law_summary(site_names=None, keyword=None):
     """법령 요약 검색 함수"""
     try:
+        # 검색 조건 로깅
+        logger.info(f"🔍 검색 시작 - 사이트: {site_names}, 키워드: '{keyword}'")
+
         base_query = """
         SELECT
             b.h_name as "사이트",
@@ -309,12 +312,14 @@ def search_law_summary(site_names=None, keyword=None):
             placeholders = ",".join(["?" for _ in site_names])
             conditions.append(f"a.site_name in ({placeholders})")
             params.extend(site_names)
+            logger.debug(f"📌 사이트 조건 추가: {site_names}")
 
         # 키워드 조건 추가
         if keyword and keyword.strip():
             conditions.append("(a.title like ? or a.summary like ?)")
             keyword_param = f"%{keyword.strip()}%"
             params.extend([keyword_param, keyword_param])
+            logger.debug(f"📌 키워드 조건 추가: '{keyword}'")
 
         # 조건 추가
         if conditions:
@@ -323,10 +328,15 @@ def search_law_summary(site_names=None, keyword=None):
         # 정렬 추가
         base_query += " ORDER BY a.site_name, a.page_id, a.register_date DESC"
 
+        logger.debug(f"🔗 최종 쿼리: {base_query}")
+        logger.debug(f"🔗 파라미터: {params}")
+
         df = get_data_frame_summary(base_query, tuple(params))
         if df.empty:
-            logger.info("검색 결과가 없습니다. ")
+            logger.info("❌ 검색 결과가 없습니다.")
             return pd.DataFrame()
+
+        logger.info(f"✅ 검색 완료: {len(df)}개 항목 반환")
         return df
 
     except Exception as e:

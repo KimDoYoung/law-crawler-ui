@@ -76,8 +76,8 @@ def get_dashboard_data(period: str = "today"):
         for _, row in df.iterrows():
             rows.append(
                 {
-                    "site_name": row.get("사이트", ""),
-                    "page_id": row.get("페이지", ""),
+                    "site_name": row.get("site_name", "") or row.get("사이트", ""),
+                    "page_id": row.get("page_id", "") or row.get("페이지", ""),
                     "title": row.get("제목", ""),
                     "registration_date": row.get("등록일", ""),
                     "collection_date": row.get("수집일시", ""),
@@ -85,6 +85,7 @@ def get_dashboard_data(period: str = "today"):
                     "detail_url": row.get("detail_url", ""),
                     "org_url": row.get("org_url", ""),
                     "summary": row.get("summary", ""),
+                    "real_seq": str(row.get("real_seq", "")),
                     "attachment_count": 0,  # 나중에 첨부파일 개수 로드
                     "attachments": [],  # 나중에 첨부파일 정보 로드
                 }
