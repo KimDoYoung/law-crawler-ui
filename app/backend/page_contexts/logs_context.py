@@ -1,6 +1,7 @@
 """
 로그 관리 페이지 컨텍스트 제공 함수
 """
+
 from datetime import datetime, timedelta
 from app.backend.data.log_util import get_log_data
 from app.backend.core.logger import get_logger
@@ -22,10 +23,7 @@ def get_available_dates(days_back=7):
     for i in range(days_back):
         date = datetime.now() - timedelta(days=i)
         date_str = date.strftime("%Y-%m-%d")
-        dates.append({
-            "date": date_str,
-            "label": date_str
-        })
+        dates.append({"date": date_str, "label": date_str})
     return dates
 
 
@@ -48,24 +46,16 @@ def get_crawler_log(log_date: str):
             return {
                 "content": "해당 날짜의 로그가 없습니다.",
                 "path": "",
-                "filename": ""
+                "filename": "",
             }
 
-        content_text = "\n".join(line.rstrip('\n') for line in log_content)
-        filename = log_fullpath.split('\\')[-1] if log_fullpath else "log.txt"
+        content_text = "\n".join(line.rstrip("\n") for line in log_content)
+        filename = log_fullpath.split("\\")[-1] if log_fullpath else "log.txt"
 
-        return {
-            "content": content_text,
-            "path": log_fullpath,
-            "filename": filename
-        }
+        return {"content": content_text, "path": log_fullpath, "filename": filename}
     except Exception as e:
         logger.error(f"❌ 크롤러 로그 로드 실패: {e}")
-        return {
-            "content": f"로그 로드 중 오류 발생: {e}",
-            "path": "",
-            "filename": ""
-        }
+        return {"content": f"로그 로드 중 오류 발생: {e}", "path": "", "filename": ""}
 
 
 def get_ui_log():
@@ -79,37 +69,21 @@ def get_ui_log():
         from app.backend.core.config import config
         import os
 
-        log_file = os.path.join(config.LOG_DIR, "law_crawler.log")
+        log_file = os.path.join(config.UI_LOG_DIR, "law_crawler.log")
 
         if not os.path.exists(log_file):
-            return {
-                "content": "UI 로그가 없습니다.",
-                "path": "",
-                "filename": ""
-            }
+            return {"content": "UI 로그가 없습니다.", "path": "", "filename": ""}
 
-        with open(log_file, 'r', encoding='utf-8') as f:
+        with open(log_file, "r", encoding="utf-8") as f:
             log_lines = f.readlines()
 
         if not log_lines:
-            return {
-                "content": "UI 로그가 없습니다.",
-                "path": "",
-                "filename": ""
-            }
+            return {"content": "UI 로그가 없습니다.", "path": "", "filename": ""}
 
-        content_text = "\n".join(line.rstrip('\n') for line in log_lines)
-        filename = log_file.split('\\')[-1] if log_file else "ui.log"
+        content_text = "\n".join(line.rstrip("\n") for line in log_lines)
+        filename = log_file.split("\\")[-1] if log_file else "ui.log"
 
-        return {
-            "content": content_text,
-            "path": log_file,
-            "filename": filename
-        }
+        return {"content": content_text, "path": log_file, "filename": filename}
     except Exception as e:
         logger.error(f"❌ UI 로그 로드 실패: {e}")
-        return {
-            "content": f"로그 로드 중 오류 발생: {e}",
-            "path": "",
-            "filename": ""
-        }
+        return {"content": f"로그 로드 중 오류 발생: {e}", "path": "", "filename": ""}

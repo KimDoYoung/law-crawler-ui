@@ -2,6 +2,9 @@
 Database access utilities for FastAPI backend
 """
 
+import os
+import sqlite3
+import yaml
 import pandas as pd
 from sqlite3 import connect
 from app.backend.core.logger import get_logger
@@ -14,6 +17,85 @@ def get_summary_db_file():
     """Summary DB 파일 경로 반환"""
     logger.debug(f"DB_PATH: {config.DB_PATH}")
     return config.DB_PATH
+
+
+def create_and_fill_yaml_table(db_path: str, yaml_path: str):
+    """
+    yaml_info 테이블 생성 및 YAML 데이터 로드
+
+    Args:
+        db_path (str): 데이터베이스 파일 경로
+        yaml_path (str): YAML 파일 경로
+
+    Raises:
+        Exception: 테이블 생성 또는 데이터 로드 중 오류 발생 시
+    """
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+
+        # 테이블 생성
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS yaml_info (
+                site_name TEXT NOT NULL,
+                page_id TEXT NOT NULL,
+                h_name TEXT,
+                desc TEXT,
+                url TEXT,
+                detail_url TEXT,
+                PRIMARY KEY (site_name, page_id)
+            );
+        """)
+        conn.commit()
+        logger.info("yaml_info 테이블 생성 완료")
+
+        # YAML 파일 읽기 및 데이터 삽입
+        if not os.path.exists(yaml_path):
+            logger.warning(f"YAML 파일을 찾을 수 없습니다: {yaml_path}")
+            conn.close()
+            return
+
+        with open(yaml_path, 'r', encoding='utf-8') as f:
+            data = yaml.safe_load(f)
+
+        # 기존 데이터 삭제
+        cursor.execute("DELETE FROM yaml_info")
+
+        # YAML 데이터 파싱 및 삽입
+        site_count = 0
+        page_count = 0
+
+        for site_name, site_info in data.items():
+            h_name = site_info.get('h_name', '')
+            base_url = site_info.get('url', '')
+            site_count += 1
+
+            # pages 배열 처리
+            pages = site_info.get('pages', [])
+            for page in pages:
+                cursor.execute("""
+                    INSERT INTO yaml_info
+                    (site_name, page_id, h_name, desc, url, detail_url)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """, (
+                    site_name,
+                    page.get('id', ''),
+                    h_name,
+                    page.get('desc', ''),
+                    base_url,
+                    page.get('detail_url', '')
+                ))
+                page_count += 1
+
+        conn.commit()
+        logger.info(f"YAML 데이터 로드 완료: 사이트 {site_count}개, 페이지 {page_count}개")
+        conn.close()
+
+    except Exception as e:
+        logger.error(f"yaml_info 테이블 처리 중 오류: {e}")
+        if 'conn' in locals():
+            conn.close()
+        raise
 
 
 def get_data_frame_summary(sql: str, params: tuple = ()) -> pd.DataFrame:

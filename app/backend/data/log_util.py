@@ -1,6 +1,7 @@
 """
 로그 파일 접근 유틸리티
 """
+
 import os
 from datetime import datetime
 from app.backend.core.logger import get_logger
@@ -24,7 +25,7 @@ def get_crawler_log_file_path(log_date):
 
     # log_date 형식: YYYY-MM-DD or date object
     log_date_str = str(log_date).replace("-", "_")
-    return os.path.join(config.LOG_DIR, f"law_crawler_{log_date_str}.log")
+    return os.path.join(config.UI_LOG_DIR, f"law_crawler_{log_date_str}.log")
 
 
 def get_log_data(log_date):
@@ -41,7 +42,7 @@ def get_log_data(log_date):
 
     if os.path.exists(log_fullpath):
         try:
-            with open(log_fullpath, 'r', encoding='utf-8') as f:
+            with open(log_fullpath, "r", encoding="utf-8") as f:
                 return f.readlines(), log_fullpath
         except Exception as e:
             logger.error(f"❌ 로그 파일 읽기 오류: {log_fullpath}, {e}")

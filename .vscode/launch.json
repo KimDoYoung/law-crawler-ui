@@ -1,21 +1,36 @@
 {
     "configurations": [
+      {
+    "name": "web2.0-direct",
+    "type": "debugpy",
+    "request": "launch",
+    "program": "${workspaceFolder}/app/backend/main.py",
+    "args": ["--reload", "--port", "8004"],
+    "env": {
+        "PYTHONPATH": "${workspaceFolder}",
+        "LAW_CRAWLER_MODE": "local"
+    },
+    "console": "integratedTerminal",
+    "jinja": true
+},
         {
             "name": "web2.0",
             "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
+            "cwd": "${workspaceFolder}",
             "env": {
                 "PYTHONPATH": "${workspaceFolder}",
                 "LAW_CRAWLER_MODE": "local"
             },
             "args": [
                 "app.backend.main:app",
+                "--reload",
                 "--port",
                 "8004"
             ],
             "jinja": true,
-            "justMyCode": true,
+            "justMyCode": false,
             "console": "integratedTerminal"
         },
       {

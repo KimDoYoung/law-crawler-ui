@@ -12,6 +12,7 @@ from app.backend.api.v1.search import router as search_router
 from app.backend.api.v1.statistics import router as statistics_router
 from app.backend.api.v1.logs import router as logs_router
 from app.backend.api.v1.settings import router as settings_router
+from app.backend.data.db_util import create_and_fill_yaml_table
 
 from app.backend.core.exception_handler import add_exception_handlers
 
@@ -73,6 +74,33 @@ async def startup_event():
     logger.info("Startup 프로세스 시작")
     logger.info("---------------------------------")
 
+    # 설정값 출력
+    logger.info("[설정값 확인]")
+    logger.info(f"프로필: {config.PROFILE_NAME}")
+    logger.info(f"버전: {config.VERSION}")
+
+    # 디렉토리 존재 여부 확인 함수
+    def check_dir(path, name):
+        exists = "✅" if os.path.exists(path) else "❌"
+        status = "존재함" if os.path.exists(path) else "존재하지 않음"
+        return f"{exists} {name}: {path} ({status})"
+
+    # 파일 존재 여부 확인 함수
+    def check_file(path, name):
+        exists = "✅" if os.path.exists(path) else "❌"
+        status = "존재함" if os.path.exists(path) else "존재하지 않음"
+        return f"{exists} {name}: {path} ({status})"
+
+    logger.info(check_dir(config.UI_BASE_DIR, "UI 기본 디렉토리"))
+    logger.info(check_dir(config.UI_LOG_DIR, "UI 로그 디렉토리"))
+    logger.info(check_dir(config.CRAWLER_BASE_DIR, "Crawler 기본 디렉토리"))
+    logger.info(check_dir(config.CRAWLER_EXE_DIR, "Crawler 실행 디렉토리"))
+    logger.info(check_dir(config.CRAWLER_DATA_DIR, "Crawler 데이터 디렉토리"))
+    logger.info(check_dir(config.ATTACHS_DIR, "첨부파일 디렉토리"))
+    logger.info(check_file(config.DB_PATH, "DB 파일 경로"))
+    logger.info(check_file(config.YAML_PATH, "YAML 파일 경로"))
+    logger.info("---------------------------------")
+
     db_path = config.DB_PATH
     parent_dir = os.path.dirname(db_path)
     # sqlite3데이터베이스 생성
@@ -80,6 +108,14 @@ async def startup_event():
         logger.error(f"DB 디렉토리가 존재하지 않습니다. 생성합니다: {parent_dir}")
 
     logger.info(f"DB 파일 경로: {db_path}")
+
+    # yaml_info 테이블 생성 및 YAML 데이터 로드
+    try:
+        create_and_fill_yaml_table(db_path, config.YAML_PATH)
+        logger.info("YAML 데이터 로드 완료")
+    except Exception as e:
+        logger.error(f"YAML 데이터 로드 중 오류: {e}")
+
     logger.info("scheduler 시작함...")
     logger.info("---------------------------------")
     logger.info("Startup 프로세스 종료")

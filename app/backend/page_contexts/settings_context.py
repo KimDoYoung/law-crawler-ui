@@ -29,7 +29,7 @@ def get_system_info():
         "crawler_dir": config.CRAWLER_EXE_DIR,
         "db_dir": config.DB_PATH,
         "file_dir": "N/A",
-        "log_dir": config.LOG_DIR,
+        "log_dir": config.UI_LOG_DIR,
         "version": config.VERSION,
     }
 

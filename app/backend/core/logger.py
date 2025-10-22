@@ -6,8 +6,8 @@ def get_logger(name):
     from app.backend.core.config import config
 
     logger = logging.getLogger(name)
-    logger.setLevel(config.LOG_LEVEL)
-    LOG_FILE = config.LOG_FILE
+    logger.setLevel(config.UI_LOG_LEVEL)
+    LOG_FILE = config.UI_LOG_FILE
     if not logger.handlers:
         # 매일 자정에 로그 파일을 회전, 최대 7개의 파일 보관
         # 파일의 최대 크기는 예시로 5MB로 설정하였습니다. 필요에 따라 조절하십시오.
