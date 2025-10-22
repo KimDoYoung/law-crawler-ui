@@ -1,0 +1,319 @@
+{% extends "common/base.html" %}
+
+{% block style %}
+<style>
+  .metric-card {
+    @apply bg-white border border-gray-200 rounded-lg p-4 shadow-sm;
+  }
+
+  .metric-value {
+    @apply text-2xl font-bold text-gray-800;
+  }
+
+  .metric-label {
+    @apply text-sm text-gray-600 mt-2;
+  }
+
+  .metric-delta {
+    @apply text-xs text-green-600 mt-1;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div x-data="dashboardData()">
+  <!-- 페이지 제목 -->
+  <h1 class="text-3xl font-bold text-gray-800 mb-2">📊 대시보드</h1>
+  <p class="text-gray-600 mb-6">법규관련 데이터수집 현황</p>
+
+  <!-- 주요 지표 (메트릭 카드) -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
+    <!-- 수집 사이트 -->
+    <div class="metric-card">
+      <div class="metric-label">수집 사이트(pages)</div>
+      <div class="metric-value" x-text="data.site_count || '-'"></div>
+      <div class="metric-delta">✓ 정상</div>
+    </div>
+
+    <!-- 오늘 수집 -->
+    <div class="metric-card">
+      <div class="metric-label">오늘 수집 (첨부파일)</div>
+      <div class="metric-value" x-text="data.today_collect || '-'"></div>
+    </div>
+
+    <!-- 3일 전 -->
+    <div class="metric-card">
+      <div class="metric-label">3일 전 (첨부파일)</div>
+      <div class="metric-value" x-text="data.three_days_collect || '-'"></div>
+    </div>
+
+    <!-- 7일 전 -->
+    <div class="metric-card">
+      <div class="metric-label">7일 전 (첨부파일)</div>
+      <div class="metric-value" x-text="data.seven_days_collect || '-'"></div>
+    </div>
+
+    <!-- 전체 -->
+    <div class="metric-card">
+      <div class="metric-label">전체 (첨부파일)</div>
+      <div class="metric-value" x-text="data.total_collect || '-'"></div>
+    </div>
+
+    <!-- 오류 발생 -->
+    <div class="metric-card">
+      <div class="metric-label">오류 발생</div>
+      <div class="metric-value text-red-600" x-text="data.error_count || '0'"></div>
+      <div class="metric-delta text-red-600">최근 수집시</div>
+    </div>
+  </div>
+
+  <hr class="my-6">
+
+  <!-- 수집된 데이터 조회 -->
+  <div class="bg-white rounded-lg shadow-sm p-6">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">📋 수집된 데이터 조회</h2>
+
+    <!-- 기간 선택 버튼 -->
+    <div class="flex gap-2 mb-6">
+      <button
+        @click="selectedPeriod = 'today'; loadData('today')"
+        :class="selectedPeriod === 'today' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'"
+        class="px-4 py-2 rounded-lg font-semibold transition-colors"
+      >
+        오늘
+      </button>
+      <button
+        @click="selectedPeriod = '3days'; loadData('3days')"
+        :class="selectedPeriod === '3days' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'"
+        class="px-4 py-2 rounded-lg font-semibold transition-colors"
+      >
+        3일
+      </button>
+      <button
+        @click="selectedPeriod = '7days'; loadData('7days')"
+        :class="selectedPeriod === '7days' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'"
+        class="px-4 py-2 rounded-lg font-semibold transition-colors"
+      >
+        7일
+      </button>
+    </div>
+
+    <!-- 데이터 테이블 로딩 중 -->
+    <div x-show="isLoading" class="text-center py-8">
+      <i class="bi bi-hourglass text-2xl text-blue-500"></i>
+      <p class="text-gray-600 mt-2">데이터를 불러오는 중입니다...</p>
+    </div>
+
+    <!-- 데이터 테이블 -->
+    <div x-show="!isLoading" class="overflow-x-auto">
+      <table class="w-full border-collapse text-sm">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="border border-gray-300 px-4 py-2 text-left">사이트</th>
+            <th class="border border-gray-300 px-4 py-2 text-left">페이지</th>
+            <th class="border border-gray-300 px-4 py-2 text-left">제목</th>
+            <th class="border border-gray-300 px-4 py-2 text-left">등록일</th>
+            <th class="border border-gray-300 px-4 py-2 text-left">수집일시</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="row in tableData" :key="row.page_id">
+            <tr class="border-b border-gray-200 hover:bg-blue-50 cursor-pointer" @click="selectRow(row)">
+              <td class="border border-gray-300 px-4 py-2">
+                <a :href="row.site_url" target="_blank" class="text-blue-500 hover:underline">
+                  <span x-text="row.site_name"></span>
+                </a>
+              </td>
+              <td class="border border-gray-300 px-4 py-2">
+                <a :href="row.detail_url" target="_blank" class="text-blue-500 hover:underline">
+                  <span x-text="row.page_id"></span>
+                </a>
+              </td>
+              <td class="border border-gray-300 px-4 py-2 max-w-xs truncate">
+                <a :href="row.org_url" target="_blank" class="text-blue-500 hover:underline">
+                  <span x-text="row.title"></span>
+                </a>
+              </td>
+              <td class="border border-gray-300 px-4 py-2">
+                <span x-text="row.registration_date || '-'"></span>
+              </td>
+              <td class="border border-gray-300 px-4 py-2">
+                <span x-text="row.collection_date"></span>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+
+      <!-- 데이터가 없을 경우 -->
+      <div x-show="tableData.length === 0" class="text-center py-8 text-gray-500">
+        <p>조회 가능한 데이터가 없습니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 상세 정보 (행 선택 시) -->
+  <div x-show="selectedRow" class="bg-white rounded-lg shadow-sm p-6 mt-6">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">📄 상세 정보</h2>
+
+    <div x-show="selectedRow" class="space-y-3">
+      <div>
+        <strong class="text-gray-700">사이트:</strong>
+        <a :href="selectedRow.site_url" target="_blank" class="text-blue-500 hover:underline ml-2">
+          <span x-text="selectedRow.site_name"></span>
+        </a>
+      </div>
+      <div>
+        <strong class="text-gray-700">페이지:</strong>
+        <a :href="selectedRow.detail_url" target="_blank" class="text-blue-500 hover:underline ml-2">
+          <span x-text="selectedRow.page_id"></span>
+        </a>
+      </div>
+      <div>
+        <strong class="text-gray-700">제목:</strong>
+        <a :href="selectedRow.org_url" target="_blank" class="text-blue-500 hover:underline ml-2">
+          <span x-text="selectedRow.title"></span>
+        </a>
+      </div>
+      <div>
+        <strong class="text-gray-700">등록일:</strong>
+        <span class="ml-2" x-text="selectedRow.registration_date || '-'"></span>
+      </div>
+      <div>
+        <strong class="text-gray-700">수집일시:</strong>
+        <span class="ml-2" x-text="selectedRow.collection_date"></span>
+      </div>
+    </div>
+
+    <!-- 탭 네비게이션 -->
+    <div class="mt-6 border-b border-gray-200">
+      <div class="flex gap-4">
+        <button
+          @click="activeTab = 'rendered'"
+          :class="activeTab === 'rendered' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
+          class="px-4 py-2 font-semibold transition-colors"
+        >
+          📄 렌더링 보기
+        </button>
+        <button
+          @click="activeTab = 'html'"
+          :class="activeTab === 'html' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
+          class="px-4 py-2 font-semibold transition-colors"
+        >
+          🧾 HTML 코드 보기
+        </button>
+        <button
+          @click="activeTab = 'attachments'"
+          :class="activeTab === 'attachments' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
+          class="px-4 py-2 font-semibold transition-colors"
+        >
+          📥 첨부파일 (<span x-text="selectedRow.attachment_count || '0'"></span>)
+        </button>
+      </div>
+    </div>
+
+    <!-- 탭 콘텐츠 -->
+    <div class="mt-4">
+      <!-- 렌더링 보기 -->
+      <div x-show="activeTab === 'rendered'" class="prose prose-sm max-w-none">
+        <div x-html="selectedRow.summary"></div>
+      </div>
+
+      <!-- HTML 코드 보기 -->
+      <div x-show="activeTab === 'html'" class="bg-gray-100 p-4 rounded-lg overflow-x-auto">
+        <pre class="text-xs text-gray-700"><code x-text="selectedRow.summary"></code></pre>
+      </div>
+
+      <!-- 첨부파일 -->
+      <div x-show="activeTab === 'attachments'">
+        <p class="text-sm text-gray-600 mb-3">📎 첨부파일 목록:</p>
+        <div x-show="(!selectedRow.attachments || selectedRow.attachments.length === 0)" class="text-blue-600 text-sm">
+          첨부파일이 없습니다.
+        </div>
+        <div x-show="selectedRow.attachments && selectedRow.attachments.length > 0" class="space-y-2">
+          <template x-for="attachment in selectedRow.attachments" :key="attachment.name">
+            <div class="flex items-center gap-2 p-2 bg-gray-100 rounded-lg">
+              <i class="bi bi-file-earmark"></i>
+              <a :href="attachment.url" :download="attachment.name" class="text-blue-500 hover:underline flex-1">
+                <span x-text="attachment.name"></span>
+              </a>
+              <button
+                @click="downloadAttachment(attachment.url, attachment.name)"
+                class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
+              >
+                📥 다운로드
+              </button>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+  function dashboardData() {
+    return {
+      data: {
+        site_count: '-',
+        today_collect: '-',
+        three_days_collect: '-',
+        seven_days_collect: '-',
+        total_collect: '-',
+        error_count: 0
+      },
+      selectedPeriod: 'today',
+      activeTab: 'rendered',
+      isLoading: false,
+      tableData: [],
+      selectedRow: null,
+
+      init() {
+        this.loadDashboardMetrics();
+        this.loadData('today');
+      },
+
+      async loadDashboardMetrics() {
+        try {
+          const response = await fetch('/api/v1/dashboard/metrics');
+          if (response.ok) {
+            this.data = await response.json();
+          }
+        } catch (error) {
+          console.error('대시보드 메트릭 로드 실패:', error);
+        }
+      },
+
+      async loadData(period) {
+        this.isLoading = true;
+        try {
+          const response = await fetch(`/api/v1/dashboard/data?period=${period}`);
+          if (response.ok) {
+            this.tableData = await response.json();
+            this.selectedRow = null; // 데이터 로드 시 선택 초기화
+          }
+        } catch (error) {
+          console.error('데이터 로드 실패:', error);
+          this.tableData = [];
+        } finally {
+          this.isLoading = false;
+        }
+      },
+
+      selectRow(row) {
+        this.selectedRow = row;
+        this.activeTab = 'rendered';
+      },
+
+      downloadAttachment(url, name) {
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = name;
+        link.click();
+      }
+    };
+  }
+</script>
+{% endblock %}

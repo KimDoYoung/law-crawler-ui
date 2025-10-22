@@ -27,7 +27,7 @@
         "program": "${file}",
         "console": "integratedTerminal",
         "env": {
-          "LAW_CRAWLER_EXE_DIR": "c:/law-crawler/exe",
+          "LAW_CRAWLER_DIR": "c:/law-crawler",
           "PYTHONPATH": "${workspaceFolder}"
         }
       },

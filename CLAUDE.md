@@ -23,7 +23,7 @@
 
 ## ⚙️ 환경 설정
 
-이 프로젝트는 반드시 `LAW_CRAWLER_EXE_DIR` 환경 변수가 설정되어야 합니다.  
+이 프로젝트는 반드시 `LAW_CRAWLER_DIR` 환경 변수가 설정되어야 합니다.  
 이 경로는 **law-crawler 실행 디렉터리**를 가리켜야 하며, 아래 파일들이 포함되어야 합니다:
 
 - `.env`
@@ -122,7 +122,7 @@ python app/backend/main.py
 ## 🗄 데이터 저장 구조
 
 - **데이터베이스:**  
-  SQLite (`law_summary.db`) — `LAW_CRAWLER_EXE_DIR` 경로 하위
+  SQLite (`law_summary.db`) — `LAW_CRAWLER_DIR` 경로 하위의 `DB` 폴더
 - **첨부파일:**  
   `Attaches/{site_name}/{page_id}/` 디렉터리 구조
 - **로그 파일:**
@@ -137,7 +137,7 @@ python app/backend/main.py
 
 ### **Streamlit (`ui/utils/ui_settings.py`)**
 
-- `LAW_CRAWLER_EXE_DIR` 환경 변수로부터 기본 경로를 읽음  
+- `LAW_CRAWLER_DIR` 환경 변수로부터 기본 경로를 읽음  
 - `.env` 및 `LAW_SITE_DESC.yaml` 로드  
 - DB, 첨부파일, 로그 경로 관련 헬퍼 제공
 

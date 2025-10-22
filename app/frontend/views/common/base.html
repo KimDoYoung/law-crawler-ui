@@ -26,11 +26,24 @@
 
 {% include "common/loading.html" %}
 
-{% include "common/nav.html" %}
+<!-- 메인 레이아웃: 사이드바 + 콘텐츠 -->
+<div class="flex h-screen overflow-hidden">
+  <!-- 사이드바 -->
+  <div x-data="{ currentPage: getCurrentPage() }">
+    {% include "common/sidebar.html" %}
+  </div>
 
-<div id="main-area" class="max-w-full mx-auto px-4 py-4">
-    <div id="alert-container"></div> <!-- 웹소켓으로 받은 체결정보를 여기서 보여준다.-->
-    {% block content %}{% endblock %}
+  <!-- 메인 콘텐츠 영역 -->
+  <div class="flex-1 flex flex-col overflow-auto">
+    <!-- 네비게이션 바 -->
+    {% include "common/nav.html" %}
+
+    <!-- 콘텐츠 -->
+    <div id="main-area" class="flex-1 px-4 py-4 bg-gray-50 overflow-auto">
+      <div id="alert-container"></div>
+      {% block content %}{% endblock %}
+    </div>
+  </div>
 </div>
 
 {% include "common/alert.html" %}

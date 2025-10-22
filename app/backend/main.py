@@ -7,6 +7,11 @@ from fastapi.staticfiles import StaticFiles
 from app.backend.core.logger import get_logger
 from app.backend.core.config import config
 from app.backend.api.endpoints.home_routes import router as home_router
+from app.backend.api.v1.dashboard import router as dashboard_router
+from app.backend.api.v1.search import router as search_router
+from app.backend.api.v1.statistics import router as statistics_router
+from app.backend.api.v1.logs import router as logs_router
+from app.backend.api.v1.settings import router as settings_router
 
 from app.backend.core.exception_handler import add_exception_handlers
 
@@ -15,7 +20,7 @@ logger = get_logger(__name__)
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title="Law Crawler UI - 주식매매(개인용)", version="0.0.1")
+    app = FastAPI(title="Law Crawler UI - 법규사이트 정보 모음", version="0.0.1")
     add_middlewares(app)
     add_routes(app)
     add_event_handlers(app)
@@ -37,9 +42,15 @@ def add_middlewares(app: FastAPI):
 
 
 def add_routes(app: FastAPI):
-    # API 라우터 포함
+    # 페이지 라우터
     app.include_router(home_router)
-    # app.include_router(settings_router, prefix="/api/v1/settings", tags=["settings"])
+
+    # API v1 라우터
+    app.include_router(dashboard_router, prefix="/api/v1")
+    app.include_router(search_router, prefix="/api/v1")
+    app.include_router(statistics_router, prefix="/api/v1")
+    app.include_router(logs_router, prefix="/api/v1")
+    app.include_router(settings_router, prefix="/api/v1")
 
 
 def add_event_handlers(app: FastAPI):

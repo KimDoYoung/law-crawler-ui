@@ -1,0 +1,287 @@
+{% extends "common/base.html" %}
+
+{% block style %}
+<style>
+  .chart-container {
+    @apply bg-white border border-gray-200 rounded-lg p-6 shadow-sm mb-6;
+  }
+
+  .stat-card {
+    @apply bg-white border border-gray-200 rounded-lg p-4 shadow-sm;
+  }
+
+  .stat-value {
+    @apply text-2xl font-bold text-gray-800;
+  }
+
+  .stat-label {
+    @apply text-sm text-gray-600 mt-1;
+  }
+
+  table {
+    @apply w-full border-collapse text-sm;
+  }
+
+  thead {
+    @apply bg-gray-100;
+  }
+
+  th, td {
+    @apply border border-gray-300 px-4 py-2 text-left;
+  }
+
+  tbody tr:hover {
+    @apply bg-blue-50;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div x-data="statisticsData()">
+  <!-- 페이지 제목 -->
+  <h1 class="text-3xl font-bold text-gray-800 mb-2">📈 통계 분석</h1>
+  <p class="text-gray-600 mb-6">법규관련 데이터수집 통계</p>
+
+  <!-- 탭 네비게이션 -->
+  <div class="bg-white border-b border-gray-200 mb-6">
+    <div class="flex gap-4">
+      <button
+        @click="activeTab = 'chart'"
+        :class="activeTab === 'chart' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
+        class="px-4 py-3 font-semibold transition-colors"
+      >
+        📈 수집 통계
+      </button>
+      <button
+        @click="activeTab = 'detail'"
+        :class="activeTab === 'detail' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
+        class="px-4 py-3 font-semibold transition-colors"
+      >
+        🏢 상세통계표
+      </button>
+    </div>
+  </div>
+
+  <!-- 탭 1: 수집 통계 -->
+  <div x-show="activeTab === 'chart'">
+    <!-- 메트릭 카드 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="stat-card">
+        <div class="stat-label">전체 수집 사이트</div>
+        <div class="stat-value" x-text="metrics.total_sites || '0'"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">전체 수집 페이지</div>
+        <div class="stat-value" x-text="metrics.total_pages || '0'"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">오늘 수집 페이지</div>
+        <div class="stat-value" x-text="metrics.today_pages || '0'"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">전체 첨부파일수</div>
+        <div class="stat-value" x-text="metrics.total_attachments || '0'"></div>
+      </div>
+    </div>
+
+    <!-- 차트 영역 -->
+    <div class="chart-container">
+      <h2 class="text-xl font-bold text-gray-800 mb-4">📊 사이트별 수집 통계</h2>
+      <canvas id="sitesChart" class="max-h-96"></canvas>
+    </div>
+
+    <!-- 테이블 -->
+    <div class="chart-container">
+      <h2 class="text-xl font-bold text-gray-800 mb-4">📋 사이트별 통계 테이블</h2>
+      <div class="overflow-x-auto">
+        <table>
+          <thead>
+            <tr>
+              <th>사이트</th>
+              <th>게시글수</th>
+              <th>첨부파일수</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="row in siteStats" :key="row.site">
+              <tr>
+                <td x-text="row.site"></td>
+                <td x-text="row.count || 0"></td>
+                <td x-text="row.file_count || 0"></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 탭 2: 상세통계표 -->
+  <div x-show="activeTab === 'detail'">
+    <!-- 메트릭 카드 (상세통계) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="stat-card">
+        <div class="stat-label">전체 수집 사이트</div>
+        <div class="stat-value" x-text="metrics.total_sites || '0'"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">전체 수집 페이지</div>
+        <div class="stat-value" x-text="metrics.total_pages || '0'"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">전체 게시글수</div>
+        <div class="stat-value" x-text="metrics.total_pages || '0'"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">전체 첨부파일수</div>
+        <div class="stat-value" x-text="metrics.total_attachments || '0'"></div>
+      </div>
+    </div>
+
+    <!-- 상세 테이블 -->
+    <div class="chart-container">
+      <h2 class="text-xl font-bold text-gray-800 mb-4">📊 사이트·페이지별 게시글 수 및 첨부파일 수</h2>
+      <div class="overflow-x-auto">
+        <table>
+          <thead>
+            <tr>
+              <th>사이트</th>
+              <th>페이지</th>
+              <th>게시글수</th>
+              <th>첨부파일수</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="row in detailStats" :key="`${row.site}-${row.page}`">
+              <tr>
+                <td x-text="row.site"></td>
+                <td x-text="row.page"></td>
+                <td x-text="row.posts || 0"></td>
+                <td x-text="row.files || 0"></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  function statisticsData() {
+    return {
+      activeTab: 'chart',
+      metrics: {
+        total_sites: 0,
+        total_pages: 0,
+        today_pages: 0,
+        total_attachments: 0
+      },
+      siteStats: [],
+      detailStats: [],
+      chart: null,
+
+      async init() {
+        await this.loadMetrics();
+        await this.loadSiteStats();
+        await this.loadDetailStats();
+
+        // 차트 초기화
+        await this.$nextTick(() => {
+          this.initChart();
+        });
+      },
+
+      async loadMetrics() {
+        try {
+          const response = await fetch('/api/v1/statistics/metrics');
+          if (response.ok) {
+            this.metrics = await response.json();
+          }
+        } catch (error) {
+          console.error('메트릭 로드 실패:', error);
+        }
+      },
+
+      async loadSiteStats() {
+        try {
+          const sitesResponse = await fetch('/api/v1/statistics/sites');
+          const filesResponse = await fetch('/api/v1/statistics/files');
+
+          if (sitesResponse.ok && filesResponse.ok) {
+            const sites = await sitesResponse.json();
+            const files = await filesResponse.json();
+
+            // 데이터 병합
+            this.siteStats = sites.map(s => {
+              const fileData = files.find(f => f.site === s.site);
+              return {
+                ...s,
+                file_count: fileData ? fileData.file_count : 0
+              };
+            });
+          }
+        } catch (error) {
+          console.error('사이트 통계 로드 실패:', error);
+        }
+      },
+
+      async loadDetailStats() {
+        try {
+          const response = await fetch('/api/v1/statistics/detail');
+          if (response.ok) {
+            this.detailStats = await response.json();
+          }
+        } catch (error) {
+          console.error('상세 통계 로드 실패:', error);
+        }
+      },
+
+      initChart() {
+        const canvas = document.getElementById('sitesChart');
+        if (!canvas || this.siteStats.length === 0) return;
+
+        const ctx = canvas.getContext('2d');
+
+        const labels = this.siteStats.map(s => s.site);
+        const data = this.siteStats.map(s => s.count);
+
+        this.chart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: '게시글수',
+              data: data,
+              backgroundColor: '#3b82f6',
+              borderColor: '#1e40af',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+              legend: {
+                display: true,
+                position: 'top'
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  stepSize: 10
+                }
+              }
+            }
+          }
+        });
+      }
+    };
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,220 @@
+{% extends "common/base.html" %}
+
+{% block style %}
+<style>
+  .log-container {
+    @apply bg-white border border-gray-200 rounded-lg p-6 shadow-sm;
+  }
+
+  .log-content {
+    @apply bg-gray-100 p-4 rounded-lg overflow-y-auto font-mono text-sm text-gray-700;
+    max-height: 500px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .log-header {
+    @apply bg-gray-100 px-4 py-2 rounded-t-lg border-b border-gray-300;
+  }
+
+  .tab-content {
+    @apply bg-white border border-gray-200 rounded-lg mt-4;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div x-data="logsData()">
+  <!-- 페이지 제목 -->
+  <h1 class="text-3xl font-bold text-gray-800 mb-2">📋 로그 관리</h1>
+  <p class="text-gray-600 mb-6">수집 로그와 시스템 로그 조회</p>
+
+  <!-- 탭 네비게이션 -->
+  <div class="bg-white border-b border-gray-200 mb-6">
+    <div class="flex gap-4">
+      <button
+        @click="activeTab = 'crawler'"
+        :class="activeTab === 'crawler' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
+        class="px-4 py-3 font-semibold transition-colors"
+      >
+        📋 수집(Crawler) 로그
+      </button>
+      <button
+        @click="activeTab = 'ui'"
+        :class="activeTab === 'ui' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
+        class="px-4 py-3 font-semibold transition-colors"
+      >
+        🔍 UI(웹페이지) 로그
+      </button>
+    </div>
+  </div>
+
+  <!-- 탭 1: 크롤러 로그 -->
+  <div x-show="activeTab === 'crawler'" class="log-container">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">📋 수집-Crawler 로그 목록</h2>
+
+    <!-- 로그 날짜 선택 -->
+    <div class="mb-4">
+      <label class="block text-sm font-semibold text-gray-700 mb-2">📅 로그 날짜</label>
+      <select
+        x-model="selectedDate"
+        @change="loadCrawlerLog()"
+        class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+      >
+        <template x-for="dateOption in dates" :key="dateOption.date">
+          <option :value="dateOption.date" x-text="dateOption.label"></option>
+        </template>
+      </select>
+    </div>
+
+    <!-- 로딩 상태 -->
+    <div x-show="isLoading" class="text-center py-4">
+      <i class="bi bi-hourglass text-2xl text-blue-500"></i>
+      <p class="text-gray-600 mt-2">로그를 불러오는 중입니다...</p>
+    </div>
+
+    <!-- 로그 파일 경로 -->
+    <div x-show="!isLoading && crawlerLog.path" class="mb-3">
+      <p class="text-sm text-gray-600">
+        <strong>로그 파일 경로:</strong>
+        <code class="bg-gray-100 px-2 py-1 rounded" x-text="crawlerLog.path"></code>
+      </p>
+    </div>
+
+    <!-- 로그 내용 -->
+    <div x-show="!isLoading" class="log-content" x-text="crawlerLog.content"></div>
+
+    <!-- 다운로드 버튼 -->
+    <div x-show="!isLoading && crawlerLog.content" class="mt-4">
+      <button
+        @click="downloadFile(crawlerLog.content, crawlerLog.filename)"
+        class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+      >
+        <i class="bi bi-download"></i>
+        📥 로그 파일 다운로드
+      </button>
+    </div>
+  </div>
+
+  <!-- 탭 2: UI 로그 -->
+  <div x-show="activeTab === 'ui'" class="log-container">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">🔍 UI(웹페이지) 로그 보기</h2>
+
+    <!-- 로딩 상태 -->
+    <div x-show="isLoading" class="text-center py-4">
+      <i class="bi bi-hourglass text-2xl text-blue-500"></i>
+      <p class="text-gray-600 mt-2">로그를 불러오는 중입니다...</p>
+    </div>
+
+    <!-- 로그 파일 경로 -->
+    <div x-show="!isLoading && uiLog.path" class="mb-3">
+      <p class="text-sm text-gray-600">
+        <strong>로그 파일 경로:</strong>
+        <code class="bg-gray-100 px-2 py-1 rounded" x-text="uiLog.path"></code>
+      </p>
+    </div>
+
+    <!-- 로그 내용 -->
+    <div x-show="!isLoading" class="log-content" x-text="uiLog.content"></div>
+
+    <!-- 다운로드 버튼 -->
+    <div x-show="!isLoading && uiLog.content" class="mt-4">
+      <button
+        @click="downloadFile(uiLog.content, uiLog.filename)"
+        class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+      >
+        <i class="bi bi-download"></i>
+        📥 로그 파일 다운로드
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+  function logsData() {
+    return {
+      activeTab: 'crawler',
+      dates: [],
+      selectedDate: '',
+      isLoading: false,
+      crawlerLog: {
+        content: '',
+        path: '',
+        filename: ''
+      },
+      uiLog: {
+        content: '',
+        path: '',
+        filename: ''
+      },
+
+      async init() {
+        await this.loadDates();
+        if (this.dates.length > 0) {
+          this.selectedDate = this.dates[0].date;
+          await this.loadCrawlerLog();
+        }
+        await this.loadUILog();
+      },
+
+      async loadDates() {
+        try {
+          const response = await fetch('/api/v1/logs/dates?days=7');
+          if (response.ok) {
+            this.dates = await response.json();
+          }
+        } catch (error) {
+          console.error('로그 날짜 로드 실패:', error);
+        }
+      },
+
+      async loadCrawlerLog() {
+        this.isLoading = true;
+        try {
+          const response = await fetch(`/api/v1/logs/crawler?date=${this.selectedDate}`);
+          if (response.ok) {
+            this.crawlerLog = await response.json();
+          }
+        } catch (error) {
+          console.error('크롤러 로그 로드 실패:', error);
+          this.crawlerLog = {
+            content: '로그 로드 중 오류 발생',
+            path: '',
+            filename: ''
+          };
+        } finally {
+          this.isLoading = false;
+        }
+      },
+
+      async loadUILog() {
+        try {
+          const response = await fetch('/api/v1/logs/ui');
+          if (response.ok) {
+            this.uiLog = await response.json();
+          }
+        } catch (error) {
+          console.error('UI 로그 로드 실패:', error);
+          this.uiLog = {
+            content: '로그 로드 중 오류 발생',
+            path: '',
+            filename: ''
+          };
+        }
+      },
+
+      downloadFile(content, filename) {
+        const element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+        element.setAttribute('download', filename);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+      }
+    };
+  }
+</script>
+{% endblock %}

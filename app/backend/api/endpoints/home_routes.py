@@ -15,20 +15,68 @@ router = APIRouter()
 
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
 def display_root(request: Request):
-    """메인"""
-    return RedirectResponse(url="/main")
+    """루트 경로 → 대시보드로 리다이렉트"""
+    return RedirectResponse(url="/dashboard")
 
 
-@router.get("/main", response_class=HTMLResponse, include_in_schema=False)
-async def display_main(request: Request):
-    """메인"""
+@router.get("/dashboard", response_class=HTMLResponse, include_in_schema=False)
+async def display_dashboard(request: Request):
+    """대시보드 (메인 페이지)"""
 
     context = {
         "request": request,
-        "page_path": "main",
-        "data": {"title": "법규사이트 정보 모음"},
+        "page_path": "dashboard",
+        "data": {"title": "법규관련 데이터수집 현황"},
     }
-    return render_template("main.html", context)
+    return render_template("template/dashboard.html", context)
+
+
+@router.get("/search", response_class=HTMLResponse, include_in_schema=False)
+async def display_search(request: Request):
+    """데이터 조회 페이지"""
+
+    context = {
+        "request": request,
+        "page_path": "search",
+        "data": {"title": "데이터 조회"},
+    }
+    return render_template("template/search.html", context)
+
+
+@router.get("/statistics", response_class=HTMLResponse, include_in_schema=False)
+async def display_statistics(request: Request):
+    """통계 분석 페이지"""
+
+    context = {
+        "request": request,
+        "page_path": "statistics",
+        "data": {"title": "통계 분석"},
+    }
+    return render_template("template/statistics.html", context)
+
+
+@router.get("/logs", response_class=HTMLResponse, include_in_schema=False)
+async def display_logs(request: Request):
+    """로그 관리 페이지"""
+
+    context = {
+        "request": request,
+        "page_path": "logs",
+        "data": {"title": "로그 관리"},
+    }
+    return render_template("template/logs.html", context)
+
+
+@router.get("/settings", response_class=HTMLResponse, include_in_schema=False)
+async def display_settings(request: Request):
+    """설정 페이지"""
+
+    context = {
+        "request": request,
+        "page_path": "settings",
+        "data": {"title": "시스템 설정"},
+    }
+    return render_template("template/settings.html", context)
 
 
 @router.get("/page", response_class=HTMLResponse, include_in_schema=False)

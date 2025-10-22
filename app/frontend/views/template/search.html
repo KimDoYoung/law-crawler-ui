@@ -1,0 +1,333 @@
+{% extends "common/base.html" %}
+
+{% block style %}
+<style>
+  .search-card {
+    @apply bg-white border border-gray-200 rounded-lg p-6 shadow-sm;
+  }
+
+  .filter-group {
+    @apply space-y-3;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div x-data="searchData()">
+  <!-- 페이지 제목 -->
+  <h1 class="text-3xl font-bold text-gray-800 mb-2">🔍 데이터 조회</h1>
+  <p class="text-gray-600 mb-6">키워드로 법규 데이터를 검색합니다</p>
+
+  <!-- 검색 필터 -->
+  <div class="search-card mb-6">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">검색 옵션</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- 사이트 선택 -->
+      <div class="filter-group">
+        <label class="block text-sm font-semibold text-gray-700 mb-2">사이트 선택</label>
+        <div class="relative">
+          <button
+            @click="showSiteDropdown = !showSiteDropdown"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg text-left bg-white hover:border-blue-500 flex justify-between items-center"
+          >
+            <span x-text="selectedSitesText || '모든 사이트'"></span>
+            <i class="bi bi-chevron-down text-gray-500"></i>
+          </button>
+
+          <!-- 드롭다운 -->
+          <div
+            x-show="showSiteDropdown"
+            @click.outside="showSiteDropdown = false"
+            class="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto"
+          >
+            <button
+              @click="toggleAllSites()"
+              class="w-full px-4 py-2 text-left hover:bg-blue-100 border-b font-semibold text-sm"
+            >
+              <input type="checkbox" x-model="selectAllSites" class="mr-2">
+              모든 사이트
+            </button>
+            <template x-for="site in sites" :key="site.code">
+              <button
+                @click="toggleSite(site.code)"
+                class="w-full px-4 py-2 text-left hover:bg-blue-100 text-sm block"
+              >
+                <input
+                  type="checkbox"
+                  :checked="selectedSites.includes(site.code)"
+                  class="mr-2"
+                >
+                <span x-text="`${site.name} (${site.code})`"></span>
+              </button>
+            </template>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 mt-1">여러 사이트를 선택할 수 있습니다</p>
+      </div>
+
+      <!-- 검색 키워드 -->
+      <div class="filter-group md:col-span-2">
+        <label class="block text-sm font-semibold text-gray-700 mb-2">검색 키워드</label>
+        <input
+          type="text"
+          x-model="keyword"
+          @keydown.enter="performSearch()"
+          placeholder="제목이나 내용에서 검색할 키워드를 입력하세요"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+        />
+      </div>
+    </div>
+
+    <!-- 버튼 -->
+    <div class="flex gap-2 mt-6">
+      <button
+        @click="performSearch()"
+        class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+      >
+        <i class="bi bi-search"></i>
+        🔍 검색
+      </button>
+      <button
+        @click="resetSearch()"
+        class="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors flex items-center gap-2"
+      >
+        <i class="bi bi-arrow-clockwise"></i>
+        🔄 초기화
+      </button>
+    </div>
+  </div>
+
+  <!-- 검색 결과 -->
+  <div x-show="searchPerformed" class="search-card">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">
+      📋 검색 결과
+      <span class="text-blue-600" x-text="`(${results.length}건)`"></span>
+    </h2>
+
+    <!-- 로딩 상태 -->
+    <div x-show="isLoading" class="text-center py-8">
+      <i class="bi bi-hourglass text-2xl text-blue-500"></i>
+      <p class="text-gray-600 mt-2">검색 중입니다...</p>
+    </div>
+
+    <!-- 결과 없음 -->
+    <div x-show="!isLoading && results.length === 0" class="text-center py-8 text-blue-600">
+      <p>검색 결과가 없습니다.</p>
+    </div>
+
+    <!-- 결과 테이블 -->
+    <div x-show="!isLoading && results.length > 0" class="overflow-x-auto">
+      <table class="w-full border-collapse text-sm">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="border border-gray-300 px-4 py-2 text-left">사이트</th>
+            <th class="border border-gray-300 px-4 py-2 text-left">페이지</th>
+            <th class="border border-gray-300 px-4 py-2 text-left">제목</th>
+            <th class="border border-gray-300 px-4 py-2 text-left">등록일</th>
+            <th class="border border-gray-300 px-4 py-2 text-left">수집일시</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="row in results" :key="row.page_id">
+            <tr
+              class="border-b border-gray-200 hover:bg-blue-50 cursor-pointer"
+              @click="selectRow(row)"
+            >
+              <td class="border border-gray-300 px-4 py-2">
+                <a :href="row.site_url" target="_blank" class="text-blue-500 hover:underline">
+                  <span x-text="row.site_name"></span>
+                </a>
+              </td>
+              <td class="border border-gray-300 px-4 py-2">
+                <a :href="row.detail_url" target="_blank" class="text-blue-500 hover:underline">
+                  <span x-text="row.page_id"></span>
+                </a>
+              </td>
+              <td class="border border-gray-300 px-4 py-2 max-w-xs truncate">
+                <a :href="row.org_url" target="_blank" class="text-blue-500 hover:underline">
+                  <span x-text="row.title"></span>
+                </a>
+              </td>
+              <td class="border border-gray-300 px-4 py-2">
+                <span x-text="row.registration_date || '-'"></span>
+              </td>
+              <td class="border border-gray-300 px-4 py-2">
+                <span x-text="row.collection_date"></span>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 상세 정보 (행 선택 시) -->
+  <div x-show="selectedRow" class="bg-white rounded-lg shadow-sm p-6 mt-6">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">📄 선택된 항목 상세 정보</h2>
+
+    <div x-show="selectedRow" class="space-y-3 mb-6">
+      <div>
+        <strong class="text-gray-700">사이트:</strong>
+        <a :href="selectedRow.site_url" target="_blank" class="text-blue-500 hover:underline ml-2">
+          <span x-text="selectedRow.site_name"></span>
+        </a>
+      </div>
+      <div>
+        <strong class="text-gray-700">페이지:</strong>
+        <a :href="selectedRow.detail_url" target="_blank" class="text-blue-500 hover:underline ml-2">
+          <span x-text="selectedRow.page_id"></span>
+        </a>
+      </div>
+      <div>
+        <strong class="text-gray-700">제목:</strong>
+        <a :href="selectedRow.org_url" target="_blank" class="text-blue-500 hover:underline ml-2">
+          <span x-text="selectedRow.title"></span>
+        </a>
+      </div>
+      <div>
+        <strong class="text-gray-700">등록일:</strong>
+        <span class="ml-2" x-text="selectedRow.registration_date || '-'"></span>
+      </div>
+      <div>
+        <strong class="text-gray-700">수집일시:</strong>
+        <span class="ml-2" x-text="selectedRow.collection_date"></span>
+      </div>
+    </div>
+
+    <!-- 탭 네비게이션 -->
+    <div class="border-b border-gray-200">
+      <div class="flex gap-4">
+        <button
+          @click="activeTab = 'rendered'"
+          :class="activeTab === 'rendered' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
+          class="px-4 py-2 font-semibold transition-colors"
+        >
+          📄 렌더링 보기
+        </button>
+        <button
+          @click="activeTab = 'html'"
+          :class="activeTab === 'html' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
+          class="px-4 py-2 font-semibold transition-colors"
+        >
+          🧾 HTML 코드 보기
+        </button>
+      </div>
+    </div>
+
+    <!-- 탭 콘텐츠 -->
+    <div class="mt-4">
+      <!-- 렌더링 보기 -->
+      <div x-show="activeTab === 'rendered'" class="prose prose-sm max-w-none">
+        <div x-html="selectedRow.summary"></div>
+      </div>
+
+      <!-- HTML 코드 보기 -->
+      <div x-show="activeTab === 'html'" class="bg-gray-100 p-4 rounded-lg overflow-x-auto">
+        <pre class="text-xs text-gray-700"><code x-text="selectedRow.summary"></code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+  function searchData() {
+    return {
+      sites: [],
+      selectedSites: [],
+      selectAllSites: false,
+      showSiteDropdown: false,
+      keyword: '',
+      results: [],
+      selectedRow: null,
+      searchPerformed: false,
+      isLoading: false,
+      activeTab: 'rendered',
+
+      get selectedSitesText() {
+        if (this.selectedSites.length === 0) return '';
+        if (this.selectedSites.length === this.sites.length) return '모든 사이트';
+        const names = this.selectedSites.map(code => {
+          const site = this.sites.find(s => s.code === code);
+          return site ? site.name : code;
+        });
+        return names.slice(0, 2).join(', ') + (names.length > 2 ? ` 외 ${names.length - 2}개` : '');
+      },
+
+      init() {
+        this.loadSites();
+      },
+
+      async loadSites() {
+        try {
+          const response = await fetch('/api/v1/search/sites');
+          if (response.ok) {
+            this.sites = await response.json();
+          }
+        } catch (error) {
+          console.error('사이트 로드 실패:', error);
+        }
+      },
+
+      toggleSite(code) {
+        const index = this.selectedSites.indexOf(code);
+        if (index > -1) {
+          this.selectedSites.splice(index, 1);
+        } else {
+          this.selectedSites.push(code);
+        }
+        this.selectAllSites = this.selectedSites.length === this.sites.length;
+      },
+
+      toggleAllSites() {
+        if (this.selectAllSites) {
+          this.selectedSites = this.sites.map(s => s.code);
+        } else {
+          this.selectedSites = [];
+        }
+      },
+
+      async performSearch() {
+        if (!this.keyword.trim()) {
+          alert('검색 키워드를 입력하세요');
+          return;
+        }
+
+        this.isLoading = true;
+        try {
+          const sitesParam = this.selectedSites.join(',');
+          const response = await fetch(
+            `/api/v1/search/results?sites=${encodeURIComponent(sitesParam)}&keyword=${encodeURIComponent(this.keyword)}`
+          );
+          if (response.ok) {
+            this.results = await response.json();
+            this.selectedRow = null;
+          }
+        } catch (error) {
+          console.error('검색 실패:', error);
+          this.results = [];
+        } finally {
+          this.searchPerformed = true;
+          this.isLoading = false;
+        }
+      },
+
+      resetSearch() {
+        this.keyword = '';
+        this.selectedSites = [];
+        this.selectAllSites = false;
+        this.results = [];
+        this.selectedRow = null;
+        this.searchPerformed = false;
+      },
+
+      selectRow(row) {
+        this.selectedRow = row;
+        this.activeTab = 'rendered';
+      }
+    };
+  }
+</script>
+{% endblock %}

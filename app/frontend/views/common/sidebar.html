@@ -1,0 +1,105 @@
+<!-- 사이드바 네비게이션 -->
+<div class="w-64 bg-white shadow-sm border-r border-gray-200 min-h-screen">
+  <!-- 로고 영역 -->
+  <div class="p-4 border-b border-gray-200">
+    <a href="/dashboard" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+      <img src="/public/images/scale1.svg" alt="Logo" class="h-8 w-8">
+      <span class="font-bold text-gray-800 text-sm">⚖️ Law Crawler</span>
+    </a>
+  </div>
+
+  <!-- 메뉴 -->
+  <nav class="p-4 space-y-2">
+    <!-- 대시보드 -->
+    <a
+      href="/dashboard"
+      class="menu-item"
+      :class="getCurrentPage() === 'dashboard' ? 'active' : ''"
+    >
+      <i class="bi bi-pie-chart-fill text-lg"></i>
+      <span>📊 대시보드</span>
+    </a>
+
+    <!-- 데이터 조회 -->
+    <a
+      href="/search"
+      class="menu-item"
+      :class="getCurrentPage() === 'search' ? 'active' : ''"
+    >
+      <i class="bi bi-search text-lg"></i>
+      <span>🔍 데이터 조회</span>
+    </a>
+
+    <!-- 통계 분석 -->
+    <a
+      href="/statistics"
+      class="menu-item"
+      :class="getCurrentPage() === 'statistics' ? 'active' : ''"
+    >
+      <i class="bi bi-bar-chart-fill text-lg"></i>
+      <span>📈 통계 분석</span>
+    </a>
+
+    <!-- 로그 관리 -->
+    <a
+      href="/logs"
+      class="menu-item"
+      :class="getCurrentPage() === 'logs' ? 'active' : ''"
+    >
+      <i class="bi bi-file-earmark-text text-lg"></i>
+      <span>📋 로그 관리</span>
+    </a>
+
+    <!-- 설정 -->
+    <a
+      href="/settings"
+      class="menu-item"
+      :class="getCurrentPage() === 'settings' ? 'active' : ''"
+    >
+      <i class="bi bi-gear-fill text-lg"></i>
+      <span>⚙️ 설정</span>
+    </a>
+  </nav>
+
+  <!-- 구분선 -->
+  <div class="border-t border-gray-200 mx-4"></div>
+
+  <!-- 시스템 상태 (선택사항) -->
+  <div class="p-4 mt-4 bg-blue-50 rounded-lg mx-4">
+    <p class="text-xs text-gray-600 font-semibold mb-2">🔄 시스템 상태</p>
+    <p class="text-sm text-blue-700">
+      <i class="bi bi-check-circle-fill text-green-500 mr-1"></i>
+      크롤러 정상
+    </p>
+  </div>
+</div>
+
+<style>
+  .menu-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors no-underline;
+  }
+
+  .menu-item.active {
+    @apply bg-blue-100 text-blue-600 font-semibold;
+  }
+
+  .menu-item i {
+    @apply flex-shrink-0;
+  }
+
+  .menu-item span {
+    @apply flex-1;
+  }
+</style>
+
+<script>
+  function getCurrentPage() {
+    const path = window.location.pathname;
+    if (path === '/dashboard') return 'dashboard';
+    if (path === '/search') return 'search';
+    if (path === '/statistics') return 'statistics';
+    if (path === '/logs') return 'logs';
+    if (path === '/settings') return 'settings';
+    return '';
+  }
+</script>
