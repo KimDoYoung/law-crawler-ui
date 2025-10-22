@@ -1,11 +1,15 @@
 <!-- 범용 Alert component -->
-<div class="container mt-3">
-    <div id="alert" class="alert d-flex align-items-center d-none" role="alert">
-        <i id="alertIcon" class="bi me-2"></i>
-        <div>
-            <span id="alertStatus" class="me-2"></span>
+<div class="max-w-full mx-auto px-4 py-3">
+    <div id="alert" class="flex items-center gap-3 p-4 rounded-lg border hidden" role="alert">
+        <i id="alertIcon" class="bi text-lg"></i>
+        <div class="flex-1">
+            <span id="alertStatus" class="font-semibold mr-2"></span>
             <span id="alertMessage"></span>
         </div>
-        <button type="button" class="btn-close ms-auto" aria-label="Close" onclick="hideAlert()"></button>
+        <button type="button" class="ml-auto text-gray-500 hover:text-gray-700" aria-label="Close" onclick="hideAlert()">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+            </svg>
+        </button>
     </div>
 </div>

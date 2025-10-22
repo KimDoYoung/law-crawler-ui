@@ -1,22 +1,15 @@
 <!-- loading layer -->
-<!-- <div class="container-fluid mt-5 d-none" id="julia-loading-div">
-    <div class="row">
-        <div class="col d-flex align-items-center justify-content-center vh-100">
-        <div class="spinner-border text-secondary" role="status">
-        </div>
-        <span class="m-2"> Please Wait... </span>
-        </div>
-    </div>
-</div> -->
 <div>
   <input type="hidden" name="page_path" id="page_path" value="{{page_path}}" />
 </div>
 <div
-  class="container-fluid vh-100 d-flex align-items-center justify-content-center d-none"
+  class="fixed inset-0 w-full h-screen flex items-center justify-center bg-white bg-opacity-90 hidden"
   id="julia-loading-div"
 >
   <div class="text-center">
-    <div class="spinner-border text-secondary" role="status"></div>
-    <span class="m-2"> 잠시만 기다려주십시오... </span>
+    <div class="inline-block">
+      <div class="w-12 h-12 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+    </div>
+    <p class="mt-4 text-gray-700"> 잠시만 기다려주십시오... </p>
   </div>
 </div>

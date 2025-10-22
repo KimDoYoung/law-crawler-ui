@@ -1,12 +1,12 @@
 <!-- 에러용 Toast component -->
-<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-    <div id="toastError" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header">
-            <img src="/public/images/error1.png" class="rounded me-2" alt="error image" style="width: 60px;">
-            <strong class="me-auto">Status Code : <span id="error-status-code"></span> </strong>
+<div class="fixed bottom-0 right-0 p-3 z-40">
+    <div id="toastError" class="bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden hidden" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="flex items-center gap-3 p-4 border-b border-gray-200 bg-red-50">
+            <img src="/public/images/error1.png" class="rounded w-16 h-16" alt="error image">
+            <strong class="text-red-700">Status Code : <span id="error-status-code"></span></strong>
         </div>
-        <div class="toast-body">
-            <div id="error-detail"></div>
+        <div class="p-4">
+            <div id="error-detail" class="text-gray-700"></div>
         </div>
     </div>
 </div>

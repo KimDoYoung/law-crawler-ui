@@ -115,6 +115,7 @@ python app/backend/main.py
 - TailwindCSS
 - Alpine.js
 - Bootstrap 의 icon을 cdn으로 포함해서 사용
+- 필요한 경우에만 svg를 자체적으로 만들어서 사용
 
 ---
 
@@ -236,6 +237,13 @@ DB 스키마는 **law-crawler 프로젝트에서 관리**됩니다.
 2. 동적 데이터가 필요하면 `app/backend/page_contexts/context_registry.py`에 컨텍스트 제공자 등록  
 3. Jinja2 템플릿을 `app/frontend/views/templates/` 디렉터리에 추가  
 4. 필요한 정적 자산은 `app/frontend/public/` 디렉터리에 배치  
+
+---
+
+### Frontend javascript 추가방법
+
+1. fetch_util.js의 함수를 사용해서 api접속
+2. 필요한 javascript 함수는 common.js에 작성
 
 ---
 

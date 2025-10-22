@@ -1,54 +1,8 @@
-<ul class="navbar-nav ms-auto">   
-    <li class="nav-item">
-        <!-- 매매일지 작성 모달 버튼 -->
-        <a href="javascript:void(0);" 
-           class="nav-link text-success" 
-           title="매매일지 작성"
-           onclick="showDiaryModal()">
-            <i class="bi bi-pencil-square"></i>
-        </a>
-    </li>
-
-    <li class="nav-item">
-        <!-- 종목찾기 모달 버튼 -->
-        <a href="javascript:void(0);" 
-           class="nav-link text-success" 
-           title="종목찾기"
-           data-bs-toggle="modal" 
-           data-bs-target="#stkFindModal">
-            <i class="bi bi-search-heart"></i>
-        </a>
-    </li>
-    <li class="nav-item">
-        <!-- 실선 별 대신 빈 별 -->
-        <a href="/page?path=stock/mystock" class="nav-link text-danger" title="나의 관심종목">
-            <!-- <i class="bi bi-star"></i>  <i class="bi bi-pencil-square"></i>-->
-            <i class="bi bi-heart"></i>
-        </a>
-    </li>    
-    {% if page_path and page_path != 'main' %}
-    <li class="nav-item">
-        <!-- 다른 새로고침 아이콘 -->
-        <a href="/page?path={{page_path}}" class="nav-link text-primary" title="새로고침">
-            <i class="bi bi-arrow-clockwise"></i>새로고침
-        </a>
-    </li>
-    {% endif %}
-    <li class="nav-item">
-        <!-- 다른 날짜 아이콘 -->
-        <span class="nav-link text-primary">
-            <i class="bi bi-clock me-1"></i><span id="span_today_time">{{today}}</span>
-        </span>
-    </li>
-    <li class="nav-item">
-        <!-- 다른 설정 아이콘 -->
-        <a class="nav-link" href="/page?path=settings/edit" title="설정">
-            <i class="bi bi-gear"></i>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/logout" title="{{user_id}} 로그아웃">
-            <i class="bi bi-power"></i>
+<ul class="flex items-center gap-4 ml-auto">
+    <li>
+        <!-- 설정 -->
+        <a class="text-gray-700 hover:text-gray-900 transition" href="/page?path=settings/edit" title="설정">
+            <i class="bi bi-gear text-2xl"></i>
         </a>
     </li>
 </ul>

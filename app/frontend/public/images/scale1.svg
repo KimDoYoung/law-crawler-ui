@@ -1,0 +1,39 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- 기준 -->
+  <defs>
+    <style>
+      .scale-dark { fill: #3a3a3a; }
+      .scale-light { fill: #ffffff; stroke: #3a3a3a; stroke-width: 8; }
+    </style>
+  </defs>
+
+  <!-- 받침대 -->
+  <path class="scale-dark" d="M 145 420 Q 145 400 165 390 L 347 390 Q 367 400 367 420 Q 367 440 347 450 L 165 450 Q 145 440 145 420 Z"/>
+
+  <!-- 수직 기둥 -->
+  <rect class="scale-dark" x="225" y="120" width="62" height="300" rx="5"/>
+
+  <!-- 수평 막대 (양팔) -->
+  <rect class="scale-dark" x="35" y="155" width="442" height="20" rx="10" transform="rotate(-5 256 165)"/>
+
+  <!-- 맨 위 원형 노브 -->
+  <circle class="scale-dark" cx="256" cy="45" r="30"/>
+
+  <!-- 왼쪽 팬 - 삼각형 -->
+  <path class="scale-light" d="M 80 240 L 140 320 L 20 320 Z"/>
+
+  <!-- 왼쪽 팬 - 호 (바닥) -->
+  <path class="scale-dark" d="M 30 320 Q 30 350 80 360 Q 130 350 130 320 Z"/>
+
+  <!-- 오른쪽 팬 - 삼각형 -->
+  <path class="scale-light" d="M 432 260 L 492 340 L 372 340 Z"/>
+
+  <!-- 오른쪽 팬 - 호 (바닥) -->
+  <path class="scale-dark" d="M 382 340 Q 382 370 432 380 Q 482 370 482 340 Z"/>
+
+  <!-- 왼쪽 연결 고리 -->
+  <line x1="80" y1="165" x2="80" y2="240" stroke="#3a3a3a" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- 오른쪽 연결 고리 -->
+  <line x1="432" y1="165" x2="432" y2="260" stroke="#3a3a3a" stroke-width="8" stroke-linecap="round"/>
+</svg>
