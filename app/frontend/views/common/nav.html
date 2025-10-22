@@ -1,25 +1,72 @@
-<nav class="bg-[#c8f097] shadow">
+<nav class="bg-[#c8f097] shadow" x-data="{ currentPage: getCurrentPage() }">
   <div class="w-full px-4 py-3">
-    <!-- Navbar Content - Simple Layout -->
-    <div class="flex items-center gap-6">
-      <!-- Logo -->
-      <a href="/dashboard" target="_blank" rel="noopener" class="flex-shrink-0">
-        <img
-          src="/public/images/scale1.svg"
-          alt="Kiwoom Securities logo"
-          class="h-10"
-        />
-      </a>
-
-      <!-- Title -->
-      <strong class="flex-shrink-0">
+    <!-- Navbar Content -->
+    <div class="flex items-center gap-4">
+      <!-- Logo & Title -->
+      <div class="flex items-center gap-3 flex-shrink-0">
         <a
-          href="/main"
-          class="text-lg font-bold text-gray-800 whitespace-nowrap"
+          href="/dashboard"
+          class="flex items-center gap-2 hover:opacity-80 transition-opacity"
         >
-          {{data.title | default('법규사이트 정보모음')}}
+          <img src="/public/images/scale1.svg" alt="Logo" class="h-8 w-8" />
+          <span class="font-bold text-gray-800 text-sm hidden sm:inline"
+            >법규사이트 정보 모음</span
+          >
         </a>
-      </strong>
+      </div>
+
+      <!-- Menu Items -->
+      <nav class="flex items-center gap-2">
+        <!-- 대시보드 -->
+        <a
+          href="/dashboard"
+          class="px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+          :class="currentPage === 'dashboard' ? 'bg-blue-500 text-white' : 'text-gray-700 hover:bg-blue-50'"
+          title="대시보드"
+        >
+          📊 대시보드
+        </a>
+
+        <!-- 데이터 조회 -->
+        <a
+          href="/search"
+          class="px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+          :class="currentPage === 'search' ? 'bg-blue-500 text-white' : 'text-gray-700 hover:bg-blue-50'"
+          title="데이터 조회"
+        >
+          🔍 조회
+        </a>
+
+        <!-- 통계 분석 -->
+        <a
+          href="/statistics"
+          class="px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+          :class="currentPage === 'statistics' ? 'bg-blue-500 text-white' : 'text-gray-700 hover:bg-blue-50'"
+          title="통계 분석"
+        >
+          📈 통계
+        </a>
+
+        <!-- 로그 관리 -->
+        <a
+          href="/logs"
+          class="px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+          :class="currentPage === 'logs' ? 'bg-blue-500 text-white' : 'text-gray-700 hover:bg-blue-50'"
+          title="로그 관리"
+        >
+          📋 로그
+        </a>
+
+        <!-- 설정 -->
+        <a
+          href="/settings"
+          class="px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+          :class="currentPage === 'settings' ? 'bg-blue-500 text-white' : 'text-gray-700 hover:bg-blue-50'"
+          title="설정"
+        >
+          ⚙️ 설정
+        </a>
+      </nav>
 
       <!-- Right Side Menu -->
       <div class="ml-auto flex-shrink-0">
@@ -30,9 +77,13 @@
 </nav>
 
 <script>
-  function navMenu() {
-    return {
-      mobileMenuOpen: false,
-    };
+  function getCurrentPage() {
+    const path = window.location.pathname;
+    if (path === "/dashboard") return "dashboard";
+    if (path === "/search") return "search";
+    if (path === "/statistics") return "statistics";
+    if (path === "/logs") return "logs";
+    if (path === "/settings") return "settings";
+    return "";
   }
 </script>

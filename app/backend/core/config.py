@@ -10,14 +10,16 @@ class Config:
         # TimeZone
         self.TIME_ZONE = "Asia/Seoul"
 
+        # BASE_DIR 설정
+        self.BASE_DIR = os.getenv("BASE_DIR", "c:/law-crawler-ui")
         # LAW_CRAWLER_DIR 환경 변수에서 기본 경로 읽기
         crawler_dir = os.getenv("LAW_CRAWLER_DIR")
         if not crawler_dir:
             raise ValueError("LAW_CRAWLER_DIR 환경 변수가 설정되어 있지 않습니다.")
-
-        # BASE_DIR 설정
-        self.BASE_DIR = os.getenv("BASE_DIR", "c:/law-crawler-ui/")
-        self.EXE_DIR = crawler_dir
+        self.CRAWLER_DIR = crawler_dir
+        self.CRAWLER_EXE_DIR = os.getenv(
+            "LAW_CRAWLER_EXE_DIR", self.CRAWLER_DIR + "/exe"
+        )
 
         # .env 파일 로드 (law-crawler 디렉터리에서)
         env_file = os.path.join(crawler_dir, ".env")

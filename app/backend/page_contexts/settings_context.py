@@ -1,6 +1,7 @@
 """
 설정 페이지 컨텍스트 제공 함수
 """
+
 import os
 from app.backend.data.db_util import yaml_info_to_html
 from app.backend.core.config import config
@@ -25,11 +26,11 @@ def get_system_info():
         "python_version": "3.11+",
         "fastapi_version": "0.100+",
         "database_type": "SQLite",
-        "crawler_dir": config.EXE_DIR,
+        "crawler_dir": config.CRAWLER_EXE_DIR,
         "db_dir": config.DB_PATH,
         "file_dir": "N/A",
         "log_dir": config.LOG_DIR,
-        "version": config.VERSION
+        "version": config.VERSION,
     }
 
 
