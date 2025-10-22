@@ -22,9 +22,16 @@ def get_data_frame_summary(sql: str, params: tuple = ()) -> pd.DataFrame:
     conn = connect(summary_path)
 
     try:
+        # SQL 쿼리 로깅
+        logger.info(f"📊 SQL 실행: {sql}")
+        if params:
+            logger.info(f"📌 파라미터: {params}")
+
         df = pd.read_sql_query(sql, conn, params=params)
+        logger.info(f"✅ SQL 결과: {len(df)} rows 반환")
         return df
     except Exception as e:
+        logger.error(f"❌ DB 조회 오류: {e}")
         raise RuntimeError(f"DB 조회 오류: {e}")
     finally:
         conn.close()
@@ -38,16 +45,19 @@ def total_site_attach_counts(from_date):
     conn = connect(summary_path)
     cursor = conn.cursor()
 
-    cursor.execute(
-        """
+    sql = """
         SELECT
             (SELECT COUNT(*) FROM law_summary WHERE upd_time >= ?) AS summary_count,
             (SELECT COUNT(*) FROM law_summary_attach WHERE upd_time >= ?) AS attach_count
-    """,
-        (from_date, from_date),
-    )
+    """
+
+    logger.info(f"📊 SQL 실행 (total_site_attach_counts): {sql.strip()}")
+    logger.info(f"📌 파라미터: from_date={from_date}")
+
+    cursor.execute(sql, (from_date, from_date))
 
     summary_count, attach_count = cursor.fetchone()
+    logger.info(f"✅ SQL 결과: summary_count={summary_count}, attach_count={attach_count}")
     conn.close()
     return summary_count, attach_count
 
@@ -60,14 +70,18 @@ def error_count_of_last_24h():
     conn = connect(summary_path)
     cursor = conn.cursor()
 
-    cursor.execute("""
+    sql = """
         SELECT COUNT(*)
         FROM law_summary
         WHERE category = 'LOG'
         AND DATE(upd_time) = (SELECT DATE(MAX(upd_time)) FROM law_summary)
-    """)
+    """
+
+    logger.info(f"📊 SQL 실행 (error_count_of_last_24h): {sql.strip()}")
+    cursor.execute(sql)
 
     error_count = cursor.fetchone()[0]
+    logger.info(f"✅ SQL 결과: error_count={error_count}")
     conn.close()
     return error_count
 
@@ -96,7 +110,7 @@ def get_summary_list(from_date: str) -> pd.DataFrame:
         ON
             a.site_name = b.site_name AND a.page_id = b.page_id
         WHERE
-            a.upd_time > ?
+            a.upd_time >= ?
         ORDER BY
             a.site_name, a.register_date DESC
     """

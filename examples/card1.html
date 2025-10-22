@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Metric Cards Example</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+      defer
+    ></script>
+  </head>
+  <body class="bg-gray-50 min-h-screen flex items-center justify-center">
+    <div
+      x-data="{ data: { error_count: 17 }, formatNumber(n){ return new Intl.NumberFormat().format(n) } }"
+      class="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 w-full max-w-6xl"
+    >
+      <!-- 🔴 카드 #1 : 붉은 경고 스타일 -->
+      <div
+        class="metric-card bg-white border-l-8 border-red-500 shadow hover:shadow-lg transition-shadow rounded-xl p-6"
+      >
+        <div class="metric-label text-gray-500 text-sm font-semibold uppercase">
+          오류 발생
+        </div>
+        <div
+          class="metric-value text-4xl font-bold text-red-600 mt-2"
+          x-text="formatNumber(data.error_count) || '0'"
+        ></div>
+        <div class="metric-delta text-sm text-red-500 mt-1">최근 수집시</div>
+      </div>
+
+      <!-- 🟢 카드 #2 : 유리 느낌 Glassmorphism -->
+      <div
+        class="metric-card backdrop-blur-sm bg-white/70 border border-gray-200 shadow-md hover:shadow-lg rounded-2xl p-6 transition-all"
+      >
+        <div class="metric-label text-gray-600 text-sm font-semibold">
+          오류 발생
+        </div>
+        <div
+          class="metric-value text-4xl font-extrabold text-red-500 mt-2 drop-shadow-sm"
+          x-text="formatNumber(data.error_count) || '0'"
+        ></div>
+        <div class="metric-delta text-sm text-gray-500 mt-1">최근 수집시</div>
+      </div>
+
+      <!-- 🟣 카드 #3 : 다크+그라데이션 카드 -->
+      <div
+        class="metric-card bg-gradient-to-br from-gray-800 to-gray-900 text-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all"
+      >
+        <div class="metric-label text-sm uppercase text-gray-400">
+          오류 발생
+        </div>
+        <div
+          class="metric-value text-4xl font-bold text-red-400 mt-2"
+          x-text="formatNumber(data.error_count) || '0'"
+        ></div>
+        <div class="metric-delta text-sm text-gray-500 mt-1">최근 수집시</div>
+      </div>
+    </div>
+  </body>
+</html>
