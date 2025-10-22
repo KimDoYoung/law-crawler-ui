@@ -1,6 +1,4 @@
-{% extends "common/base.html" %}
-
-{% block style %}
+{% extends "common/base.html" %} {% block style %}
 <style>
   .log-container {
     @apply bg-white border border-gray-200 rounded-lg p-6 shadow-sm;
@@ -21,9 +19,7 @@
     @apply bg-white border border-gray-200 rounded-lg mt-4;
   }
 </style>
-{% endblock %}
-
-{% block content %}
+{% endblock %} {% block content %}
 <div x-data="logsData()">
   <!-- 페이지 제목 -->
   <h1 class="text-3xl font-bold text-gray-800 mb-2">📋 로그 관리</h1>
@@ -51,15 +47,20 @@
 
   <!-- 탭 1: 크롤러 로그 -->
   <div x-show="activeTab === 'crawler'" class="log-container">
-    <h2 class="text-xl font-bold text-gray-800 mb-4">📋 수집-Crawler 로그 목록</h2>
+    <h2 class="text-xl font-bold text-gray-800 mb-4">
+      📋 수집-Crawler 로그 목록
+    </h2>
 
     <!-- 로그 날짜 선택 -->
     <div class="mb-4">
-      <label class="block text-sm font-semibold text-gray-700 mb-2">📅 로그 날짜</label>
+      <label class="block text-sm font-semibold text-gray-700 mb-2"
+        >📅 로그 날짜</label
+      >
       <select
         x-model="selectedDate"
         @change="loadCrawlerLog()"
         class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+        title="로그 날짜 선택"
       >
         <template x-for="dateOption in dates" :key="dateOption.date">
           <option :value="dateOption.date" x-text="dateOption.label"></option>
@@ -77,12 +78,19 @@
     <div x-show="!isLoading && crawlerLog.path" class="mb-3">
       <p class="text-sm text-gray-600">
         <strong>로그 파일 경로:</strong>
-        <code class="bg-gray-100 px-2 py-1 rounded" x-text="crawlerLog.path"></code>
+        <code
+          class="bg-gray-100 px-2 py-1 rounded"
+          x-text="crawlerLog.path"
+        ></code>
       </p>
     </div>
 
     <!-- 로그 내용 -->
-    <div x-show="!isLoading" class="log-content" x-text="crawlerLog.content"></div>
+    <div
+      x-show="!isLoading"
+      class="log-content"
+      x-text="crawlerLog.content"
+    ></div>
 
     <!-- 다운로드 버튼 -->
     <div x-show="!isLoading && crawlerLog.content" class="mt-4">
@@ -98,7 +106,9 @@
 
   <!-- 탭 2: UI 로그 -->
   <div x-show="activeTab === 'ui'" class="log-container">
-    <h2 class="text-xl font-bold text-gray-800 mb-4">🔍 UI(웹페이지) 로그 보기</h2>
+    <h2 class="text-xl font-bold text-gray-800 mb-4">
+      🔍 UI(웹페이지) 로그 보기
+    </h2>
 
     <!-- 로딩 상태 -->
     <div x-show="isLoading" class="text-center py-4">
@@ -129,25 +139,23 @@
     </div>
   </div>
 </div>
-{% endblock %}
-
-{% block script %}
+{% endblock %} {% block script %}
 <script>
   function logsData() {
     return {
-      activeTab: 'crawler',
+      activeTab: "crawler",
       dates: [],
-      selectedDate: '',
+      selectedDate: "",
       isLoading: false,
       crawlerLog: {
-        content: '',
-        path: '',
-        filename: ''
+        content: "",
+        path: "",
+        filename: "",
       },
       uiLog: {
-        content: '',
-        path: '',
-        filename: ''
+        content: "",
+        path: "",
+        filename: "",
       },
 
       async init() {
@@ -161,28 +169,30 @@
 
       async loadDates() {
         try {
-          const response = await fetch('/api/v1/logs/dates?days=7');
+          const response = await fetch("/api/v1/logs/dates?days=7");
           if (response.ok) {
             this.dates = await response.json();
           }
         } catch (error) {
-          console.error('로그 날짜 로드 실패:', error);
+          console.error("로그 날짜 로드 실패:", error);
         }
       },
 
       async loadCrawlerLog() {
         this.isLoading = true;
         try {
-          const response = await fetch(`/api/v1/logs/crawler?date=${this.selectedDate}`);
+          const response = await fetch(
+            `/api/v1/logs/crawler?date=${this.selectedDate}`
+          );
           if (response.ok) {
             this.crawlerLog = await response.json();
           }
         } catch (error) {
-          console.error('크롤러 로그 로드 실패:', error);
+          console.error("크롤러 로그 로드 실패:", error);
           this.crawlerLog = {
-            content: '로그 로드 중 오류 발생',
-            path: '',
-            filename: ''
+            content: "로그 로드 중 오류 발생",
+            path: "",
+            filename: "",
           };
         } finally {
           this.isLoading = false;
@@ -191,29 +201,32 @@
 
       async loadUILog() {
         try {
-          const response = await fetch('/api/v1/logs/ui');
+          const response = await fetch("/api/v1/logs/ui");
           if (response.ok) {
             this.uiLog = await response.json();
           }
         } catch (error) {
-          console.error('UI 로그 로드 실패:', error);
+          console.error("UI 로그 로드 실패:", error);
           this.uiLog = {
-            content: '로그 로드 중 오류 발생',
-            path: '',
-            filename: ''
+            content: "로그 로드 중 오류 발생",
+            path: "",
+            filename: "",
           };
         }
       },
 
       downloadFile(content, filename) {
-        const element = document.createElement('a');
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
-        element.setAttribute('download', filename);
-        element.style.display = 'none';
+        const element = document.createElement("a");
+        element.setAttribute(
+          "href",
+          "data:text/plain;charset=utf-8," + encodeURIComponent(content)
+        );
+        element.setAttribute("download", filename);
+        element.style.display = "none";
         document.body.appendChild(element);
         element.click();
         document.body.removeChild(element);
-      }
+      },
     };
   }
 </script>

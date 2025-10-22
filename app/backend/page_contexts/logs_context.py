@@ -60,7 +60,7 @@ def get_crawler_log(log_date: str):
             "filename": filename
         }
     except Exception as e:
-        logger.error(f"크롤러 로그 로드 실패: {e}")
+        logger.error(f"❌ 크롤러 로그 로드 실패: {e}")
         return {
             "content": f"로그 로드 중 오류 발생: {e}",
             "path": "",
@@ -107,7 +107,7 @@ def get_ui_log():
             "filename": filename
         }
     except Exception as e:
-        logger.error(f"UI 로그 로드 실패: {e}")
+        logger.error(f"❌ UI 로그 로드 실패: {e}")
         return {
             "content": f"로그 로드 중 오류 발생: {e}",
             "path": "",

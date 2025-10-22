@@ -59,5 +59,5 @@ async def get_data(
         data = get_dashboard_data(period)
         return data
     except Exception as e:
-        logger.error(f"대시보드 데이터 조회 실패: {e}")
+        logger.error(f"❌ 대시보드 데이터 조회 실패: {e}")
         return []

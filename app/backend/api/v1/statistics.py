@@ -30,7 +30,7 @@ async def get_metrics():
         metrics = get_statistics_metrics()
         return metrics
     except Exception as e:
-        logger.error(f"통계 메트릭 조회 실패: {e}")
+        logger.error(f"❌ 통계 메트릭 조회 실패: {e}")
         return {
             "total_sites": 0,
             "total_pages": 0,
@@ -51,7 +51,7 @@ async def get_sites_stats():
         stats = get_site_statistics()
         return stats
     except Exception as e:
-        logger.error(f"사이트 통계 조회 실패: {e}")
+        logger.error(f"❌ 사이트 통계 조회 실패: {e}")
         return []
 
 
@@ -67,7 +67,7 @@ async def get_files_stats():
         stats = get_site_file_statistics()
         return stats
     except Exception as e:
-        logger.error(f"첨부파일 통계 조회 실패: {e}")
+        logger.error(f"❌ 첨부파일 통계 조회 실패: {e}")
         return []
 
 
@@ -83,5 +83,5 @@ async def get_detail_stats():
         stats = get_detail_statistics()
         return stats
     except Exception as e:
-        logger.error(f"상세 통계 조회 실패: {e}")
+        logger.error(f"❌ 상세 통계 조회 실패: {e}")
         return []

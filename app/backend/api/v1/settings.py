@@ -32,7 +32,7 @@ async def get_system_info_endpoint():
         info = get_system_info()
         return info
     except Exception as e:
-        logger.error(f"시스템 정보 조회 실패: {e}")
+        logger.error(f"❌ 시스템 정보 조회 실패: {e}")
         return {
             "error": "시스템 정보 조회 중 오류 발생"
         }
@@ -50,7 +50,7 @@ async def get_info():
         content = get_info_content()
         return {"content": content}
     except Exception as e:
-        logger.error(f"시스템 소개 로드 실패: {e}")
+        logger.error(f"❌ 시스템 소개 로드 실패: {e}")
         return {"content": f"로드 실패: {e}"}
 
 
@@ -66,7 +66,7 @@ async def get_history():
         content = get_history_content()
         return {"content": content}
     except Exception as e:
-        logger.error(f"시스템 히스토리 로드 실패: {e}")
+        logger.error(f"❌ 시스템 히스토리 로드 실패: {e}")
         return {"content": f"로드 실패: {e}"}
 
 
@@ -82,5 +82,5 @@ async def get_sites():
         html = get_site_list_html()
         return {"html": html}
     except Exception as e:
-        logger.error(f"사이트 목록 조회 실패: {e}")
+        logger.error(f"❌ 사이트 목록 조회 실패: {e}")
         return {"html": f"로드 실패: {e}"}

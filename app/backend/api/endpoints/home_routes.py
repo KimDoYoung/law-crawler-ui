@@ -115,7 +115,7 @@ async def page(
 
             context["data"] = data
         except Exception as e:
-            logger.error(f"{path}용 데이터 로딩 실패: {e}")
+            logger.error(f"❌ {path}용 데이터 로딩 실패: {e}")
     else:
         data = {"title": "주식매매"}
         context["data"] = data

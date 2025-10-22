@@ -47,7 +47,7 @@ def get_site_statistics():
             })
         return rows
     except Exception as e:
-        logger.error(f"사이트별 통계 로드 실패: {e}")
+        logger.error(f"❌ 사이트별 통계 로드 실패: {e}")
         return []
 
 
@@ -68,7 +68,7 @@ def get_site_file_statistics():
             })
         return rows
     except Exception as e:
-        logger.error(f"사이트별 첨부파일 통계 로드 실패: {e}")
+        logger.error(f"❌ 사이트별 첨부파일 통계 로드 실패: {e}")
         return []
 
 
@@ -91,5 +91,5 @@ def get_detail_statistics():
             })
         return rows
     except Exception as e:
-        logger.error(f"상세 통계 로드 실패: {e}")
+        logger.error(f"❌ 상세 통계 로드 실패: {e}")
         return []

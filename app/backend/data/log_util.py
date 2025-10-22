@@ -44,7 +44,7 @@ def get_log_data(log_date):
             with open(log_fullpath, 'r', encoding='utf-8') as f:
                 return f.readlines(), log_fullpath
         except Exception as e:
-            logger.error(f"로그 파일 읽기 오류: {log_fullpath}, {e}")
+            logger.error(f"❌ 로그 파일 읽기 오류: {log_fullpath}, {e}")
             return [], log_fullpath
     else:
         logger.warning(f"로그 파일이 존재하지 않습니다: {log_fullpath}")

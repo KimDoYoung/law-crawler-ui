@@ -22,7 +22,7 @@ async def get_sites():
         sites = get_sites_list()
         return sites
     except Exception as e:
-        logger.error(f"사이트 목록 조회 실패: {e}")
+        logger.error(f"❌ 사이트 목록 조회 실패: {e}")
         return []
 
 
@@ -46,5 +46,5 @@ async def search_results(
         results = search_data(site_names=site_list, keyword=keyword)
         return results
     except Exception as e:
-        logger.error(f"데이터 검색 실패: {e}")
+        logger.error(f"❌ 데이터 검색 실패: {e}")
         return []

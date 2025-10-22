@@ -29,7 +29,7 @@ async def get_dates(days: int = Query(7, description="과거 며칠의 날짜를
         dates = get_available_dates(days)
         return dates
     except Exception as e:
-        logger.error(f"로그 날짜 조회 실패: {e}")
+        logger.error(f"❌ 로그 날짜 조회 실패: {e}")
         return []
 
 
@@ -48,7 +48,7 @@ async def get_crawler(date: str = Query(..., description="로그 날짜 (YYYY-MM
         log_data = get_crawler_log(date)
         return log_data
     except Exception as e:
-        logger.error(f"크롤러 로그 조회 실패: {e}")
+        logger.error(f"❌ 크롤러 로그 조회 실패: {e}")
         return {
             "content": f"로그 조회 중 오류 발생: {e}",
             "path": "",
@@ -68,7 +68,7 @@ async def get_ui():
         log_data = get_ui_log()
         return log_data
     except Exception as e:
-        logger.error(f"UI 로그 조회 실패: {e}")
+        logger.error(f"❌ UI 로그 조회 실패: {e}")
         return {
             "content": f"로그 조회 중 오류 발생: {e}",
             "path": "",

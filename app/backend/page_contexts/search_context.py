@@ -22,7 +22,7 @@ def get_sites_list():
         ]
         return sorted(sites, key=lambda x: x["name"])
     except Exception as e:
-        logger.error(f"사이트 목록 로드 실패: {e}")
+        logger.error(f"❌ 사이트 목록 로드 실패: {e}")
         return []
 
 
@@ -66,5 +66,5 @@ def search_data(site_names: list = None, keyword: str = ""):
 
         return rows
     except Exception as e:
-        logger.error(f"검색 실패: {e}")
+        logger.error(f"❌ 검색 실패: {e}")
         return []

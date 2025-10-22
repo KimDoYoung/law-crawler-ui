@@ -316,5 +316,5 @@ def search_law_summary(site_names=None, keyword=None):
         return df
 
     except Exception as e:
-        logger.error(f"법령 요약 검색 쿼리 생성 오류: {e}")
+        logger.error(f"❌ 법령 요약 검색 쿼리 생성 오류: {e}")
         return pd.DataFrame()

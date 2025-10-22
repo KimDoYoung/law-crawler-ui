@@ -87,5 +87,5 @@ def get_dashboard_data(period: str = "today"):
 
         return rows
     except Exception as e:
-        logger.error(f"대시보드 데이터 로드 실패: {e}")
+        logger.error(f"❌ 대시보드 데이터 로드 실패: {e}")
         return []
