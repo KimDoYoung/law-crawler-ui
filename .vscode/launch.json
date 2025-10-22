@@ -11,9 +11,8 @@
             },
             "args": [
                 "app.backend.main:app",
-                "--reload",
                 "--port",
-                "8004" // 원하는 포트 번호로 변경
+                "8004"
             ],
             "jinja": true,
             "justMyCode": true,

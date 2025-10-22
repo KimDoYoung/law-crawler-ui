@@ -2,7 +2,7 @@
 대시보드 페이지 컨텍스트 제공 함수
 """
 from datetime import datetime, timedelta
-from ui.utils.db_util import (
+from app.backend.data.db_util import (
     total_site_attach_counts,
     error_count_of_last_24h,
     get_summary_list

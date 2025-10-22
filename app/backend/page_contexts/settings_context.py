@@ -2,8 +2,7 @@
 설정 페이지 컨텍스트 제공 함수
 """
 import os
-from ui.utils.ui_settings import UiConfig
-from ui.utils.db_util import yaml_info_to_html
+from app.backend.data.db_util import yaml_info_to_html
 from app.backend.core.config import config
 
 
@@ -26,10 +25,10 @@ def get_system_info():
         "python_version": "3.11+",
         "fastapi_version": "0.100+",
         "database_type": "SQLite",
-        "crawler_dir": UiConfig.REPOSITORY_DIR,
-        "db_dir": UiConfig.DB_BASE_DIR,
-        "file_dir": UiConfig.FILE_BASE_DIR,
-        "log_dir": UiConfig.LOG_DIR,
+        "crawler_dir": config.EXE_DIR,
+        "db_dir": config.DB_PATH,
+        "file_dir": "N/A",
+        "log_dir": config.LOG_DIR,
         "version": config.VERSION
     }
 

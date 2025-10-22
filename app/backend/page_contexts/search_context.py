@@ -1,7 +1,7 @@
 """
 검색 페이지 컨텍스트 제공 함수
 """
-from ui.utils.db_util import search_law_summary, get_site_and_code_dict
+from app.backend.data.db_util import search_law_summary, get_site_and_code_dict
 
 
 def get_sites_list():

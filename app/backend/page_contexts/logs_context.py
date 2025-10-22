@@ -2,11 +2,10 @@
 로그 관리 페이지 컨텍스트 제공 함수
 """
 from datetime import datetime, timedelta
-from ui.utils.logger import get_ui_log_contents, setup_logger
-from ui.utils.misc_utils import get_log_data
-from app.backend.core.logger import get_logger as get_fastapi_logger
+from app.backend.data.log_util import get_log_data
+from app.backend.core.logger import get_logger
 
-fastapi_logger = get_fastapi_logger(__name__)
+logger = get_logger(__name__)
 
 
 def get_available_dates(days_back=7):
@@ -61,7 +60,7 @@ def get_crawler_log(log_date: str):
             "filename": filename
         }
     except Exception as e:
-        fastapi_logger.error(f"크롤러 로그 로드 실패: {e}")
+        logger.error(f"크롤러 로그 로드 실패: {e}")
         return {
             "content": f"로그 로드 중 오류 발생: {e}",
             "path": "",
@@ -71,32 +70,44 @@ def get_crawler_log(log_date: str):
 
 def get_ui_log():
     """
-    UI 로그 내용 반환
+    FastAPI UI 로그 내용 반환
 
     Returns:
         {"content": "로그 내용", "path": "파일경로", "filename": "파일명"}
     """
     try:
-        streamlit_logger = setup_logger()
-        ui_log_contents, ui_log_fullpath = get_ui_log_contents(streamlit_logger)
+        from app.backend.core.config import config
+        import os
 
-        if ui_log_contents is None or len(ui_log_contents) == 0:
+        log_file = os.path.join(config.LOG_DIR, "law_crawler.log")
+
+        if not os.path.exists(log_file):
             return {
                 "content": "UI 로그가 없습니다.",
                 "path": "",
                 "filename": ""
             }
 
-        content_text = "\n".join(line.rstrip('\n') for line in ui_log_contents)
-        filename = ui_log_fullpath.split('\\')[-1] if ui_log_fullpath else "ui.log"
+        with open(log_file, 'r', encoding='utf-8') as f:
+            log_lines = f.readlines()
+
+        if not log_lines:
+            return {
+                "content": "UI 로그가 없습니다.",
+                "path": "",
+                "filename": ""
+            }
+
+        content_text = "\n".join(line.rstrip('\n') for line in log_lines)
+        filename = log_file.split('\\')[-1] if log_file else "ui.log"
 
         return {
             "content": content_text,
-            "path": ui_log_fullpath,
+            "path": log_file,
             "filename": filename
         }
     except Exception as e:
-        fastapi_logger.error(f"UI 로그 로드 실패: {e}")
+        logger.error(f"UI 로그 로드 실패: {e}")
         return {
             "content": f"로그 로드 중 오류 발생: {e}",
             "path": "",
