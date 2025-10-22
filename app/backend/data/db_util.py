@@ -1,6 +1,7 @@
 """
 Database access utilities for FastAPI backend
 """
+
 import pandas as pd
 from sqlite3 import connect
 from app.backend.core.logger import get_logger
@@ -11,6 +12,7 @@ logger = get_logger(__name__)
 
 def get_summary_db_file():
     """Summary DB 파일 경로 반환"""
+    logger.debug(f"DB_PATH: {config.DB_PATH}")
     return config.DB_PATH
 
 
@@ -36,11 +38,14 @@ def total_site_attach_counts(from_date):
     conn = connect(summary_path)
     cursor = conn.cursor()
 
-    cursor.execute("""
+    cursor.execute(
+        """
         SELECT
             (SELECT COUNT(*) FROM law_summary WHERE upd_time >= ?) AS summary_count,
             (SELECT COUNT(*) FROM law_summary_attach WHERE upd_time >= ?) AS attach_count
-    """, (from_date, from_date))
+    """,
+        (from_date, from_date),
+    )
 
     summary_count, attach_count = cursor.fetchone()
     conn.close()
@@ -191,7 +196,13 @@ def detail_static():
     df2 = get_data_frame_summary(sql2)
 
     # 두 DataFrame을 합치기
-    df = pd.merge(df1, df2, on=["사이트", "페이지"], how="outer", suffixes=('_게시글수', '_첨부파일수'))
+    df = pd.merge(
+        df1,
+        df2,
+        on=["사이트", "페이지"],
+        how="outer",
+        suffixes=("_게시글수", "_첨부파일수"),
+    )
 
     # NaN 값을 0으로 대체
     df.fillna(0, inplace=True)
@@ -226,8 +237,8 @@ def yaml_info_to_html():
     for _, row in df.iterrows():
         detail_url = row["detail_url"] if row["detail_url"] else "#"
         html += "<tr>"
-        html += f'<td>{row["h_name"]}</td>'
-        html += f'<td>{row["desc"]}</td>'
+        html += f"<td>{row['h_name']}</td>"
+        html += f"<td>{row['desc']}</td>"
         html += f'<td><a href="{detail_url}" target="_blank">{detail_url}</a></td>'
         html += "</tr>"
 
@@ -243,8 +254,8 @@ def get_site_and_code_dict():
     df = get_data_frame_summary(sql)
     site_dict = {}
     for _, row in df.iterrows():
-        site_name = row['site_name']
-        h_name = row['h_name']
+        site_name = row["site_name"]
+        h_name = row["h_name"]
         if site_name not in site_dict:
             site_dict[site_name] = h_name
     return site_dict
@@ -281,7 +292,7 @@ def search_law_summary(site_names=None, keyword=None):
 
         # 사이트명 조건 추가
         if site_names and len(site_names) > 0:
-            placeholders = ','.join(['?' for _ in site_names])
+            placeholders = ",".join(["?" for _ in site_names])
             conditions.append(f"a.site_name in ({placeholders})")
             params.extend(site_names)
 

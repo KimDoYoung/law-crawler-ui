@@ -2,12 +2,15 @@
 통계 분석 페이지 컨텍스트 제공 함수
 """
 from datetime import datetime, timedelta
+from app.backend.core.logger import get_logger
 from app.backend.data.db_util import (
     total_site_attach_counts,
     site_static,
     site_static_filecount,
     detail_static
 )
+
+logger = get_logger(__name__)
 
 
 def get_statistics_metrics():
@@ -44,7 +47,7 @@ def get_site_statistics():
             })
         return rows
     except Exception as e:
-        print(f"사이트별 통계 로드 실패: {e}")
+        logger.error(f"사이트별 통계 로드 실패: {e}")
         return []
 
 
@@ -65,7 +68,7 @@ def get_site_file_statistics():
             })
         return rows
     except Exception as e:
-        print(f"사이트별 첨부파일 통계 로드 실패: {e}")
+        logger.error(f"사이트별 첨부파일 통계 로드 실패: {e}")
         return []
 
 
@@ -88,5 +91,5 @@ def get_detail_statistics():
             })
         return rows
     except Exception as e:
-        print(f"상세 통계 로드 실패: {e}")
+        logger.error(f"상세 통계 로드 실패: {e}")
         return []

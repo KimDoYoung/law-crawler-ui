@@ -2,11 +2,14 @@
 대시보드 페이지 컨텍스트 제공 함수
 """
 from datetime import datetime, timedelta
+from app.backend.core.logger import get_logger
 from app.backend.data.db_util import (
     total_site_attach_counts,
     error_count_of_last_24h,
     get_summary_list
 )
+
+logger = get_logger(__name__)
 
 
 def get_dashboard_metrics():
@@ -84,5 +87,5 @@ def get_dashboard_data(period: str = "today"):
 
         return rows
     except Exception as e:
-        print(f"대시보드 데이터 로드 실패: {e}")
+        logger.error(f"대시보드 데이터 로드 실패: {e}")
         return []

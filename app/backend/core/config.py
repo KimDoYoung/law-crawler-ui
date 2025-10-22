@@ -27,11 +27,12 @@ class Config:
             load_dotenv(dotenv_path=env_file, override=True)
 
         # REPOSITORY_DIR에서 DB 경로 결정
-        repository_dir = os.getenv("REPOSITORY_DIR")
-        if repository_dir:
-            self.DB_PATH = os.path.join(repository_dir, "DB", "law_summary.db")
-        else:
-            self.DB_PATH = os.path.join(self.BASE_DIR, "DB", "law_summary.db")
+        # repository_dir = os.getenv("REPOSITORY_DIR")
+        # if repository_dir:
+        #     self.DB_PATH = os.path.join(repository_dir, "DB", "law_summary.db")
+        # else:
+        #     self.DB_PATH = os.path.join(self.BASE_DIR, "DB", "law_summary.db")
+        self.DB_PATH = os.path.join(self.CRAWLER_DIR, "DB", "law_summary.db")
 
         # 로그 설정
         self.LOG_LEVEL = os.getenv("LOG_LEVEL", "DEBUG")

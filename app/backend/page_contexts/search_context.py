@@ -1,7 +1,10 @@
 """
 검색 페이지 컨텍스트 제공 함수
 """
+from app.backend.core.logger import get_logger
 from app.backend.data.db_util import search_law_summary, get_site_and_code_dict
+
+logger = get_logger(__name__)
 
 
 def get_sites_list():
@@ -19,7 +22,7 @@ def get_sites_list():
         ]
         return sorted(sites, key=lambda x: x["name"])
     except Exception as e:
-        print(f"사이트 목록 로드 실패: {e}")
+        logger.error(f"사이트 목록 로드 실패: {e}")
         return []
 
 
@@ -63,5 +66,5 @@ def search_data(site_names: list = None, keyword: str = ""):
 
         return rows
     except Exception as e:
-        print(f"검색 실패: {e}")
+        logger.error(f"검색 실패: {e}")
         return []
