@@ -1,15 +1,14 @@
-import asyncio
 import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from backend.core.logger import get_logger
-from backend.core.config import config
-from backend.api.endpoints.home_routes import router as home_router
+from app.backend.core.logger import get_logger
+from app.backend.core.config import config
+from app.backend.api.endpoints.home_routes import router as home_router
 
-from backend.core.exception_handler import add_exception_handlers
+from app.backend.core.exception_handler import add_exception_handlers
 
 
 logger = get_logger(__name__)

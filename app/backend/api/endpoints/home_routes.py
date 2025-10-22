@@ -1,13 +1,12 @@
-from datetime import datetime, timedelta
-from fastapi import APIRouter, Form, HTTPException, Query, Request, Response
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
-from fastapi import status
+from fastapi import APIRouter, Query, Request
+from fastapi.responses import HTMLResponse, RedirectResponse
 
-from backend.core.config import config
-from backend.core.template_engine import render_template
 
-from backend.core.logger import get_logger
-from backend.page_contexts.context_registry import PAGE_CONTEXT_PROVIDERS
+from app.backend.core.config import config
+from app.backend.core.template_engine import render_template
+
+from app.backend.core.logger import get_logger
+from app.backend.page_contexts.context_registry import PAGE_CONTEXT_PROVIDERS
 
 logger = get_logger(__name__)
 

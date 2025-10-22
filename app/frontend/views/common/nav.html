@@ -1,0 +1,83 @@
+<nav class="navbar navbar-expand-lg" style="background-color:#c8f097;">
+    <div class="container-fluid">
+        <a href="https://www1.kiwoom.com/h/main" target="_blank" rel="noopener">
+            <img src="/public/images/kiwoom_ci.svg" alt="Kiwoom Securities logo" style="height:40px;">
+        </a>
+        <strong><a class="navbar-brand ms-3" href="/main">키움증권-{{data.title | default('주식매매') }}</a></strong>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        종목
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="nav-link" href="/page?path=stock/find"><i class="bi bi-search-heart"></i> 종목찾기</a></li>
+                        <li><a class="nav-link" href="/page?path=stock/mystock"><i class="bi bi-heart"></i> 관심종목</a></li>
+                        <li><a class="nav-link" href="/page?path=mystock/test1">TEST페이지</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="nav-link" href="/page?path=mystock/foreign_trade">외국인 매매종목</a></li>
+                        <li><a class="nav-link" href="/page?path=kis/kis-opinion">증권사-투자의견</a> </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="nav-link" href="/page?path=kis/kis-attension">KIS-관심종목</a> </li>
+                        <li><a class="nav-link" href="/page?path=kis/kis-psearch">KIS-조건식</a> </li>
+                        <li><a class="nav-link" href="/page?path=kis/kis-ranking">KIS-상위종목</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="nav-link" href="/page?path=ls/ls-ranking">LS-상위종목</a></li>
+                    </ul>                    
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownKis" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        계좌
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="nav-link" href="/page?path=account/list">계좌현황</a></li>
+                        <li><a class="nav-link" href="/page?path=account/detail">계좌상세</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="nav-link" href="/page?path=account/fill">체결내역</a></li>
+                        <li><a class="nav-link" href="/page?path=account/balance">체결잔고</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="nav-link" href="/page?path=account/profit_lose">계좌손익</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <!-- <a class="nav-link" href="#" id="btnBuySellOffcanvas" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBuySell">매수/매도</a> -->
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownLS" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        관리
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="nav-link" href="/page?path=/manage/diary/list">일지</a></li>
+                        <li><a class="nav-link" href="/page?path=/manage/daemon/list">K-데몬</a></li>
+                        <li><a class="nav-link" href="/page?path=/manage/scheduler/list">K-스케줄러</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <!-- <a class="nav-link" href="#" id="btnBuySellOffcanvas" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBuySell">매수/매도</a> -->
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownLS" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        매수/매도
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="nav-link" href="/page?path=order/buy&stk_code=12345">매수</a></li>
+                        <li><a class="nav-link" href="/page?path=order/sell&stk_code=12345">매도</a></li>
+                    </ul>
+
+                </li>
+                <li class="nav-item dropdown">
+                    <!-- <a class="nav-link" href="#" id="btnBuySellOffcanvas" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBuySell">매수/매도</a> -->
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownLS" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        테스트
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="nav-link" href="/page?path=test/test1">test1</a></li>
+                    </ul>
+
+                </li>
+
+            </ul>
+            {% include "common/nav_right.html" %}
+        </div>
+    </div>
+</nav>

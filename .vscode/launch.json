@@ -1,5 +1,24 @@
 {
     "configurations": [
+        {
+            "name": "web2.0",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}",
+                "LAW_CRAWLER_MODE": "local"
+            },
+            "args": [
+                "app.backend.main:app",
+                "--reload",
+                "--port",
+                "8004" // 원하는 포트 번호로 변경
+            ],
+            "jinja": true,
+            "justMyCode": true,
+            "console": "integratedTerminal"
+        },
       {
         "type": "debugpy",
         "name": "Python: Current File",
