@@ -6,7 +6,8 @@ from app.backend.page_contexts.statistics_context import (
     get_statistics_metrics,
     get_site_statistics,
     get_site_file_statistics,
-    get_detail_statistics
+    get_detail_statistics,
+    get_collection_period_info
 )
 from app.backend.core.logger import get_logger
 
@@ -85,3 +86,22 @@ async def get_detail_stats():
     except Exception as e:
         logger.error(f"❌ 상세 통계 조회 실패: {e}")
         return []
+
+
+@router.get("/collection-period", response_model=dict)
+async def get_collection_period():
+    """
+    데이터 수집 기간 조회
+
+    Returns:
+        {"first_date": "2024-01-15", "last_date": "2025-01-23"}
+    """
+    try:
+        period = get_collection_period_info()
+        return period
+    except Exception as e:
+        logger.error(f"❌ 수집 기간 조회 실패: {e}")
+        return {
+            "first_date": None,
+            "last_date": None
+        }

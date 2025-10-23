@@ -27,7 +27,15 @@
   }
 
   th, td {
-    @apply border border-gray-300 px-4 py-2 text-left;
+    @apply border border-gray-300 px-4 py-2;
+  }
+
+  th {
+    @apply text-left;
+  }
+
+  td.number {
+    @apply text-right;
   }
 
   tbody tr:hover {
@@ -37,10 +45,46 @@
 {% endblock %}
 
 {% block content %}
-<div x-data="statisticsData()">
+<div x-data="statisticsData()" class="max-w-7xl mx-auto px-4">
   <!-- 페이지 제목 -->
-  <h1 class="text-3xl font-bold text-gray-800 mb-2">📈 통계 분석</h1>
-  <p class="text-gray-600 mb-6">법규관련 데이터수집 통계</p>
+  <div class="flex items-baseline gap-3 mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">📈 통계 분석</h1>
+    <span class="text-base text-gray-600">법규관련 데이터수집 통계</span>
+    <span
+      x-show="collectionPeriod.first_date && collectionPeriod.last_date"
+      class="text-sm text-gray-500"
+      x-text="`(${collectionPeriod.first_date} ~ ${collectionPeriod.last_date})`"
+    ></span>
+  </div>
+
+  <!-- 주요 지표 카드 (대시보드 스타일) -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+    <!-- 전체 수집 사이트 -->
+    <div class="bg-white border-l-4 border-blue-400 shadow hover:shadow-md transition-shadow rounded-lg p-4">
+      <div class="text-gray-500 text-xs font-semibold uppercase">전체 수집 사이트</div>
+      <div class="text-2xl font-bold text-blue-600 mt-1" x-text="formatNumber(metrics.total_sites) || '0'"></div>
+    </div>
+
+    <!-- 전체 수집 페이지 -->
+    <div class="bg-white border-l-4 border-blue-400 shadow hover:shadow-md transition-shadow rounded-lg p-4">
+      <div class="text-gray-500 text-xs font-semibold uppercase">전체 수집 페이지</div>
+      <div class="text-2xl font-bold text-blue-600 mt-1" x-text="formatNumber(metrics.total_pages) || '0'"></div>
+    </div>
+
+    <!-- 전체 게시물 갯수 -->
+    <div class="bg-white border-l-4 border-blue-400 shadow hover:shadow-md transition-shadow rounded-lg p-4">
+      <div class="text-gray-500 text-xs font-semibold uppercase">전체 게시물 갯수</div>
+      <div class="text-2xl font-bold text-blue-600 mt-1" x-text="formatNumber(metrics.total_posts) || '0'"></div>
+    </div>
+
+    <!-- 전체 첨부파일 갯수 -->
+    <div class="bg-white border-l-4 border-blue-400 shadow hover:shadow-md transition-shadow rounded-lg p-4">
+      <div class="text-gray-500 text-xs font-semibold uppercase">전체 첨부파일 갯수</div>
+      <div class="text-2xl font-bold text-blue-600 mt-1" x-text="formatNumber(metrics.total_attachments) || '0'"></div>
+    </div>
+  </div>
+
+  <hr class="my-3" />
 
   <!-- 탭 네비게이션 -->
   <div class="bg-white border-b border-gray-200 mb-6">
@@ -64,104 +108,218 @@
 
   <!-- 탭 1: 수집 통계 -->
   <div x-show="activeTab === 'chart'">
-    <!-- 메트릭 카드 -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <div class="stat-card">
-        <div class="stat-label">전체 수집 사이트</div>
-        <div class="stat-value" x-text="metrics.total_sites || '0'"></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">전체 수집 페이지</div>
-        <div class="stat-value" x-text="metrics.total_pages || '0'"></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">오늘 수집 페이지</div>
-        <div class="stat-value" x-text="metrics.today_pages || '0'"></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">전체 첨부파일수</div>
-        <div class="stat-value" x-text="metrics.total_attachments || '0'"></div>
-      </div>
-    </div>
 
     <!-- 차트 영역 -->
     <div class="chart-container">
-      <h2 class="text-xl font-bold text-gray-800 mb-4">📊 사이트별 수집 통계</h2>
-      <canvas id="sitesChart" class="max-h-96"></canvas>
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-gray-800">📊 사이트별 수집 통계 차트</h2>
+        <button
+          @click="showChart = !showChart"
+          class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          :title="showChart ? '차트 접기' : '차트 펼치기'"
+        >
+          <i :class="showChart ? 'bi bi-chevron-up' : 'bi bi-chevron-down'" class="text-gray-600 text-lg"></i>
+        </button>
+      </div>
+      <div x-show="showChart" x-transition>
+        <canvas id="sitesChart" class="max-h-96"></canvas>
+      </div>
     </div>
 
     <!-- 테이블 -->
-    <div class="chart-container">
-      <h2 class="text-xl font-bold text-gray-800 mb-4">📋 사이트별 통계 테이블</h2>
+    <div class="bg-white rounded-2xl shadow-sm ring-1 ring-gray-200 overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100">
+        <h2 class="text-xl font-bold text-gray-800">📋 사이트별 통계 테이블</h2>
+      </div>
+
+      <!-- 툴바 -->
+      <div class="px-6 py-4 bg-gray-50 flex flex-col md:flex-row gap-3 md:items-end">
+        <!-- 사이트 선택 드롭다운 -->
+        <div class="flex-1 relative">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">사이트 선택</label>
+
+          <!-- 드롭다운 버튼 -->
+          <button
+            @click="showSiteDropdown = !showSiteDropdown"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-left bg-white hover:border-blue-500 flex justify-between items-center text-sm transition-colors"
+          >
+            <span x-text="selectedSitesText"></span>
+            <i :class="showSiteDropdown ? 'bi bi-chevron-up' : 'bi bi-chevron-down'" class="text-gray-500"></i>
+          </button>
+
+          <!-- 드롭다운 패널 -->
+          <div
+            x-show="showSiteDropdown"
+            @click.outside="showSiteDropdown = false"
+            class="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-xl shadow-lg z-50"
+          >
+            <!-- 모두선택/해제 버튼 -->
+            <div class="sticky top-0 bg-white px-3 py-2 border-b border-gray-200 flex gap-2">
+              <button
+                @click="selectAllSites()"
+                class="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors"
+              >
+                모두선택
+              </button>
+              <button
+                @click="deselectAllSites()"
+                class="px-3 py-1 bg-gray-400 text-white text-xs rounded hover:bg-gray-500 transition-colors"
+              >
+                모두해제
+              </button>
+              <span class="text-xs text-gray-600 ml-auto self-center">
+                <span x-text="`${selectedSiteNames.length}/${allSiteNames.length}`"></span>
+              </span>
+            </div>
+
+            <!-- 사이트 체크박스 그리드 (3열) -->
+            <div class="px-3 py-2 grid grid-cols-3 gap-x-2 gap-y-1">
+              <template x-for="site in allSiteNames" :key="site">
+                <label class="flex items-center px-2 py-1 rounded hover:bg-blue-50 cursor-pointer text-xs">
+                  <input
+                    type="checkbox"
+                    @change="toggleSiteSelection(site)"
+                    :checked="selectedSiteNames.includes(site)"
+                    class="w-4 h-4 rounded cursor-pointer"
+                  />
+                  <span class="ml-2 text-gray-700 truncate" :title="site" x-text="site"></span>
+                </label>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <!-- 정렬 버튼 -->
+        <div class="flex gap-2">
+          <button
+            @click="toggleSort('count')"
+            class="rounded-xl bg-white px-4 py-2.5 text-sm shadow-sm ring-1 ring-gray-200 hover:bg-gray-50"
+          >
+            게시글수 정렬
+          </button>
+          <button
+            @click="toggleSort('file_count')"
+            class="rounded-xl bg-white px-4 py-2.5 text-sm shadow-sm ring-1 ring-gray-200 hover:bg-gray-50"
+          >
+            첨부파일수 정렬
+          </button>
+          <button
+            @click="resetFilter()"
+            class="rounded-xl bg-gray-900 px-4 py-2.5 text-sm text-white shadow-sm hover:bg-black/90"
+          >
+            초기화
+          </button>
+          <button
+            @click="exportSiteStatsToExcel()"
+            class="rounded-xl bg-green-500 px-4 py-2.5 text-sm text-white shadow-sm hover:bg-green-600 flex items-center gap-2"
+            title="엑셀로 다운로드"
+          >
+            <i class="bi bi-file-earmark-excel"></i>
+            <span>엑셀</span>
+          </button>
+        </div>
+      </div>
+
       <div class="overflow-x-auto">
-        <table>
-          <thead>
+        <table class="min-w-full text-sm">
+          <thead class="bg-gray-100/80 text-gray-700">
             <tr>
-              <th>사이트</th>
-              <th>게시글수</th>
-              <th>첨부파일수</th>
+              <th class="px-4 py-3 text-left font-semibold">사이트</th>
+              <th class="px-4 py-3 text-right font-semibold">게시글수</th>
+              <th class="px-4 py-3 text-right font-semibold">첨부파일수</th>
+              <th class="px-4 py-3 text-left font-semibold">시각화</th>
             </tr>
           </thead>
-          <tbody>
-            <template x-for="row in siteStats" :key="row.site">
-              <tr>
-                <td x-text="row.site"></td>
-                <td x-text="row.count || 0"></td>
-                <td x-text="row.file_count || 0"></td>
+          <tbody class="divide-y divide-gray-100">
+            <template x-for="row in filteredStats" :key="row.site">
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3">
+                  <div class="font-medium" x-text="row.site"></div>
+                </td>
+                <td class="px-4 py-3 text-right tabular-nums" x-text="formatNumber(row.count) || '0'"></td>
+                <td class="px-4 py-3 text-right tabular-nums" x-text="formatNumber(row.file_count) || '0'"></td>
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-40">
+                      <div class="text-[10px] text-gray-500 mb-1">게시글</div>
+                      <div class="h-2 bg-blue-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-blue-500" :style="`width: ${getBarWidth(row.count, maxPosts)}%`"></div>
+                      </div>
+                    </div>
+                    <div class="w-40">
+                      <div class="text-[10px] text-gray-500 mb-1">첨부</div>
+                      <div class="h-2 bg-green-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-green-500" :style="`width: ${getBarWidth(row.file_count, maxFiles)}%`"></div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
               </tr>
             </template>
           </tbody>
         </table>
+      </div>
+
+      <div class="flex items-center justify-between px-4 py-3 bg-gray-50 text-xs text-gray-500">
+        <span x-text="`표시: ${formatNumber(filteredStats.length)}개 사이트`"></span>
+        <span>Tip: 헤더 버튼으로 정렬하고, 상단 입력창으로 빠르게 필터링하세요.</span>
       </div>
     </div>
   </div>
 
   <!-- 탭 2: 상세통계표 -->
   <div x-show="activeTab === 'detail'">
-    <!-- 메트릭 카드 (상세통계) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <div class="stat-card">
-        <div class="stat-label">전체 수집 사이트</div>
-        <div class="stat-value" x-text="metrics.total_sites || '0'"></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">전체 수집 페이지</div>
-        <div class="stat-value" x-text="metrics.total_pages || '0'"></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">전체 게시글수</div>
-        <div class="stat-value" x-text="metrics.total_pages || '0'"></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">전체 첨부파일수</div>
-        <div class="stat-value" x-text="metrics.total_attachments || '0'"></div>
-      </div>
-    </div>
-
     <!-- 상세 테이블 -->
-    <div class="chart-container">
-      <h2 class="text-xl font-bold text-gray-800 mb-4">📊 사이트·페이지별 게시글 수 및 첨부파일 수</h2>
+    <div class="bg-white rounded-2xl shadow-sm ring-1 ring-gray-200 overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+        <h2 class="text-xl font-bold text-gray-800">📊 사이트·페이지별 게시글 수 및 첨부파일 수</h2>
+        <button
+          @click="exportToExcel()"
+          class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2 text-sm"
+          title="엑셀로 다운로드"
+        >
+          <i class="bi bi-file-earmark-excel"></i>
+          <span>엑셀 다운로드</span>
+        </button>
+      </div>
+
       <div class="overflow-x-auto">
-        <table>
-          <thead>
+        <table class="min-w-full text-sm">
+          <thead class="bg-gray-100/80 text-gray-700">
             <tr>
-              <th>사이트</th>
-              <th>페이지</th>
-              <th>게시글수</th>
-              <th>첨부파일수</th>
+              <th class="px-4 py-3 text-left font-semibold">사이트</th>
+              <th class="px-4 py-3 text-left font-semibold">페이지</th>
+              <th class="px-4 py-3 text-right font-semibold">게시글수</th>
+              <th class="px-4 py-3 text-right font-semibold">첨부파일수</th>
             </tr>
           </thead>
-          <tbody>
-            <template x-for="row in detailStats" :key="`${row.site}-${row.page}`">
-              <tr>
-                <td x-text="row.site"></td>
-                <td x-text="row.page"></td>
-                <td x-text="row.posts || 0"></td>
-                <td x-text="row.files || 0"></td>
+          <tbody class="divide-y divide-gray-100">
+            <template x-for="(row, index) in detailStats" :key="`${row.site}-${row.page}-${index}`">
+              <tr
+                :class="getSiteGroupClass(row.site, index)"
+                class="hover:bg-blue-50 transition-colors"
+              >
+                <!-- 사이트명: 첫 번째 행에만 표시 (rowspan 사용) -->
+                <td
+                  x-show="shouldShowSite(row.site, index)"
+                  :rowspan="getSiteRowspan(row.site)"
+                  class="px-4 py-3 align-middle border-r border-gray-200"
+                >
+                  <div class="font-bold text-gray-800" x-text="row.site"></div>
+                </td>
+
+                <td class="px-4 py-3 text-gray-600" x-text="row.page"></td>
+                <td class="px-4 py-3 text-right tabular-nums" x-text="formatNumber(row.posts) || '0'"></td>
+                <td class="px-4 py-3 text-right tabular-nums" x-text="formatNumber(row.files) || '0'"></td>
               </tr>
             </template>
           </tbody>
         </table>
+      </div>
+
+      <div class="flex items-center justify-between px-4 py-3 bg-gray-50 text-xs text-gray-500">
+        <span x-text="`표시: ${formatNumber(detailStats.length)}개 페이지`"></span>
+        <span>사이트별·페이지별 상세 통계</span>
       </div>
     </div>
   </div>
@@ -170,6 +328,7 @@
 
 {% block script %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 <script>
   function statisticsData() {
     return {
@@ -177,14 +336,42 @@
       metrics: {
         total_sites: 0,
         total_pages: 0,
-        today_pages: 0,
+        total_posts: 0,
         total_attachments: 0
       },
       siteStats: [],
+      filteredStats: [],
       detailStats: [],
       chart: null,
+      sortKey: null,
+      sortDir: 'desc',
+      maxPosts: 0,
+      maxFiles: 0,
+      showSiteDropdown: false,
+      allSiteNames: [],
+      selectedSiteNames: [],
+      collectionPeriod: {
+        first_date: null,
+        last_date: null
+      },
+      showChart: true,
+
+      get selectedSitesText() {
+        if (this.selectedSiteNames.length === 0) {
+          return '사이트를 선택하세요';
+        }
+        if (this.selectedSiteNames.length === this.allSiteNames.length) {
+          return '모든 사이트';
+        }
+        if (this.selectedSiteNames.length === 1) {
+          return this.selectedSiteNames[0];
+        }
+        return `${this.selectedSiteNames[0]} 외 ${this.selectedSiteNames.length - 1}개`;
+      },
 
       async init() {
+        console.log('✅ statisticsData 초기화');
+        await this.loadCollectionPeriod();
         await this.loadMetrics();
         await this.loadSiteStats();
         await this.loadDetailStats();
@@ -195,11 +382,24 @@
         });
       },
 
+      async loadCollectionPeriod() {
+        try {
+          const response = await fetch('/api/v1/statistics/collection-period');
+          if (response.ok) {
+            this.collectionPeriod = await response.json();
+            console.log('📅 수집 기간 로드 완료:', this.collectionPeriod);
+          }
+        } catch (error) {
+          console.error('수집 기간 로드 실패:', error);
+        }
+      },
+
       async loadMetrics() {
         try {
           const response = await fetch('/api/v1/statistics/metrics');
           if (response.ok) {
             this.metrics = await response.json();
+            console.log('📊 메트릭 로드 완료:', this.metrics);
           }
         } catch (error) {
           console.error('메트릭 로드 실패:', error);
@@ -223,6 +423,17 @@
                 file_count: fileData ? fileData.file_count : 0
               };
             });
+
+            // 최대값 계산
+            this.maxPosts = Math.max(...this.siteStats.map(s => s.count));
+            this.maxFiles = Math.max(...this.siteStats.map(s => s.file_count));
+
+            // 사이트 목록 추출 및 모두 선택
+            this.allSiteNames = [...new Set(this.siteStats.map(s => s.site))].sort();
+            this.selectedSiteNames = [...this.allSiteNames];
+
+            // 초기 필터링
+            this.filterAndSort();
           }
         } catch (error) {
           console.error('사이트 통계 로드 실패:', error);
@@ -280,6 +491,206 @@
             }
           }
         });
+      },
+
+      formatNumber(value) {
+        if (!value && value !== 0) return value;
+
+        // 숫자 값 처리
+        if (typeof value === 'number') {
+          return value.toLocaleString('en-US');
+        }
+
+        // 문자열 값 처리
+        if (typeof value === 'string') {
+          const num = parseInt(value);
+          if (!isNaN(num)) {
+            return num.toLocaleString('en-US');
+          }
+        }
+
+        return value;
+      },
+
+      filterAndSort() {
+        let data = [...this.siteStats];
+
+        // 선택된 사이트로 필터링
+        if (this.selectedSiteNames.length > 0 && this.selectedSiteNames.length < this.allSiteNames.length) {
+          data = data.filter(d => this.selectedSiteNames.includes(d.site));
+        }
+
+        // 정렬
+        if (this.sortKey) {
+          data.sort((a, b) => {
+            const v = a[this.sortKey] - b[this.sortKey];
+            return this.sortDir === 'asc' ? v : -v;
+          });
+        }
+
+        this.filteredStats = data;
+      },
+
+      toggleSort(key) {
+        if (this.sortKey === key) {
+          this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+          this.sortKey = key;
+          this.sortDir = 'desc';
+        }
+        this.filterAndSort();
+      },
+
+      resetFilter() {
+        this.selectedSiteNames = [...this.allSiteNames];
+        this.sortKey = null;
+        this.sortDir = 'desc';
+        this.showSiteDropdown = false;
+        this.filterAndSort();
+      },
+
+      toggleSiteSelection(site) {
+        const index = this.selectedSiteNames.indexOf(site);
+        if (index > -1) {
+          this.selectedSiteNames.splice(index, 1);
+        } else {
+          this.selectedSiteNames.push(site);
+        }
+        this.filterAndSort();
+      },
+
+      selectAllSites() {
+        this.selectedSiteNames = [...this.allSiteNames];
+        this.filterAndSort();
+      },
+
+      deselectAllSites() {
+        this.selectedSiteNames = [];
+        this.filterAndSort();
+      },
+
+      getBarWidth(value, max) {
+        if (!max || max === 0) return 0;
+        return Math.round((value / max) * 100);
+      },
+
+      getSiteGroupClass(site, index) {
+        // 현재 행의 사이트와 이전 행의 사이트가 다르면 그룹 변경
+        if (index === 0) {
+          this._lastSite = site;
+          this._siteGroupIndex = 0;
+          return this._siteGroupIndex % 2 === 0 ? 'bg-yellow-50' : 'bg-white';
+        }
+
+        const prevSite = this.detailStats[index - 1]?.site;
+        if (prevSite !== site) {
+          this._lastSite = site;
+          this._siteGroupIndex = (this._siteGroupIndex || 0) + 1;
+        }
+
+        return this._siteGroupIndex % 2 === 0 ? 'bg-yellow-50' : 'bg-white';
+      },
+
+      shouldShowSite(site, index) {
+        // 첫 번째 행이거나, 이전 행과 사이트가 다르면 사이트명 표시
+        if (index === 0) return true;
+        const prevSite = this.detailStats[index - 1]?.site;
+        return prevSite !== site;
+      },
+
+      getSiteRowspan(site) {
+        // 해당 사이트의 페이지 개수 계산
+        return this.detailStats.filter(row => row.site === site).length;
+      },
+
+      exportSiteStatsToExcel() {
+        try {
+          console.log('📥 사이트별 통계 엑셀 다운로드 시작...');
+
+          if (!this.filteredStats || this.filteredStats.length === 0) {
+            alert('다운로드할 데이터가 없습니다.');
+            return;
+          }
+
+          // 1. 데이터 준비
+          const data = this.filteredStats.map(row => ({
+            '사이트': row.site,
+            '게시글수': parseInt(row.count) || 0,
+            '첨부파일수': parseInt(row.file_count) || 0
+          }));
+
+          // 2. 워크시트 생성
+          const ws = XLSX.utils.json_to_sheet(data);
+
+          // 3. 열 너비 설정
+          ws['!cols'] = [
+            { wch: 25 },  // 사이트
+            { wch: 15 },  // 게시글수
+            { wch: 15 }   // 첨부파일수
+          ];
+
+          // 4. 워크북 생성
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, "사이트별통계");
+
+          // 5. 파일명 생성 (현재 날짜 포함)
+          const today = new Date().toISOString().slice(0, 10);
+          const filename = `법규데이터_사이트별통계_${today}.xlsx`;
+
+          // 6. 파일 다운로드
+          XLSX.writeFile(wb, filename);
+
+          console.log('✅ 사이트별 통계 엑셀 다운로드 완료:', filename);
+        } catch (error) {
+          console.error('❌ 엑셀 다운로드 실패:', error);
+          alert('엑셀 다운로드 중 오류가 발생했습니다.');
+        }
+      },
+
+      exportToExcel() {
+        try {
+          console.log('📥 상세통계 엑셀 다운로드 시작...');
+
+          if (!this.detailStats || this.detailStats.length === 0) {
+            alert('다운로드할 데이터가 없습니다.');
+            return;
+          }
+
+          // 1. 데이터 준비 (숫자는 실제 값으로, 천단위 콤마 제거)
+          const data = this.detailStats.map(row => ({
+            '사이트': row.site,
+            '페이지': row.page,
+            '게시글수': parseInt(row.posts) || 0,
+            '첨부파일수': parseInt(row.files) || 0
+          }));
+
+          // 2. 워크시트 생성
+          const ws = XLSX.utils.json_to_sheet(data);
+
+          // 3. 열 너비 설정
+          ws['!cols'] = [
+            { wch: 20 },  // 사이트
+            { wch: 30 },  // 페이지
+            { wch: 12 },  // 게시글수
+            { wch: 12 }   // 첨부파일수
+          ];
+
+          // 4. 워크북 생성
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, "사이트페이지별통계");
+
+          // 5. 파일명 생성 (현재 날짜 포함)
+          const today = new Date().toISOString().slice(0, 10);
+          const filename = `법규데이터_상세통계_${today}.xlsx`;
+
+          // 6. 파일 다운로드
+          XLSX.writeFile(wb, filename);
+
+          console.log('✅ 상세통계 엑셀 다운로드 완료:', filename);
+        } catch (error) {
+          console.error('❌ 엑셀 다운로드 실패:', error);
+          alert('엑셀 다운로드 중 오류가 발생했습니다.');
+        }
       }
     };
   }

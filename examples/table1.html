@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>기관별 게시글/첨부 통계</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- TailwindCSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Pretendard for KR typography (optional) -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
+    />
+    <style>
+      /* 깔끔한 스크롤 */
+      .thin-scroll::-webkit-scrollbar {
+        height: 8px;
+        width: 8px;
+      }
+      .thin-scroll::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body class="bg-slate-50 text-slate-800 antialiased">
+    <div class="max-w-6xl mx-auto p-6">
+      <!-- 헤더 -->
+      <header class="mb-6">
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">
+          기관별 게시글/첨부 통계
+        </h1>
+        <p class="text-slate-600 mt-1">
+          복붙한 표 데이터를 보기 좋게 정리하고, 검색/정렬/간단 시각화를
+          제공합니다.
+        </p>
+      </header>
+
+      <!-- 요약 카드 -->
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
+          <div class="text-sm text-slate-500">기관 수</div>
+          <div id="card-sites" class="mt-1 text-3xl font-bold"></div>
+          <div class="mt-2 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-slate-400/60 w-full"></div>
+          </div>
+        </div>
+        <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
+          <div class="text-sm text-slate-500">게시글 합계</div>
+          <div id="card-posts" class="mt-1 text-3xl font-bold"></div>
+          <div class="mt-2 h-1.5 bg-indigo-100 rounded-full overflow-hidden">
+            <div
+              id="bar-posts"
+              class="h-full bg-indigo-500"
+              style="width: 0%"
+            ></div>
+          </div>
+        </div>
+        <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
+          <div class="text-sm text-slate-500">첨부파일 합계</div>
+          <div id="card-files" class="mt-1 text-3xl font-bold"></div>
+          <div class="mt-2 h-1.5 bg-emerald-100 rounded-full overflow-hidden">
+            <div
+              id="bar-files"
+              class="h-full bg-emerald-500"
+              style="width: 0%"
+            ></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 툴바 -->
+      <section class="mb-4 flex flex-col md:flex-row gap-3 md:items-center">
+        <div class="relative flex-1">
+          <input
+            id="search"
+            type="text"
+            placeholder="기관명 검색..."
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 pr-9 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+          />
+          <svg
+            class="pointer-events-none absolute right-3 top-2.5 h-5 w-5 text-slate-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m21 21-4.35-4.35M10 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"
+            />
+          </svg>
+        </div>
+        <div class="flex gap-2">
+          <button
+            id="sort-posts"
+            class="rounded-xl bg-white px-4 py-2 text-sm shadow-sm ring-1 ring-slate-200 hover:bg-slate-50"
+          >
+            게시글수 정렬
+          </button>
+          <button
+            id="sort-files"
+            class="rounded-xl bg-white px-4 py-2 text-sm shadow-sm ring-1 ring-slate-200 hover:bg-slate-50"
+          >
+            첨부파일수 정렬
+          </button>
+          <button
+            id="reset"
+            class="rounded-xl bg-slate-900 px-4 py-2 text-sm text-white shadow-sm hover:bg-black/90"
+          >
+            초기화
+          </button>
+        </div>
+      </section>
+
+      <!-- 테이블 -->
+      <section
+        class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 overflow-hidden"
+      >
+        <div class="overflow-x-auto thin-scroll">
+          <table id="data-table" class="min-w-full text-sm">
+            <thead class="bg-slate-100/80 text-slate-700">
+              <tr>
+                <th class="px-4 py-3 text-left font-semibold">사이트</th>
+                <th class="px-4 py-3 text-right font-semibold">게시글수</th>
+                <th class="px-4 py-3 text-right font-semibold">첨부파일수</th>
+                <th class="px-4 py-3 text-left font-semibold">시각화</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <!-- 원본 데이터 (data-* 속성에 숫자 저장) -->
+              <tr
+                data-site="4대사회보험정보연계센터"
+                data-posts="127"
+                data-files="97"
+              ></tr>
+              <tr
+                data-site="NHIS-EDI서비스"
+                data-posts="38"
+                data-files="17"
+              ></tr>
+              <tr data-site="Wetax" data-posts="104" data-files="208"></tr>
+              <tr
+                data-site="고용노동부"
+                data-posts="24277"
+                data-files="33928"
+              ></tr>
+              <tr
+                data-site="국가법령정보센터"
+                data-posts="2929"
+                data-files="5832"
+              ></tr>
+              <tr
+                data-site="국민권익위원회"
+                data-posts="321"
+                data-files="618"
+              ></tr>
+              <tr
+                data-site="국민연금공단"
+                data-posts="233"
+                data-files="305"
+              ></tr>
+              <tr
+                data-site="국세법령정보시스템"
+                data-posts="6306"
+                data-files="12530"
+              ></tr>
+              <tr data-site="국세청" data-posts="3108" data-files="4109"></tr>
+              <tr data-site="근로복지공단" data-posts="14" data-files="20"></tr>
+              <tr
+                data-site="금융감독원"
+                data-posts="1791"
+                data-files="3077"
+              ></tr>
+              <tr
+                data-site="금융규제·법령해석포털"
+                data-posts="235"
+                data-files="244"
+              ></tr>
+              <tr
+                data-site="금융위원회"
+                data-posts="282"
+                data-files="1013"
+              ></tr>
+              <tr
+                data-site="금융투자협회"
+                data-posts="2280"
+                data-files="2704"
+              ></tr>
+              <tr
+                data-site="기획제정부"
+                data-posts="2613"
+                data-files="5366"
+              ></tr>
+              <tr data-site="법제처" data-posts="1264" data-files="3718"></tr>
+              <tr
+                data-site="정부입법지원센터"
+                data-posts="827"
+                data-files="1654"
+              ></tr>
+              <tr
+                data-site="최저임금위원회"
+                data-posts="39"
+                data-files="31"
+              ></tr>
+            </tbody>
+          </table>
+        </div>
+        <div
+          class="flex items-center justify-between px-4 py-3 bg-slate-50 text-xs text-slate-500"
+        >
+          <span id="visible-count"></span>
+          <span
+            >Tip: 헤더 버튼으로 정렬하고, 상단 입력창으로 빠르게
+            필터링하세요.</span
+          >
+        </div>
+      </section>
+
+      <!-- 바닥 -->
+      <footer class="text-xs text-slate-500 mt-6">
+        © <span id="year"></span> 통계 보기. TailwindCSS CDN 기반 한 페이지
+        구성.
+      </footer>
+    </div>
+
+    <!-- 스크립트: 렌더/검색/정렬/요약 -->
+    <script>
+      const fmt = (n) => n.toLocaleString("ko-KR");
+      const tbody = document.querySelector("#data-table tbody");
+      const rows = Array.from(tbody.querySelectorAll("tr")).map((tr) => ({
+        site: tr.dataset.site,
+        posts: Number(tr.dataset.posts),
+        files: Number(tr.dataset.files),
+      }));
+
+      // 초기 렌더
+      let state = {
+        data: [...rows],
+        sortKey: null, // 'posts' | 'files'
+        sortDir: "desc", // 'asc' | 'desc'
+        query: "",
+      };
+
+      function renderTable(data) {
+        const maxPosts = Math.max(...data.map((d) => d.posts));
+        const maxFiles = Math.max(...data.map((d) => d.files));
+        tbody.innerHTML = data
+          .map((d) => {
+            const pRate = maxPosts ? Math.round((d.posts / maxPosts) * 100) : 0;
+            const fRate = maxFiles ? Math.round((d.files / maxFiles) * 100) : 0;
+            return `
+          <tr class="hover:bg-slate-50">
+            <td class="px-4 py-3">
+              <div class="font-medium">${d.site}</div>
+            </td>
+            <td class="px-4 py-3 text-right tabular-nums">${fmt(d.posts)}</td>
+            <td class="px-4 py-3 text-right tabular-nums">${fmt(d.files)}</td>
+            <td class="px-4 py-3">
+              <div class="flex items-center gap-3">
+                <div class="w-40">
+                  <div class="text-[10px] text-slate-500 mb-1">게시글</div>
+                  <div class="h-2 bg-indigo-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-indigo-500" style="width:${pRate}%"></div>
+                  </div>
+                </div>
+                <div class="w-40">
+                  <div class="text-[10px] text-slate-500 mb-1">첨부</div>
+                  <div class="h-2 bg-emerald-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-emerald-500" style="width:${fRate}%"></div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        `;
+          })
+          .join("");
+
+        // 푸터 카운트
+        document.getElementById("visible-count").textContent = `표시: ${fmt(
+          data.length
+        )}개 기관`;
+      }
+
+      function renderCards(data) {
+        const siteCount = data.length;
+        const totalPosts = data.reduce((a, c) => a + c.posts, 0);
+        const totalFiles = data.reduce((a, c) => a + c.files, 0);
+
+        document.getElementById("card-sites").textContent = fmt(siteCount);
+        document.getElementById("card-posts").textContent = fmt(totalPosts);
+        document.getElementById("card-files").textContent = fmt(totalFiles);
+
+        // 합계 막대는 상대적 시각만 제공 (게시글/첨부 비율)
+        const sum = totalPosts + totalFiles;
+        const postsPct = sum ? Math.round((totalPosts / sum) * 100) : 0;
+        const filesPct = 100 - postsPct;
+        document.getElementById("bar-posts").style.width = postsPct + "%";
+        document.getElementById("bar-files").style.width = filesPct + "%";
+      }
+
+      function apply() {
+        let data = [...rows];
+
+        // 필터
+        if (state.query) {
+          const q = state.query.trim().toLowerCase();
+          data = data.filter((d) => d.site.toLowerCase().includes(q));
+        }
+
+        // 정렬
+        if (state.sortKey) {
+          data.sort((a, b) => {
+            const v = a[state.sortKey] - b[state.sortKey];
+            return state.sortDir === "asc" ? v : -v;
+          });
+        }
+
+        renderCards(data);
+        renderTable(data);
+      }
+
+      // 이벤트: 검색
+      document.getElementById("search").addEventListener("input", (e) => {
+        state.query = e.target.value;
+        apply();
+      });
+
+      // 이벤트: 정렬
+      const toggleSort = (key) => {
+        if (state.sortKey === key) {
+          state.sortDir = state.sortDir === "asc" ? "desc" : "asc";
+        } else {
+          state.sortKey = key;
+          state.sortDir = "desc";
+        }
+        apply();
+      };
+      document
+        .getElementById("sort-posts")
+        .addEventListener("click", () => toggleSort("posts"));
+      document
+        .getElementById("sort-files")
+        .addEventListener("click", () => toggleSort("files"));
+
+      // 이벤트: 초기화
+      document.getElementById("reset").addEventListener("click", () => {
+        state = { data: [...rows], sortKey: null, sortDir: "desc", query: "" };
+        document.getElementById("search").value = "";
+        apply();
+      });
+
+      // 연도
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      // 최초 렌더
+      apply();
+    </script>
+  </body>
+</html>

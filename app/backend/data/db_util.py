@@ -183,6 +183,36 @@ def error_count_of_last_24h():
     return error_count
 
 
+def get_collection_period():
+    """
+    데이터 수집 기간 조회 (첫날 ~ 최근날)
+
+    Returns:
+        tuple: (first_date, last_date) 또는 (None, None)
+    """
+    summary_path = get_summary_db_file()
+    conn = connect(summary_path)
+    cursor = conn.cursor()
+
+    sql = """
+        SELECT
+            DATE(MIN(upd_time)) as first_date,
+            DATE(MAX(upd_time)) as last_date
+        FROM law_summary
+    """
+
+    logger.info(f"📊 SQL 실행 (get_collection_period): {sql.strip()}")
+    cursor.execute(sql)
+
+    result = cursor.fetchone()
+    first_date, last_date = result if result else (None, None)
+
+    logger.info(f"✅ SQL 결과: first_date={first_date}, last_date={last_date}")
+    conn.close()
+
+    return first_date, last_date
+
+
 def get_summary_list(from_date: str, to_date: str = None) -> pd.DataFrame:
     """
     특정 날짜 범위의 요약 목록 반환
@@ -290,29 +320,29 @@ def detail_static():
     sql1 = """
         SELECT
             b.h_name as "사이트",
-			b.desc as "페이지",
-			count(*) as '갯수'
+            b.desc as "페이지",
+            count(*) as '게시글수'
         FROM
             law_summary a
         INNER JOIN
             yaml_info b
         ON
             a.site_name = b.site_name AND a.page_id = b.page_id
-		GROUP BY b.h_name, b.page_id
-		ORDER BY b.site_name, b.page_id
+        GROUP BY b.h_name, b.desc
+        ORDER BY b.h_name, b.desc
     """
     sql2 = """
-        select
+        SELECT
             c.h_name as '사이트',
             c.desc as '페이지',
-            count(*) as '파일갯수'
-        from law_summary a
-            inner join law_summary_attach b
-            on a.id = b.parent_id
-            inner join yaml_info c
-            on a.site_name = c.site_name and a.page_id = c.page_id
-        group by c.site_name, c.page_id
-        order by c.site_name, c.page_id
+            count(*) as '첨부파일수'
+        FROM law_summary a
+            INNER JOIN law_summary_attach b
+            ON a.id = b.parent_id
+            INNER JOIN yaml_info c
+            ON a.site_name = c.site_name AND a.page_id = c.page_id
+        GROUP BY c.h_name, c.desc
+        ORDER BY c.h_name, c.desc
     """
     df1 = get_data_frame_summary(sql1)
     df2 = get_data_frame_summary(sql2)
@@ -322,12 +352,15 @@ def detail_static():
         df1,
         df2,
         on=["사이트", "페이지"],
-        how="outer",
-        suffixes=("_게시글수", "_첨부파일수"),
+        how="outer"
     )
 
     # NaN 값을 0으로 대체
     df.fillna(0, inplace=True)
+
+    # 정수형으로 변환
+    df["게시글수"] = df["게시글수"].astype(int)
+    df["첨부파일수"] = df["첨부파일수"].astype(int)
 
     return df
 

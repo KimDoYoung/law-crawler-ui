@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>기관·페이지별 통계 (rowspan + zebra 배경)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
+    />
+    <style>
+      .thin-scroll::-webkit-scrollbar {
+        height: 8px;
+        width: 8px;
+      }
+      .thin-scroll::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 8px;
+      }
+      .tabular-nums {
+        font-variant-numeric: tabular-nums;
+      }
+    </style>
+  </head>
+  <body class="bg-slate-50 text-slate-800 antialiased">
+    <div class="max-w-7xl mx-auto p-6">
+      <h1 class="text-2xl font-extrabold mb-4">
+        기관·페이지별 게시글/첨부 통계
+      </h1>
+
+      <div
+        class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 overflow-hidden"
+      >
+        <div class="overflow-x-auto thin-scroll">
+          <table id="data-table" class="min-w-full text-sm">
+            <thead class="bg-slate-100 text-slate-700">
+              <tr>
+                <th class="px-4 py-3 text-left font-semibold">사이트</th>
+                <th class="px-4 py-3 text-left font-semibold">페이지</th>
+                <th class="px-4 py-3 text-right font-semibold">게시글수</th>
+                <th class="px-4 py-3 text-right font-semibold">첨부파일수</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const fmt = (n) => n.toLocaleString("ko-KR");
+
+      // 원본 데이터
+      const rows = [
+        {
+          site: "4대사회보험정보연계센터",
+          page: "기관별공지사항",
+          posts: 0,
+          files: 0,
+        },
+        { site: "NHIS-EDI서비스", page: "공지사항", posts: 0, files: 0 },
+        { site: "NHIS-EDI서비스", page: "자료실", posts: 0, files: 0 },
+        { site: "Wetax", page: "법령개정사항", posts: 0, files: 0 },
+        { site: "Wetax", page: "지방세자료실", posts: 0, files: 0 },
+        { site: "고용노동부", page: "보도자료", posts: 0, files: 0 },
+        { site: "고용노동부", page: "입법·행정예고", posts: 0, files: 0 },
+        { site: "고용노동부", page: "정책자료실", posts: 0, files: 0 },
+        { site: "고용노동부", page: "최신 제개정 정보", posts: 0, files: 0 },
+        { site: "고용노동부", page: "최신 훈령·고시", posts: 0, files: 0 },
+        { site: "국가법령정보센터", page: "법령공포법령", posts: 0, files: 0 },
+        { site: "국가법령정보센터", page: "법령시행법령", posts: 0, files: 0 },
+        {
+          site: "국가법령정보센터",
+          page: "행정규칙 규칙명",
+          posts: 0,
+          files: 0,
+        },
+        { site: "국민권익위원회", page: "보도자료", posts: 0, files: 0 },
+        { site: "국민권익위원회", page: "입법행정예고", posts: 0, files: 0 },
+        { site: "국민연금공단", page: "기타자료", posts: 0, files: 0 },
+        { site: "국민연금공단", page: "법령정보", posts: 0, files: 0 },
+        { site: "국민연금공단", page: "보도자료", posts: 0, files: 0 },
+        { site: "국민연금공단", page: "새소식", posts: 0, files: 0 },
+        {
+          site: "국세법령정보시스템",
+          page: "최신 훈령·고시",
+          posts: 0,
+          files: 0,
+        },
+        {
+          site: "국세법령정보시스템",
+          page: "최신개정법령",
+          posts: 0,
+          files: 0,
+        },
+        { site: "국세청", page: "고시", posts: 0, files: 0 },
+        { site: "국세청", page: "공고", posts: 0, files: 0 },
+        { site: "국세청", page: "행정예고", posts: 0, files: 0 },
+        { site: "근로복지공단", page: "정보공개", posts: 0, files: 0 },
+        { site: "금융감독원", page: "보도자료", posts: 0, files: 0 },
+        { site: "금융감독원", page: "세칙 제ㆍ개정정보", posts: 0, files: 0 },
+        { site: "금융감독원", page: "최신 제개정 정보", posts: 0, files: 0 },
+        { site: "금융위원회", page: "보도자료", posts: 0, files: 0 },
+        {
+          site: "금융위원회",
+          page: "입법예고/규정변경예고",
+          posts: 0,
+          files: 0,
+        },
+        {
+          site: "금융위원회",
+          page: "금융위 소관규정/고시/공고/훈령",
+          posts: 0,
+          files: 0,
+        },
+      ];
+
+      const tbody = document.querySelector("#data-table tbody");
+
+      // 사이트별 그룹핑
+      const groups = rows.reduce((acc, row) => {
+        (acc[row.site] ||= []).push(row);
+        return acc;
+      }, {});
+
+      const siteNames = Object.keys(groups);
+      let html = "";
+      siteNames.forEach((site, i) => {
+        const rows = groups[site];
+        const span = rows.length;
+        const bg = i % 2 === 0 ? "" : "bg-yellow-50"; // 옅은 노랑 배경 교차 적용
+
+        rows.forEach((r, idx) => {
+          html += `<tr class="${bg} hover:bg-yellow-100/50">`;
+          if (idx === 0) {
+            html += `<td rowspan="${span}" class="px-4 py-3 align-top font-medium">${site}</td>`;
+          }
+          html += `<td class="px-4 py-3">${r.page}</td>
+                 <td class="px-4 py-3 text-right tabular-nums">${fmt(
+                   r.posts
+                 )}</td>
+                 <td class="px-4 py-3 text-right tabular-nums">${fmt(
+                   r.files
+                 )}</td>`;
+          html += `</tr>`;
+        });
+      });
+      tbody.innerHTML = html;
+    </script>
+  </body>
+</html>
