@@ -3,9 +3,29 @@
 """
 
 import os
+import sys
 import json
 from app.backend.data.db_util import yaml_info_to_html
 from app.backend.core.config import config
+
+
+def _get_data_file_path(filename):
+    """
+    PyInstaller 환경에 맞는 데이터 파일 경로 반환
+
+    Args:
+        filename: 파일명 (예: "info.md")
+
+    Returns:
+        파일 전체 경로
+    """
+    if getattr(sys, 'frozen', False):
+        # PyInstaller로 빌드된 경우
+        base_path = sys._MEIPASS
+        return os.path.join(base_path, "app", "data", filename)
+    else:
+        # 일반 Python 실행
+        return os.path.join("app", "data", filename)
 
 
 def get_system_info():
@@ -59,7 +79,8 @@ def get_info_content():
         마크다운 문자열
     """
     try:
-        with open("app/data/info.md", "r", encoding="utf-8") as f:
+        file_path = _get_data_file_path("info.md")
+        with open(file_path, "r", encoding="utf-8") as f:
             return f.read()
     except Exception as e:
         return f"info.md 파일을 불러올 수 없습니다: {e}"
