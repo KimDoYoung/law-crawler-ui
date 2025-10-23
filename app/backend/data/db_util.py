@@ -119,24 +119,39 @@ def get_data_frame_summary(sql: str, params: tuple = ()) -> pd.DataFrame:
         conn.close()
 
 
-def total_site_attach_counts(from_date):
+def total_site_attach_counts(from_date, to_date=None):
     """
-    특정 날짜 이후의 전체 사이트와 페이지 수를 반환합니다.
+    특정 날짜 범위의 전체 사이트와 페이지 수를 반환합니다.
+
+    Args:
+        from_date: 시작 날짜 (YYYY-MM-DD)
+        to_date: 종료 날짜 (YYYY-MM-DD). None이면 from_date와 동일 (특정 날짜만 조회)
     """
     summary_path = get_summary_db_file()
     conn = connect(summary_path)
     cursor = conn.cursor()
 
-    sql = """
-        SELECT
-            (SELECT COUNT(*) FROM law_summary WHERE upd_time >= ?) AS summary_count,
-            (SELECT COUNT(*) FROM law_summary_attach WHERE upd_time >= ?) AS attach_count
-    """
+    if to_date is None:
+        # 특정 날짜만 조회 (오늘)
+        sql = """
+            SELECT
+                (SELECT COUNT(*) FROM law_summary WHERE DATE(upd_time) = ?) AS summary_count,
+                (SELECT COUNT(*) FROM law_summary_attach WHERE DATE(upd_time) = ?) AS attach_count
+        """
+        params = (from_date, from_date)
+    else:
+        # 날짜 범위 조회 (3일, 7일)
+        sql = """
+            SELECT
+                (SELECT COUNT(*) FROM law_summary WHERE DATE(upd_time) BETWEEN ? AND ?) AS summary_count,
+                (SELECT COUNT(*) FROM law_summary_attach WHERE DATE(upd_time) BETWEEN ? AND ?) AS attach_count
+        """
+        params = (from_date, to_date, from_date, to_date)
 
     logger.info(f"📊 SQL 실행 (total_site_attach_counts): {sql.strip()}")
-    logger.info(f"📌 파라미터: from_date={from_date}")
+    logger.info(f"📌 파라미터: from_date={from_date}, to_date={to_date}")
 
-    cursor.execute(sql, (from_date, from_date))
+    cursor.execute(sql, params)
 
     summary_count, attach_count = cursor.fetchone()
     logger.info(f"✅ SQL 결과: summary_count={summary_count}, attach_count={attach_count}")
@@ -168,8 +183,17 @@ def error_count_of_last_24h():
     return error_count
 
 
-def get_summary_list(from_date: str) -> pd.DataFrame:
-    """특정 날짜 이후의 요약 목록 반환"""
+def get_summary_list(from_date: str, to_date: str = None) -> pd.DataFrame:
+    """
+    특정 날짜 범위의 요약 목록 반환
+
+    Args:
+        from_date: 시작 날짜 (YYYY-MM-DD)
+        to_date: 종료 날짜 (YYYY-MM-DD). None이면 from_date와 동일
+    """
+    if to_date is None:
+        to_date = from_date
+
     sql = """
         SELECT
             b.h_name as "사이트",
@@ -192,7 +216,7 @@ def get_summary_list(from_date: str) -> pd.DataFrame:
         ON
             a.site_name = b.site_name AND a.page_id = b.page_id
         WHERE
-            a.upd_time >= ?
+            DATE(a.upd_time) BETWEEN ? AND ?
         ORDER BY
             a.site_name, a.register_date DESC
     """
@@ -200,8 +224,10 @@ def get_summary_list(from_date: str) -> pd.DataFrame:
     conn = connect(summary_path)
 
     try:
-        params = (from_date,)
+        params = (from_date, to_date)
+        logger.info(f"📊 get_summary_list 실행: from_date={from_date}, to_date={to_date}")
         df = pd.read_sql_query(sql, conn, params=params)
+        logger.info(f"✅ 조회 결과: {len(df)}건")
         return df
     except Exception as e:
         raise RuntimeError(f"DB 조회 오류: {e}")

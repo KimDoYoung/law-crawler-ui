@@ -4,7 +4,8 @@
       "Bash(uv add:*)",
       "Bash(python -m pytest:*)",
       "Bash(python:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(sqlite3:*)"
     ],
     "deny": [],
     "ask": []
