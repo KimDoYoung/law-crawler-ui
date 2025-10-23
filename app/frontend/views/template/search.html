@@ -6,6 +6,20 @@
     color: rgb(3, 97, 179) !important;
     font-weight: bold !important;
   }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .spin-animation {
+    animation: spin 1s linear infinite;
+    display: inline-block;
+  }
 </style>
 {% endblock %}
 
@@ -116,7 +130,7 @@
   <div x-show="searchPerformed" class="bg-white rounded-lg shadow-sm p-4">
     <!-- 로딩 상태 -->
     <div x-show="isLoading" class="text-center py-8">
-      <i class="bi bi-hourglass text-2xl text-blue-500"></i>
+      <i class="bi bi-hourglass text-2xl text-blue-500 spin-animation"></i>
       <p class="text-gray-600 mt-2">검색 중입니다...</p>
     </div>
 
@@ -282,40 +296,50 @@
     <div x-show="activeResultTab === 'details' && selectedRow" class="space-y-4">
       <!-- 상세 정보 항목 -->
       <div class="space-y-3 mb-6">
-        <div>
-          <strong class="text-gray-700">사이트:</strong>
-          <a
-            :href="selectedRow.site_url"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-blue-500 hover:underline ml-2"
-          >
-            <span x-text="selectedRow.site_name"></span>
-          </a>
+        <!-- 사이트 & 페이지 (같은 줄) -->
+        <div class="flex gap-6">
+          <div>
+            <strong class="text-gray-700">사이트:</strong>
+            <a
+              :href="selectedRow.site_url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-500 hover:underline ml-2"
+            >
+              <span x-text="selectedRow.site_name"></span>
+            </a>
+          </div>
+          <div>
+            <strong class="text-gray-700">페이지:</strong>
+            <a
+              :href="selectedRow.detail_url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-500 hover:underline ml-2"
+            >
+              <span x-text="selectedRow.page_id"></span>
+            </a>
+          </div>
         </div>
-        <div>
-          <strong class="text-gray-700">페이지:</strong>
-          <a
-            :href="selectedRow.detail_url"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-blue-500 hover:underline ml-2"
-          >
-            <span x-text="selectedRow.page_id"></span>
-          </a>
-        </div>
-        <div>
+
+        <!-- 제목 (강조) -->
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded">
           <strong class="text-gray-700">제목:</strong>
-          <span class="ml-2" x-text="selectedRow.title"></span>
+          <span class="ml-2 text-red-800 font-medium" x-text="selectedRow.title"></span>
         </div>
-        <div>
-          <strong class="text-gray-700">등록일:</strong>
-          <span class="ml-2" x-text="selectedRow.registration_date || '-'"></span>
+
+        <!-- 등록일 & 수집일시 (같은 줄) -->
+        <div class="flex gap-6">
+          <div>
+            <strong class="text-gray-700">등록일:</strong>
+            <span class="ml-2" x-text="selectedRow.registration_date || '-'"></span>
+          </div>
+          <div>
+            <strong class="text-gray-700">수집일시:</strong>
+            <span class="ml-2" x-text="selectedRow.collection_date"></span>
+          </div>
         </div>
-        <div>
-          <strong class="text-gray-700">수집일시:</strong>
-          <span class="ml-2" x-text="selectedRow.collection_date"></span>
-        </div>
+
         <div class="flex items-center gap-3">
           <strong class="text-gray-700">링크:</strong>
           <a
@@ -355,6 +379,14 @@
           >
             🧾 HTML 코드 보기
           </button>
+          <button
+            type="button"
+            @click="activeTab = 'attachments'"
+            :class="activeTab === 'attachments' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
+            class="px-4 py-2 font-semibold transition-colors"
+          >
+            📥 첨부파일 (<span x-text="selectedRow.attachment_count || '0'"></span>)
+          </button>
         </div>
       </div>
 
@@ -381,6 +413,31 @@
           <pre
             class="text-xs text-gray-700 pr-10"
           ><code x-text="selectedRow.summary"></code></pre>
+        </div>
+
+        <!-- 첨부파일 -->
+        <div x-show="activeTab === 'attachments'">
+          <p class="text-sm text-gray-600 mb-3">첨부파일 목록:</p>
+          <div x-show="(!selectedRow.attachments || selectedRow.attachments.length === 0)" class="text-blue-600 text-sm">
+            첨부파일이 없습니다.
+          </div>
+          <div x-show="selectedRow.attachments && selectedRow.attachments.length > 0" class="space-y-2">
+            <template x-for="attachment in selectedRow.attachments || []" :key="attachment.name">
+              <div class="flex items-center gap-2 p-2 bg-gray-100 rounded-lg">
+                <i class="bi bi-file-earmark"></i>
+                <a :href="attachment.url" :download="attachment.name" class="text-blue-500 hover:underline flex-1">
+                  <span x-text="attachment.name"></span>
+                </a>
+                <button
+                  type="button"
+                  @click="downloadAttachment(attachment.url, attachment.name)"
+                  class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
+                >
+                  📥 다운로드
+                </button>
+              </div>
+            </template>
+          </div>
         </div>
       </div>
     </div>
@@ -545,6 +602,29 @@
         this.selectedRow = row;
         this.activeTab = "rendered";
         this.activeResultTab = "details";
+
+        // 4. 첨부파일 로드
+        this.loadAttachments();
+      },
+
+      async loadAttachments() {
+        if (!this.selectedRow) return;
+
+        const { site_code, page_code, real_seq } = this.selectedRow;
+
+        try {
+          const response = await fetch(`/api/v1/search/attachments/${site_code}/${page_code}/${real_seq}`);
+          if (response.ok) {
+            const data = await response.json();
+            this.selectedRow.attachment_count = data.count;
+            this.selectedRow.attachments = data.items;
+            console.log(`✅ 첨부파일 로드 완료: ${data.count}개`);
+          }
+        } catch (error) {
+          console.error("첨부파일 로드 실패:", error);
+          this.selectedRow.attachment_count = 0;
+          this.selectedRow.attachments = [];
+        }
       },
 
       isRowSelected(row) {
@@ -576,6 +656,13 @@
           console.error("복사 실패:", err);
           alert("복사에 실패했습니다.");
         });
+      },
+
+      downloadAttachment(url, name) {
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = name;
+        link.click();
       },
 
       get totalPages() {

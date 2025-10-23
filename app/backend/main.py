@@ -12,6 +12,7 @@ from app.backend.api.v1.search import router as search_router
 from app.backend.api.v1.statistics import router as statistics_router
 from app.backend.api.v1.logs import router as logs_router
 from app.backend.api.v1.settings import router as settings_router
+from app.backend.api.v1.attachments import router as attachments_router
 from app.backend.data.db_util import create_and_fill_yaml_table
 
 from app.backend.core.exception_handler import add_exception_handlers
@@ -52,6 +53,7 @@ def add_routes(app: FastAPI):
     app.include_router(statistics_router, prefix="/api/v1")
     app.include_router(logs_router, prefix="/api/v1")
     app.include_router(settings_router, prefix="/api/v1")
+    app.include_router(attachments_router, prefix="/api/v1")
 
 
 def add_event_handlers(app: FastAPI):

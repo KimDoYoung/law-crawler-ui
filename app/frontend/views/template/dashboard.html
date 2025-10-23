@@ -227,30 +227,40 @@
       <!-- selectedRow가 있을 때 -->
       <div x-show="selectedRow">
         <div class="space-y-3 mb-6">
-          <div>
-            <strong class="text-gray-700">사이트:</strong>
-            <a :href="selectedRow?.site_url" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline ml-2">
-              <span x-text="selectedRow?.site_name"></span>
-            </a>
+          <!-- 사이트 & 페이지 (같은 줄) -->
+          <div class="flex gap-6">
+            <div>
+              <strong class="text-gray-700">사이트:</strong>
+              <a :href="selectedRow?.site_url" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline ml-2">
+                <span x-text="selectedRow?.site_name"></span>
+              </a>
+            </div>
+            <div>
+              <strong class="text-gray-700">페이지:</strong>
+              <a :href="selectedRow?.detail_url" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline ml-2">
+                <span x-text="selectedRow?.page_id"></span>
+              </a>
+            </div>
           </div>
-          <div>
-            <strong class="text-gray-700">페이지:</strong>
-            <a :href="selectedRow?.detail_url" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline ml-2">
-              <span x-text="selectedRow?.page_id"></span>
-            </a>
-          </div>
-          <div>
+
+          <!-- 제목 (강조) -->
+          <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded">
             <strong class="text-gray-700">제목:</strong>
-            <span class="ml-2" x-text="selectedRow?.title"></span>
+            <span class="ml-2 text-red-800 font-medium" x-text="selectedRow?.title"></span>
           </div>
-          <div>
-            <strong class="text-gray-700">등록일:</strong>
-            <span class="ml-2" x-text="selectedRow?.registration_date || '-'"></span>
+
+          <!-- 등록일 & 수집일시 (같은 줄) -->
+          <div class="flex gap-6">
+            <div>
+              <strong class="text-gray-700">등록일:</strong>
+              <span class="ml-2" x-text="selectedRow?.registration_date || '-'"></span>
+            </div>
+            <div>
+              <strong class="text-gray-700">수집일시:</strong>
+              <span class="ml-2" x-text="selectedRow?.collection_date"></span>
+            </div>
           </div>
-          <div>
-            <strong class="text-gray-700">수집일시:</strong>
-            <span class="ml-2" x-text="selectedRow?.collection_date"></span>
-          </div>
+
           <div class="flex items-center gap-3">
             <strong class="text-gray-700">링크:</strong>
             <a
@@ -477,10 +487,33 @@
         this.activeTab = "rendered";
         this.mainTab = "details";
 
+        // 첨부파일 로드
+        this.loadAttachments();
+
         console.log("✅ 상태 업데이트 완료");
         console.log("   mainTab:", this.mainTab);
         console.log("   activeTab:", this.activeTab);
         console.log("   selectedRow:", this.selectedRow ? "YES" : "NO");
+      },
+
+      async loadAttachments() {
+        if (!this.selectedRow) return;
+
+        const { site_code, page_code, real_seq } = this.selectedRow;
+
+        try {
+          const response = await fetch(`/api/v1/dashboard/attachments/${site_code}/${page_code}/${real_seq}`);
+          if (response.ok) {
+            const data = await response.json();
+            this.selectedRow.attachment_count = data.count;
+            this.selectedRow.attachments = data.items;
+            console.log(`✅ 첨부파일 로드 완료: ${data.count}개`);
+          }
+        } catch (error) {
+          console.error("첨부파일 로드 실패:", error);
+          this.selectedRow.attachment_count = 0;
+          this.selectedRow.attachments = [];
+        }
       },
 
       copyToClipboard(text) {

@@ -7,6 +7,7 @@ from app.backend.page_contexts.dashboard_context import (
     get_dashboard_metrics,
     get_dashboard_data,
 )
+from app.backend.data.db_util import attach_list
 from app.backend.core.logger import get_logger
 
 logger = get_logger(__name__)
@@ -61,3 +62,41 @@ async def get_data(
     except Exception as e:
         logger.error(f"❌ 대시보드 데이터 조회 실패: {e}")
         return []
+
+
+@router.get("/attachments/{site_code}/{page_code}/{real_seq}")
+async def get_attachments(site_code: str, page_code: str, real_seq: str):
+    """
+    특정 항목의 첨부파일 목록 조회
+
+    Args:
+        site_code: 사이트 코드
+        page_code: 페이지 코드
+        real_seq: 시퀀스 번호
+
+    Returns:
+        첨부파일 목록
+    """
+    try:
+        attach_df = attach_list(site_code, page_code, real_seq)
+        attachments_data = []
+
+        for _, attach_row in attach_df.iterrows():
+            save_file_name = attach_row.get("save_file_name", "")
+            attach_url = f"/api/v1/attachments/{site_code}/{page_code}/{real_seq}/{save_file_name}"
+
+            attachments_data.append({
+                "name": save_file_name,
+                "url": attach_url
+            })
+
+        return {
+            "count": len(attachments_data),
+            "items": attachments_data
+        }
+    except Exception as e:
+        logger.error(f"❌ 첨부파일 조회 실패 ({site_code}/{page_code}/{real_seq}): {e}")
+        return {
+            "count": 0,
+            "items": []
+        }
