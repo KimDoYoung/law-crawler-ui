@@ -19,7 +19,7 @@ class Config:
         )
 
         # UI 로그 설정
-        self.UI_LOG_LEVEL = os.getenv("LOG_LEVEL", "DEBUG")
+        self.UI_LOG_LEVEL = os.getenv("UI_LOG_LEVEL", "DEBUG")
         self.UI_LOG_FILE = os.path.join(self.UI_LOG_DIR, "law_crawler.log")
 
         # 로그 디렉토리 생성

@@ -1,15 +1,11 @@
-{% extends "common/base.html" %}
-
-{% block style %}
+{% extends "common/base.html" %} {% block style %}
 <style>
   .css_title_blue {
     color: rgb(3, 97, 179) !important;
     font-weight: bold !important;
   }
 </style>
-{% endblock %}
-
-{% block content %}
+{% endblock %} {% block content %}
 <div x-data="dashboardData()">
   <!-- 페이지 제목 -->
   <div class="flex items-baseline gap-2 mb-4">
@@ -20,33 +16,66 @@
   <!-- 주요 지표 (메트릭 카드) - 1줄에 5개 -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 mb-3">
     <!-- 오늘 수집 -->
-    <div class="bg-white border-l-4 border-blue-400 shadow hover:shadow-md transition-shadow rounded-lg p-4">
-      <div class="text-gray-500 text-xs font-semibold uppercase">오늘 수집 (첨부파일)</div>
-      <div class="text-2xl font-bold text-blue-600 mt-1" x-text="formatNumber(data.today_collect) || '-'"></div>
+    <div
+      class="bg-white border-l-4 border-blue-400 shadow hover:shadow-md transition-shadow rounded-lg p-4"
+    >
+      <div class="text-gray-500 text-xs font-semibold uppercase">
+        오늘 수집 (첨부파일)
+      </div>
+      <div
+        class="text-2xl font-bold text-blue-600 mt-1"
+        x-text="formatNumber(data.today_collect) || '-'"
+      ></div>
     </div>
 
     <!-- 3일 전 -->
-    <div class="bg-white border-l-4 border-blue-400 shadow hover:shadow-md transition-shadow rounded-lg p-4">
-      <div class="text-gray-500 text-xs font-semibold uppercase">3일 전 (첨부파일)</div>
-      <div class="text-2xl font-bold text-blue-600 mt-1" x-text="formatNumber(data.three_days_collect) || '-'"></div>
+    <div
+      class="bg-white border-l-4 border-blue-400 shadow hover:shadow-md transition-shadow rounded-lg p-4"
+    >
+      <div class="text-gray-500 text-xs font-semibold uppercase">
+        3일 전 (첨부파일)
+      </div>
+      <div
+        class="text-2xl font-bold text-blue-600 mt-1"
+        x-text="formatNumber(data.three_days_collect) || '-'"
+      ></div>
     </div>
 
     <!-- 7일 전 -->
-    <div class="bg-white border-l-4 border-blue-400 shadow hover:shadow-md transition-shadow rounded-lg p-4">
-      <div class="text-gray-500 text-xs font-semibold uppercase">7일 전 (첨부파일)</div>
-      <div class="text-2xl font-bold text-blue-600 mt-1" x-text="formatNumber(data.seven_days_collect) || '-'"></div>
+    <div
+      class="bg-white border-l-4 border-blue-400 shadow hover:shadow-md transition-shadow rounded-lg p-4"
+    >
+      <div class="text-gray-500 text-xs font-semibold uppercase">
+        7일 전 (첨부파일)
+      </div>
+      <div
+        class="text-2xl font-bold text-blue-600 mt-1"
+        x-text="formatNumber(data.seven_days_collect) || '-'"
+      ></div>
     </div>
 
     <!-- 전체 -->
-    <div class="bg-white border-l-4 border-blue-400 shadow hover:shadow-md transition-shadow rounded-lg p-4">
-      <div class="text-gray-500 text-xs font-semibold uppercase">전체 (첨부파일)</div>
-      <div class="text-2xl font-bold text-blue-600 mt-1" x-text="formatNumber(data.total_collect) || '-'"></div>
+    <div
+      class="bg-white border-l-4 border-blue-400 shadow hover:shadow-md transition-shadow rounded-lg p-4"
+    >
+      <div class="text-gray-500 text-xs font-semibold uppercase">
+        전체 (첨부파일)
+      </div>
+      <div
+        class="text-2xl font-bold text-blue-600 mt-1"
+        x-text="formatNumber(data.total_collect) || '-'"
+      ></div>
     </div>
 
     <!-- 오류 발생 (빨강 색상만 사용) -->
-    <div class="bg-white border-l-4 border-red-500 shadow hover:shadow-md transition-shadow rounded-lg p-4">
+    <div
+      class="bg-white border-l-4 border-red-500 shadow hover:shadow-md transition-shadow rounded-lg p-4"
+    >
       <div class="text-gray-500 text-xs font-semibold uppercase">오류 발생</div>
-      <div class="text-2xl font-bold text-red-600 mt-1" x-text="formatNumber(data.error_count) || '0'"></div>
+      <div
+        class="text-2xl font-bold text-red-600 mt-1"
+        x-text="formatNumber(data.error_count) || '0'"
+      ></div>
     </div>
   </div>
 
@@ -80,125 +109,144 @@
     <div x-show="mainTab === 'results'">
       <!-- 기간 선택 버튼 및 필터 -->
       <div class="flex flex-col gap-2 mb-6">
-      <!-- 기간 선택 버튼 및 필터 섹션 (한 줄) -->
-      <div class="flex gap-3 items-center">
-        <!-- 기간 선택 버튼 -->
-        <div class="flex gap-2">
-          <button
-            @click="selectedPeriod = 'today'; loadData('today')"
-            :class="selectedPeriod === 'today' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'"
-            class="px-4 py-2 rounded-lg font-semibold transition-colors"
+        <!-- 기간 선택 버튼 및 필터 섹션 (한 줄) -->
+        <div class="flex gap-3 items-center">
+          <!-- 기간 선택 버튼 -->
+          <div class="flex gap-2">
+            <button
+              @click="selectedPeriod = 'today'; loadData('today')"
+              :class="selectedPeriod === 'today' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'"
+              class="px-4 py-2 rounded-lg font-semibold transition-colors"
+            >
+              오늘
+            </button>
+            <button
+              @click="selectedPeriod = '3days'; loadData('3days')"
+              :class="selectedPeriod === '3days' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'"
+              class="px-4 py-2 rounded-lg font-semibold transition-colors"
+            >
+              3일
+            </button>
+            <button
+              @click="selectedPeriod = '7days'; loadData('7days')"
+              :class="selectedPeriod === '7days' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'"
+              class="px-4 py-2 rounded-lg font-semibold transition-colors"
+            >
+              7일
+            </button>
+          </div>
+
+          <!-- 필터 섹션 -->
+          <div
+            class="flex gap-3 items-end flex-1 bg-gray-50 p-2 rounded-lg border border-gray-200"
           >
-            오늘
-          </button>
-          <button
-            @click="selectedPeriod = '3days'; loadData('3days')"
-            :class="selectedPeriod === '3days' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'"
-            class="px-4 py-2 rounded-lg font-semibold transition-colors"
-          >
-            3일
-          </button>
-          <button
-            @click="selectedPeriod = '7days'; loadData('7days')"
-            :class="selectedPeriod === '7days' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'"
-            class="px-4 py-2 rounded-lg font-semibold transition-colors"
-          >
-            7일
-          </button>
+            <!-- 사이트 선택 -->
+            <div class="flex-1">
+              <label class="block text-xs font-semibold text-gray-700 mb-0.5"
+                >사이트</label
+              >
+              <select
+                aria-label="사이트선택"
+                x-model="filterSite"
+                @change="applyFilters()"
+                class="w-full px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">전체</option>
+                <template x-for="site in uniqueSites" :key="site">
+                  <option :value="site" x-text="site"></option>
+                </template>
+              </select>
+            </div>
+
+            <!-- 제목 검색 -->
+            <div class="flex-1">
+              <label class="block text-xs font-semibold text-gray-700 mb-0.5"
+                >제목</label
+              >
+              <input
+                type="text"
+                x-model="filterTitle"
+                @input="applyFilters()"
+                placeholder="검색..."
+                class="w-full px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <!-- 필터 초기화 버튼 -->
+            <button
+              @click="mainTab = 'results'; clearFilters()"
+              class="px-3 py-1.5 bg-gray-400 text-white rounded font-semibold hover:bg-gray-500 transition-colors text-sm"
+            >
+              초기화
+            </button>
+          </div>
         </div>
 
-        <!-- 필터 섹션 -->
-        <div class="flex gap-3 items-end flex-1 bg-gray-50 p-2 rounded-lg border border-gray-200">
-          <!-- 사이트 선택 -->
-          <div class="flex-1">
-            <label class="block text-xs font-semibold text-gray-700 mb-0.5">사이트</label>
-            <select
-              x-model="filterSite"
-              @change="applyFilters()"
-              class="w-full px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">전체</option>
-              <template x-for="site in uniqueSites" :key="site">
-                <option :value="site" x-text="site"></option>
-              </template>
-            </select>
-          </div>
-
-          <!-- 제목 검색 -->
-          <div class="flex-1">
-            <label class="block text-xs font-semibold text-gray-700 mb-0.5">제목</label>
-            <input
-              type="text"
-              x-model="filterTitle"
-              @input="applyFilters()"
-              placeholder="검색..."
-              class="w-full px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <!-- 필터 초기화 버튼 -->
-          <button
-            @click="mainTab = 'results'; clearFilters()"
-            class="px-3 py-1.5 bg-gray-400 text-white rounded font-semibold hover:bg-gray-500 transition-colors text-sm"
+        <!-- 필터 결과 정보 -->
+        <div class="text-xs text-gray-600">
+          <span x-show="filteredTableData.length > 0"
+            >필터 적용: <strong x-text="filteredTableData.length"></strong>개 /
+            전체: <strong x-text="tableData.length"></strong>개</span
           >
-            초기화
-          </button>
+          <span
+            x-show="filteredTableData.length === 0 && tableData.length > 0"
+            class="text-red-500"
+            >⚠️ 검색 결과가 없습니다.</span
+          >
         </div>
       </div>
 
-      <!-- 필터 결과 정보 -->
-      <div class="text-xs text-gray-600">
-        <span x-show="filteredTableData.length > 0">필터 적용: <strong x-text="filteredTableData.length"></strong>개 / 전체: <strong x-text="tableData.length"></strong>개</span>
-        <span x-show="filteredTableData.length === 0 && tableData.length > 0" class="text-red-500">⚠️ 검색 결과가 없습니다.</span>
+      <!-- 데이터 테이블 로딩 중 -->
+      <div x-show="isLoading" class="text-center py-8">
+        <i class="bi bi-hourglass text-2xl text-blue-500"></i>
+        <p class="text-gray-600 mt-2">데이터를 불러오는 중입니다...</p>
       </div>
-    </div>
 
-    <!-- 데이터 테이블 로딩 중 -->
-    <div x-show="isLoading" class="text-center py-8">
-      <i class="bi bi-hourglass text-2xl text-blue-500"></i>
-      <p class="text-gray-600 mt-2">데이터를 불러오는 중입니다...</p>
-    </div>
-
-    <!-- 데이터 테이블 -->
-    <div x-show="!isLoading" class="overflow-x-auto">
-      <table class="w-full border-collapse text-sm">
-        <thead class="bg-gray-100">
-          <tr>
-            <th class="border border-gray-300 px-4 py-2 text-left">사이트</th>
-            <th class="border border-gray-300 px-4 py-2 text-left">페이지</th>
-            <th class="border border-gray-300 px-4 py-2 text-left">제목</th>
-            <th class="border border-gray-300 px-4 py-2 text-left">등록일</th>
-            <th class="border border-gray-300 px-4 py-2 text-left">수집일시</th>
-            <th class="border border-gray-300 px-4 py-2 text-center">원본열기</th>
-          </tr>
-        </thead>
-        <tbody>
-          <template x-for="(row, index) in filteredTableData" :key="`${row.site_name}-${row.page_id}-${row.real_seq}-${index}`">
-            <tr
-              class="border-b border-gray-200 hover:bg-blue-50"
+      <!-- 데이터 테이블 -->
+      <div x-show="!isLoading" class="overflow-x-auto">
+        <table class="w-full border-collapse text-sm">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="border border-gray-300 px-4 py-2 text-left">사이트</th>
+              <th class="border border-gray-300 px-4 py-2 text-left">페이지</th>
+              <th class="border border-gray-300 px-4 py-2 text-left">제목</th>
+              <th class="border border-gray-300 px-4 py-2 text-left">등록일</th>
+              <th class="border border-gray-300 px-4 py-2 text-left">
+                수집일시
+              </th>
+              <th class="border border-gray-300 px-4 py-2 text-center">
+                원본열기
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <template
+              x-for="(row, index) in filteredTableData"
+              :key="`${row.site_name}-${row.page_id}-${row.real_seq}-${index}`"
             >
-              <td class="border border-gray-300 px-4 py-2">
-                <a
-                  :href="row.site_url"
-                  target="_blank"
-                  class="text-blue-500 hover:underline"
-                >
-                  <span x-text="row.site_name"></span>
-                </a>
-              </td>
-              <td class="border border-gray-300 px-4 py-2">
-                <a
-                  :href="row.detail_url"
-                  target="_blank"
-                  class="text-blue-500 hover:underline"
-                >
-                  <span x-text="row.page_id"></span>
-                </a>
-              </td>
-              <td class="border border-gray-300 px-4 py-2 max-w-xs truncate">
-                <span
-                  class="cursor-pointer text-gray-700 hover:text-blue-500"
-                  @click.prevent="
+              <tr class="border-b border-gray-200 hover:bg-blue-50">
+                <td class="border border-gray-300 px-4 py-2">
+                  <a
+                    :href="row.site_url"
+                    target="_blank"
+                    class="text-blue-500 hover:underline"
+                  >
+                    <span x-text="row.site_name"></span>
+                  </a>
+                </td>
+                <td class="border border-gray-300 px-4 py-2">
+                  <a
+                    :href="row.detail_url"
+                    target="_blank"
+                    class="text-blue-500 hover:underline"
+                  >
+                    <span x-text="row.page_id"></span>
+                  </a>
+                </td>
+                <td class="border border-gray-300 px-4 py-2 max-w-xs truncate">
+                  <span
+                    class="cursor-pointer text-gray-700 hover:text-blue-500"
+                    @click.prevent="
                     console.log('🔵 클릭 이벤트 시작');
                     console.log('🔵 현재 this:', this);
                     console.log('🔵 현재 mainTab:', mainTab);
@@ -212,405 +260,512 @@
                       console.log('🔵 $nextTick 후 mainTab:', mainTab);
                     });
                   "
-                  :title="row.title"
-                  x-text="row.title"
-                ></span>
-              </td>
-              <td class="border border-gray-300 px-4 py-2">
-                <span x-text="row.registration_date || '-'"></span>
-              </td>
-              <td class="border border-gray-300 px-4 py-2">
-                <span x-text="row.collection_date"></span>
-              </td>
-              <td class="border border-gray-300 px-4 py-2 text-center">
-                <a
-                  :href="row.org_url"
-                  target="_blank"
-                  class="text-blue-500 hover:underline"
-                >
-                  원본열기
-                </a>
-              </td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
+                    :title="row.title"
+                    x-text="row.title"
+                  ></span>
+                </td>
+                <td class="border border-gray-300 px-4 py-2">
+                  <span x-text="row.registration_date || '-'"></span>
+                </td>
+                <td class="border border-gray-300 px-4 py-2">
+                  <span x-text="row.collection_date"></span>
+                </td>
+                <td class="border border-gray-300 px-4 py-2 text-center">
+                  <a
+                    :href="row.org_url"
+                    target="_blank"
+                    class="text-blue-500 hover:underline"
+                  >
+                    원본열기
+                  </a>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
 
-      <!-- 데이터가 없을 경우 -->
+        <!-- 데이터가 없을 경우 -->
+        <div
+          x-show="filteredTableData.length === 0"
+          class="text-center py-8 text-gray-500"
+        >
+          <p x-show="tableData.length === 0">조회 가능한 데이터가 없습니다.</p>
+          <p x-show="tableData.length > 0">
+            필터 조건에 맞는 데이터가 없습니다.
+          </p>
+        </div>
+      </div>
+
+      <!-- 상세정보 탭 테스트 -->
       <div
-        x-show="filteredTableData.length === 0"
+        style="
+          border: 3px solid red;
+          padding: 20px;
+          margin: 20px 0;
+          background: #fff0f0;
+        "
+      >
+        <h3 style="color: red; font-weight: bold; font-size: 18px">
+          🔴 TEST: mainTab과 selectedRow 상태
+        </h3>
+        <p>
+          mainTab =
+          <span
+            x-text="mainTab"
+            style="color: red; font-weight: bold; font-size: 16px"
+          ></span>
+        </p>
+        <p>
+          selectedRow 있음?
+          <span
+            x-text="selectedRow ? 'YES' : 'NO'"
+            style="color: red; font-weight: bold; font-size: 16px"
+          ></span>
+        </p>
+        <p>
+          조건 (mainTab === 'details' && selectedRow)?
+          <span
+            x-text="(mainTab === 'details' && selectedRow) ? 'TRUE (보여야함)' : 'FALSE (안보임)'"
+            style="color: red; font-weight: bold; font-size: 16px"
+          ></span>
+        </p>
+        <div style="margin-top: 10px">
+          <button
+            @click="mainTab = 'details'; console.log('🟢 TEST 버튼으로 mainTab 변경:', mainTab)"
+            style="
+              background: green;
+              color: white;
+              padding: 8px 16px;
+              border: none;
+              cursor: pointer;
+              font-weight: bold;
+            "
+          >
+            TEST: mainTab을 details로 변경
+          </button>
+          <button
+            @click="mainTab = 'results'; console.log('🟡 TEST 버튼으로 mainTab 변경:', mainTab)"
+            style="
+              background: orange;
+              color: white;
+              padding: 8px 16px;
+              border: none;
+              cursor: pointer;
+              font-weight: bold;
+              margin-left: 10px;
+            "
+          >
+            TEST: mainTab을 results로 변경
+          </button>
+        </div>
+      </div>
+
+      <!-- 상세정보 탭 -->
+      <div x-show="mainTab === 'details' && selectedRow" class="space-y-4">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">📄 상세 정보</h2>
+
+        <div class="space-y-3 mb-6">
+          <div>
+            <strong class="text-gray-700">사이트:</strong>
+            <a
+              :href="selectedRow?.site_url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-500 hover:underline ml-2"
+            >
+              <span x-text="selectedRow?.site_name"></span>
+            </a>
+          </div>
+          <div>
+            <strong class="text-gray-700">페이지:</strong>
+            <a
+              :href="selectedRow?.detail_url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-500 hover:underline ml-2"
+            >
+              <span x-text="selectedRow?.page_id"></span>
+            </a>
+          </div>
+          <div>
+            <strong class="text-gray-700">제목:</strong>
+            <span class="ml-2" x-text="selectedRow?.title"></span>
+          </div>
+          <div>
+            <strong class="text-gray-700">등록일:</strong>
+            <span
+              class="ml-2"
+              x-text="selectedRow?.registration_date || '-'"
+            ></span>
+          </div>
+          <div>
+            <strong class="text-gray-700">수집일시:</strong>
+            <span class="ml-2" x-text="selectedRow?.collection_date"></span>
+          </div>
+          <div class="flex items-center gap-3">
+            <strong class="text-gray-700">링크:</strong>
+            <a
+              :href="selectedRow?.org_url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-block px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors"
+            >
+              <i class="bi bi-box-arrow-up-right"></i> 원본 사이트 열기
+            </a>
+            <button
+              type="button"
+              @click="mainTab = 'results'"
+              class="inline-block px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-colors"
+            >
+              <i class="bi bi-list"></i> 리스트로 돌아가기
+            </button>
+          </div>
+        </div>
+
+        <!-- 탭 네비게이션 -->
+        <div class="mt-6 border-b border-gray-200">
+          <div class="flex gap-4">
+            <button
+              @click="activeTab = 'rendered'"
+              :class="activeTab === 'rendered' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
+              class="px-4 py-2 font-semibold transition-colors"
+            >
+              📄 렌더링 보기
+            </button>
+            <button
+              @click="activeTab = 'html'"
+              :class="activeTab === 'html' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
+              class="px-4 py-2 font-semibold transition-colors"
+            >
+              🧾 HTML 코드 보기
+            </button>
+            <button
+              @click="activeTab = 'attachments'"
+              :class="activeTab === 'attachments' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
+              class="px-4 py-2 font-semibold transition-colors"
+            >
+              📥 첨부파일 (<span
+                x-text="selectedRow?.attachment_count || '0'"
+              ></span
+              >)
+            </button>
+          </div>
+        </div>
+
+        <!-- 탭 콘텐츠 -->
+        <div class="mt-4">
+          <!-- 렌더링 보기 -->
+          <div class="prose prose-sm max-w-none">
+            <div
+              style="
+                border: 2px solid green;
+                padding: 15px;
+                background: #ffffcc;
+                margin-bottom: 20px;
+              "
+            >
+              <p style="color: green; font-weight: bold; font-size: 16px">
+                ✅ DEBUG INFO:<br />
+                activeTab =
+                <span
+                  x-text="activeTab"
+                  style="color: red; font-weight: bold"
+                ></span
+                ><br />
+                summary 길이 =
+                <span
+                  x-text="selectedRow?.summary?.length || 0"
+                  style="color: red; font-weight: bold"
+                ></span
+                ><br />
+                selectedRow 존재 =
+                <span
+                  x-text="selectedRow ? 'YES' : 'NO'"
+                  style="color: red; font-weight: bold"
+                ></span>
+              </p>
+            </div>
+
+            <div
+              style="
+                border: 2px solid purple;
+                padding: 10px;
+                background: #f5f5f5;
+                margin-bottom: 10px;
+              "
+            >
+              <strong style="color: purple">렌더링 된 HTML 콘텐츠:</strong>
+            </div>
+            <div x-html="selectedRow?.summary"></div>
+          </div>
+
+          <!-- HTML 코드 보기 (조건 제거) -->
+          <div
+            style="
+              margin-top: 30px;
+              border-top: 2px solid #ccc;
+              padding-top: 20px;
+            "
+          >
+            <h3 style="color: #333; margin-bottom: 10px">🧾 HTML 코드 보기</h3>
+            <div class="bg-gray-100 p-4 rounded-lg overflow-x-auto relative">
+              <button
+                @click="copyToClipboard(selectedRow?.summary)"
+                class="absolute top-2 right-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                title="클립보드 복사"
+              >
+                <i class="bi bi-clipboard"></i>
+              </button>
+              <pre
+                class="text-xs text-gray-700"
+              ><code x-text="selectedRow?.summary"></code></pre>
+            </div>
+          </div>
+
+          <!-- 첨부파일 -->
+          <div
+            style="
+              margin-top: 30px;
+              border-top: 2px solid #ccc;
+              padding-top: 20px;
+            "
+          >
+            <h3 style="color: #333; margin-bottom: 10px">📎 첨부파일</h3>
+            <p class="text-sm text-gray-600 mb-3">첨부파일 목록:</p>
+            <div
+              x-show="(!selectedRow?.attachments || selectedRow?.attachments.length === 0)"
+              class="text-blue-600 text-sm"
+            >
+              첨부파일이 없습니다.
+            </div>
+            <div
+              x-show="selectedRow?.attachments && selectedRow?.attachments.length > 0"
+              class="space-y-2"
+            >
+              <template
+                x-for="attachment in selectedRow?.attachments || []"
+                :key="attachment.name"
+              >
+                <div class="flex items-center gap-2 p-2 bg-gray-100 rounded-lg">
+                  <i class="bi bi-file-earmark"></i>
+                  <a
+                    :href="attachment.url"
+                    :download="attachment.name"
+                    class="text-blue-500 hover:underline flex-1"
+                  >
+                    <span x-text="attachment.name"></span>
+                  </a>
+                  <button
+                    @click="downloadAttachment(attachment.url, attachment.name)"
+                    class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
+                  >
+                    📥 다운로드
+                  </button>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 선택된 행이 없을 경우 메시지 -->
+      <div
+        x-show="mainTab === 'details' && !selectedRow"
         class="text-center py-8 text-gray-500"
       >
-        <p x-show="tableData.length === 0">조회 가능한 데이터가 없습니다.</p>
-        <p x-show="tableData.length > 0">필터 조건에 맞는 데이터가 없습니다.</p>
+        <p>검색결과 탭에서 항목을 선택하세요.</p>
       </div>
-    </div>
-
-    <!-- 상세정보 탭 테스트 -->
-    <div style="border: 3px solid red; padding: 20px; margin: 20px 0; background: #fff0f0;">
-      <h3 style="color: red; font-weight: bold; font-size: 18px;">🔴 TEST: mainTab과 selectedRow 상태</h3>
-      <p>mainTab = <span x-text="mainTab" style="color: red; font-weight: bold; font-size: 16px;"></span></p>
-      <p>selectedRow 있음? <span x-text="selectedRow ? 'YES' : 'NO'" style="color: red; font-weight: bold; font-size: 16px;"></span></p>
-      <p>조건 (mainTab === 'details' && selectedRow)?
-        <span x-text="(mainTab === 'details' && selectedRow) ? 'TRUE (보여야함)' : 'FALSE (안보임)'" style="color: red; font-weight: bold; font-size: 16px;"></span>
-      </p>
-      <div style="margin-top: 10px;">
-        <button @click="mainTab = 'details'; console.log('🟢 TEST 버튼으로 mainTab 변경:', mainTab)" style="background: green; color: white; padding: 8px 16px; border: none; cursor: pointer; font-weight: bold;">
-          TEST: mainTab을 details로 변경
-        </button>
-        <button @click="mainTab = 'results'; console.log('🟡 TEST 버튼으로 mainTab 변경:', mainTab)" style="background: orange; color: white; padding: 8px 16px; border: none; cursor: pointer; font-weight: bold; margin-left: 10px;">
-          TEST: mainTab을 results로 변경
-        </button>
-      </div>
-    </div>
-
-    <!-- 상세정보 탭 -->
-    <div x-show="mainTab === 'details' && selectedRow" class="space-y-4">
-      <h2 class="text-xl font-bold text-gray-800 mb-4">📄 상세 정보</h2>
-
-      <div class="space-y-3 mb-6">
-        <div>
-          <strong class="text-gray-700">사이트:</strong>
-          <a
-            :href="selectedRow?.site_url"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-blue-500 hover:underline ml-2"
-          >
-            <span x-text="selectedRow?.site_name"></span>
-          </a>
-        </div>
-        <div>
-          <strong class="text-gray-700">페이지:</strong>
-          <a
-            :href="selectedRow?.detail_url"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-blue-500 hover:underline ml-2"
-          >
-            <span x-text="selectedRow?.page_id"></span>
-          </a>
-        </div>
-        <div>
-          <strong class="text-gray-700">제목:</strong>
-          <span class="ml-2" x-text="selectedRow?.title"></span>
-        </div>
-        <div>
-          <strong class="text-gray-700">등록일:</strong>
-          <span class="ml-2" x-text="selectedRow?.registration_date || '-'"></span>
-        </div>
-        <div>
-          <strong class="text-gray-700">수집일시:</strong>
-          <span class="ml-2" x-text="selectedRow?.collection_date"></span>
-        </div>
-        <div class="flex items-center gap-3">
-          <strong class="text-gray-700">링크:</strong>
-          <a
-            :href="selectedRow?.org_url"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-block px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors"
-          >
-            <i class="bi bi-box-arrow-up-right"></i> 원본 사이트 열기
-          </a>
-          <button
-            type="button"
-            @click="mainTab = 'results'"
-            class="inline-block px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition-colors"
-          >
-            <i class="bi bi-list"></i> 리스트로 돌아가기
-          </button>
-        </div>
-      </div>
-
-      <!-- 탭 네비게이션 -->
-      <div class="mt-6 border-b border-gray-200">
-        <div class="flex gap-4">
-          <button
-            @click="activeTab = 'rendered'"
-            :class="activeTab === 'rendered' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
-            class="px-4 py-2 font-semibold transition-colors"
-          >
-            📄 렌더링 보기
-          </button>
-          <button
-            @click="activeTab = 'html'"
-            :class="activeTab === 'html' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
-            class="px-4 py-2 font-semibold transition-colors"
-          >
-            🧾 HTML 코드 보기
-          </button>
-          <button
-            @click="activeTab = 'attachments'"
-            :class="activeTab === 'attachments' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
-            class="px-4 py-2 font-semibold transition-colors"
-          >
-            📥 첨부파일 (<span x-text="selectedRow?.attachment_count || '0'"></span>)
-          </button>
-        </div>
-      </div>
-
-      <!-- 탭 콘텐츠 -->
-      <div class="mt-4">
-        <!-- 렌더링 보기 -->
-        <div class="prose prose-sm max-w-none">
-          <div style="border: 2px solid green; padding: 15px; background: #ffffcc; margin-bottom: 20px;">
-            <p style="color: green; font-weight: bold; font-size: 16px;">
-              ✅ DEBUG INFO:<br/>
-              activeTab = <span x-text="activeTab" style="color: red; font-weight: bold;"></span><br/>
-              summary 길이 = <span x-text="selectedRow?.summary?.length || 0" style="color: red; font-weight: bold;"></span><br/>
-              selectedRow 존재 = <span x-text="selectedRow ? 'YES' : 'NO'" style="color: red; font-weight: bold;"></span>
-            </p>
-          </div>
-
-          <div style="border: 2px solid purple; padding: 10px; background: #f5f5f5; margin-bottom: 10px;">
-            <strong style="color: purple;">렌더링 된 HTML 콘텐츠:</strong>
-          </div>
-          <div x-html="selectedRow?.summary"></div>
-        </div>
-
-        <!-- HTML 코드 보기 (조건 제거) -->
-        <div style="margin-top: 30px; border-top: 2px solid #ccc; padding-top: 20px;">
-          <h3 style="color: #333; margin-bottom: 10px;">🧾 HTML 코드 보기</h3>
-          <div class="bg-gray-100 p-4 rounded-lg overflow-x-auto relative">
-            <button
-              @click="copyToClipboard(selectedRow?.summary)"
-              class="absolute top-2 right-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-              title="클립보드 복사"
-            >
-              <i class="bi bi-clipboard"></i>
-            </button>
-            <pre
-              class="text-xs text-gray-700"
-            ><code x-text="selectedRow?.summary"></code></pre>
-          </div>
-        </div>
-
-        <!-- 첨부파일 -->
-        <div style="margin-top: 30px; border-top: 2px solid #ccc; padding-top: 20px;">
-          <h3 style="color: #333; margin-bottom: 10px;">📎 첨부파일</h3>
-          <p class="text-sm text-gray-600 mb-3">첨부파일 목록:</p>
-          <div
-            x-show="(!selectedRow?.attachments || selectedRow?.attachments.length === 0)"
-            class="text-blue-600 text-sm"
-          >
-            첨부파일이 없습니다.
-          </div>
-          <div
-            x-show="selectedRow?.attachments && selectedRow?.attachments.length > 0"
-            class="space-y-2"
-          >
-            <template
-              x-for="attachment in selectedRow?.attachments || []"
-              :key="attachment.name"
-            >
-              <div class="flex items-center gap-2 p-2 bg-gray-100 rounded-lg">
-                <i class="bi bi-file-earmark"></i>
-                <a
-                  :href="attachment.url"
-                  :download="attachment.name"
-                  class="text-blue-500 hover:underline flex-1"
-                >
-                  <span x-text="attachment.name"></span>
-                </a>
-                <button
-                  @click="downloadAttachment(attachment.url, attachment.name)"
-                  class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
-                >
-                  📥 다운로드
-                </button>
-              </div>
-            </template>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 선택된 행이 없을 경우 메시지 -->
-    <div x-show="mainTab === 'details' && !selectedRow" class="text-center py-8 text-gray-500">
-      <p>검색결과 탭에서 항목을 선택하세요.</p>
     </div>
   </div>
-</div>
-{% endblock %}
+  {% endblock %} {% block script %}
+  <script>
+    function dashboardData() {
+      return {
+        data: {
+          site_count: "-",
+          today_collect: "-",
+          three_days_collect: "-",
+          seven_days_collect: "-",
+          total_collect: "-",
+          error_count: 0,
+        },
+        selectedPeriod: "today",
+        mainTab: "results",
+        activeTab: "rendered",
+        isLoading: false,
+        tableData: [],
+        filteredTableData: [],
+        selectedRow: null,
+        filterSite: "",
+        filterTitle: "",
+        uniqueSites: [],
 
-{% block script %}
-<script>
-  function dashboardData() {
-    return {
-      data: {
-        site_count: "-",
-        today_collect: "-",
-        three_days_collect: "-",
-        seven_days_collect: "-",
-        total_collect: "-",
-        error_count: 0,
-      },
-      selectedPeriod: "today",
-      mainTab: "results",
-      activeTab: "rendered",
-      isLoading: false,
-      tableData: [],
-      filteredTableData: [],
-      selectedRow: null,
-      filterSite: "",
-      filterTitle: "",
-      uniqueSites: [],
+        init() {
+          this.loadDashboardMetrics();
+          this.selectedPeriod = "3days"; // 3일을 기본값으로 설정
+          this.loadData("3days"); // 3일 데이터 로드
+        },
 
-      init() {
-        this.loadDashboardMetrics();
-        this.selectedPeriod = "3days";  // 3일을 기본값으로 설정
-        this.loadData("3days");  // 3일 데이터 로드
-      },
-
-      async loadDashboardMetrics() {
-        try {
-          const response = await fetch("/api/v1/dashboard/metrics");
-          if (response.ok) {
-            this.data = await response.json();
+        async loadDashboardMetrics() {
+          try {
+            const response = await fetch("/api/v1/dashboard/metrics");
+            if (response.ok) {
+              this.data = await response.json();
+            }
+          } catch (error) {
+            console.error("대시보드 메트릭 로드 실패:", error);
           }
-        } catch (error) {
-          console.error("대시보드 메트릭 로드 실패:", error);
-        }
-      },
+        },
 
-      async loadData(period) {
-        // CSS 클래스 제거
-        document.querySelectorAll('.css_title_blue').forEach(el => {
-          el.classList.remove('css_title_blue');
-        });
+        async loadData(period) {
+          // CSS 클래스 제거
+          document.querySelectorAll(".css_title_blue").forEach((el) => {
+            el.classList.remove("css_title_blue");
+          });
 
-        this.isLoading = true;
-        this.mainTab = 'results'; // 데이터 로드 시 검색결과 탭으로 전환
-        try {
-          const response = await fetch(
-            `/api/v1/dashboard/data?period=${period}`
-          );
-          if (response.ok) {
-            this.tableData = await response.json();
-            this.selectedRow = null; // 데이터 로드 시 선택 초기화
-            this.filterSite = ""; // 필터 초기화
-            this.filterTitle = "";
-            this.updateUniqueSites(); // 고유 사이트 업데이트
-            this.applyFilters(); // 필터 적용
+          this.isLoading = true;
+          this.mainTab = "results"; // 데이터 로드 시 검색결과 탭으로 전환
+          try {
+            const response = await fetch(
+              `/api/v1/dashboard/data?period=${period}`
+            );
+            if (response.ok) {
+              this.tableData = await response.json();
+              this.selectedRow = null; // 데이터 로드 시 선택 초기화
+              this.filterSite = ""; // 필터 초기화
+              this.filterTitle = "";
+              this.updateUniqueSites(); // 고유 사이트 업데이트
+              this.applyFilters(); // 필터 적용
+            }
+          } catch (error) {
+            console.error("데이터 로드 실패:", error);
+            this.tableData = [];
+          } finally {
+            this.isLoading = false;
           }
-        } catch (error) {
-          console.error("데이터 로드 실패:", error);
-          this.tableData = [];
-        } finally {
-          this.isLoading = false;
-        }
-      },
+        },
 
-      updateUniqueSites() {
-        // 고유한 사이트 목록 추출
-        const sites = [...new Set(this.tableData.map(row => row.site_name))];
-        this.uniqueSites = sites.sort();
-      },
+        updateUniqueSites() {
+          // 고유한 사이트 목록 추출
+          const sites = [
+            ...new Set(this.tableData.map((row) => row.site_name)),
+          ];
+          this.uniqueSites = sites.sort();
+        },
 
-      applyFilters() {
-        // 필터 조건에 따라 테이블 데이터 필터링
-        this.filteredTableData = this.tableData.filter(row => {
-          // 사이트 필터
-          if (this.filterSite && row.site_name !== this.filterSite) {
-            return false;
+        applyFilters() {
+          // 필터 조건에 따라 테이블 데이터 필터링
+          this.filteredTableData = this.tableData.filter((row) => {
+            // 사이트 필터
+            if (this.filterSite && row.site_name !== this.filterSite) {
+              return false;
+            }
+
+            // 제목 필터 (대소문자 구분 안함)
+            if (
+              this.filterTitle &&
+              !row.title.toLowerCase().includes(this.filterTitle.toLowerCase())
+            ) {
+              return false;
+            }
+
+            return true;
+          });
+        },
+
+        clearFilters() {
+          // CSS 클래스 제거
+          document.querySelectorAll(".css_title_blue").forEach((el) => {
+            el.classList.remove("css_title_blue");
+          });
+
+          this.filterSite = "";
+          this.filterTitle = "";
+          this.applyFilters();
+        },
+
+        selectRow(row, titleElement) {
+          console.log("🔷 selectRow 시작");
+          console.log("📍 row 객체:", row);
+
+          // 이전에 적용된 CSS 제거
+          document.querySelectorAll(".css_title_blue").forEach((el) => {
+            el.classList.remove("css_title_blue");
+          });
+
+          // 새로 클릭한 제목 span에 CSS 클래스 적용
+          if (titleElement) {
+            titleElement.classList.add("css_title_blue");
           }
 
-          // 제목 필터 (대소문자 구분 안함)
-          if (this.filterTitle && !row.title.toLowerCase().includes(this.filterTitle.toLowerCase())) {
-            return false;
-          }
+          // ⭐ Alpine.js 반응성을 위해 개별 속성 할당 사용 (Object.assign 대신)
+          console.log("📍 상태 업데이트 중...");
+          this.selectedRow = row;
+          this.activeTab = "rendered";
+          this.mainTab = "details";
 
-          return true;
-        });
-      },
-
-      clearFilters() {
-        // CSS 클래스 제거
-        document.querySelectorAll('.css_title_blue').forEach(el => {
-          el.classList.remove('css_title_blue');
-        });
-
-        this.filterSite = "";
-        this.filterTitle = "";
-        this.applyFilters();
-      },
-
-      selectRow(row, titleElement) {
-        console.log("🔷 selectRow 시작");
-        console.log("📍 row 객체:", row);
-
-        // 이전에 적용된 CSS 제거
-        document.querySelectorAll('.css_title_blue').forEach(el => {
-          el.classList.remove('css_title_blue');
-        });
-
-        // 새로 클릭한 제목 span에 CSS 클래스 적용
-        if (titleElement) {
-          titleElement.classList.add('css_title_blue');
-        }
-
-        // ⭐ Alpine.js 반응성을 위해 개별 속성 할당 사용 (Object.assign 대신)
-        console.log("📍 상태 업데이트 중...");
-        this.selectedRow = row;
-        this.activeTab = "rendered";
-        this.mainTab = "details";
-
-        console.log("✅ 상태 업데이트 완료");
-        console.log("   mainTab:", this.mainTab);
-        console.log("   activeTab:", this.activeTab);
-        console.log("   selectedRow 있음:", this.selectedRow ? "YES" : "NO");
-
-        // 다시 한번 확인
-        setTimeout(() => {
-          console.log("⏰ setTimeout 후 상태:");
+          console.log("✅ 상태 업데이트 완료");
           console.log("   mainTab:", this.mainTab);
+          console.log("   activeTab:", this.activeTab);
           console.log("   selectedRow 있음:", this.selectedRow ? "YES" : "NO");
-        }, 100);
-      },
 
-      copyToClipboard(text) {
-        navigator.clipboard.writeText(text).then(() => {
-          alert("📋 클립보드에 복사되었습니다!");
-        }).catch(() => {
-          alert("❌ 복사 실패했습니다.");
-        });
-      },
+          // 다시 한번 확인
+          setTimeout(() => {
+            console.log("⏰ setTimeout 후 상태:");
+            console.log("   mainTab:", this.mainTab);
+            console.log(
+              "   selectedRow 있음:",
+              this.selectedRow ? "YES" : "NO"
+            );
+          }, 100);
+        },
 
-      downloadAttachment(url, name) {
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = name;
-        link.click();
-      },
+        copyToClipboard(text) {
+          navigator.clipboard
+            .writeText(text)
+            .then(() => {
+              alert("📋 클립보드에 복사되었습니다!");
+            })
+            .catch(() => {
+              alert("❌ 복사 실패했습니다.");
+            });
+        },
 
-      formatNumber(value) {
-        if (!value || value === "-") return value;
+        downloadAttachment(url, name) {
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = name;
+          link.click();
+        },
 
-        // 문자열 값 처리 (예: "100 (50)" 형태)
-        if (typeof value === "string") {
-          const match = value.match(/^(\d+)\s*\((\d+)\)$/);
-          if (match) {
-            const num1 = parseInt(match[1]).toLocaleString("en-US");
-            const num2 = parseInt(match[2]).toLocaleString("en-US");
-            return `${num1} (${num2})`;
+        formatNumber(value) {
+          if (!value || value === "-") return value;
+
+          // 문자열 값 처리 (예: "100 (50)" 형태)
+          if (typeof value === "string") {
+            const match = value.match(/^(\d+)\s*\((\d+)\)$/);
+            if (match) {
+              const num1 = parseInt(match[1]).toLocaleString("en-US");
+              const num2 = parseInt(match[2]).toLocaleString("en-US");
+              return `${num1} (${num2})`;
+            }
+            // 순수 숫자만 있는 경우
+            const num = parseInt(value);
+            if (!isNaN(num)) {
+              return num.toLocaleString("en-US");
+            }
+            return value;
           }
-          // 순수 숫자만 있는 경우
-          const num = parseInt(value);
-          if (!isNaN(num)) {
-            return num.toLocaleString("en-US");
+
+          // 숫자 값 처리
+          if (typeof value === "number") {
+            return value.toLocaleString("en-US");
           }
+
           return value;
-        }
-
-        // 숫자 값 처리
-        if (typeof value === "number") {
-          return value.toLocaleString("en-US");
-        }
-
-        return value;
-      },
-    };
-  }
-</script>
-{% endblock %}
+        },
+      };
+    }
+  </script>
+  {% endblock %}
+</div>
