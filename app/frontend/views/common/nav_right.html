@@ -1,7 +1,42 @@
 <ul class="flex items-center gap-4">
+    <!-- 실시간 시계 -->
     <li class="flex items-center gap-2 px-3 py-1 bg-white rounded-lg shadow-sm">
-        <!-- 시스템 상태 -->
+        <i class="bi bi-clock text-blue-500 text-lg"></i>
+        <span id="current-time" class="text-sm text-gray-700 font-medium">2025-01-01 (월) 00:00:00</span>
+    </li>
+
+    <!-- 시스템 상태 -->
+    <li class="flex items-center gap-2 px-3 py-1 bg-white rounded-lg shadow-sm">
         <i class="bi bi-check-circle-fill text-green-500 text-lg"></i>
         <span class="text-sm text-gray-700 font-medium">크롤러 정상</span>
     </li>
 </ul>
+
+<script>
+  // 실시간 시계 업데이트
+  function updateClock() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+    const dayOfWeek = daysOfWeek[now.getDay()];
+
+    const timeString = `${year}-${month}-${day} (${dayOfWeek}) ${hours}:${minutes}:${seconds}`;
+
+    const timeElement = document.getElementById('current-time');
+    if (timeElement) {
+      timeElement.textContent = timeString;
+    }
+  }
+
+  // 페이지 로드 시 즉시 실행
+  updateClock();
+
+  // 1초마다 업데이트
+  setInterval(updateClock, 1000);
+</script>

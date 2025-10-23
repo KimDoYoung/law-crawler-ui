@@ -1,50 +1,106 @@
-{% extends "common/base.html" %}
-
-{% block style %}
+{% extends "common/base.html" %} {% block style %}
 <style>
   .settings-card {
-    @apply bg-white border border-gray-200 rounded-lg p-6 shadow-sm;
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   }
 
   .settings-group {
-    @apply border-b border-gray-200 pb-6 mb-6;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
   }
 
   .settings-group:last-child {
-    @apply border-b-0;
+    border-bottom: 0;
   }
 
-  .info-row {
-    @apply flex items-start gap-4 py-3;
+  .info-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
   }
 
-  .info-label {
-    @apply font-semibold text-gray-700 min-w-fit;
+  .info-table th {
+    background-color: #f9fafb;
+    color: #374151;
+    font-weight: 600;
+    text-align: left;
+    padding: 0.875rem 1rem;
+    border-bottom: 2px solid #e5e7eb;
+    white-space: nowrap;
+    width: 200px;
   }
 
-  .info-value {
-    @apply text-gray-600 break-all;
+  .info-table td {
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    color: #4b5563;
+  }
+
+  .info-table tbody tr:hover {
+    background-color: #f9fafb;
+  }
+
+  .info-table tbody tr:last-child td {
+    border-bottom: none;
   }
 
   .markdown-content {
-    @apply prose prose-sm max-w-none;
+    max-width: none;
+    line-height: 1.75;
+    font-size: 0.875rem;
+  }
+
+  .markdown-content h1,
+  .markdown-content h2,
+  .markdown-content h3 {
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .markdown-content p {
+    margin-bottom: 1rem;
+  }
+
+  .markdown-content ul,
+  .markdown-content ol {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
   }
 
   .expander-header {
-    @apply cursor-pointer p-4 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold text-gray-800 transition-colors;
+    cursor: pointer;
+    padding: 1rem;
+    background-color: #f3f4f6;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    color: #1f2937;
+    transition: background-color 0.2s;
+  }
+
+  .expander-header:hover {
+    background-color: #e5e7eb;
   }
 
   .expander-content {
-    @apply p-4 border border-gray-200 border-t-0 rounded-b-lg;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    border-top: 0;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
   }
 </style>
-{% endblock %}
-
-{% block content %}
+{% endblock %} {% block content %}
 <div x-data="settingsData()">
   <!-- 페이지 제목 -->
-  <h1 class="text-3xl font-bold text-gray-800 mb-2">⚙️ 시스템 설정</h1>
-  <p class="text-gray-600 mb-6">시스템 정보 및 설정</p>
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">⚙️ 시스템 설정 <span class="text-lg font-normal text-gray-600">· 시스템 정보 및 설정</span></h1>
+  </div>
 
   <!-- 탭 네비게이션 -->
   <div class="bg-white border-b border-gray-200 mb-6">
@@ -76,14 +132,17 @@
   <!-- 탭 1: 시스템 소개 -->
   <div x-show="activeTab === 'info'">
     <div class="settings-card mb-6">
-      <h2 class="text-xl font-bold text-gray-800 mb-4">🔧 설명</h2>
+      <h2 class="text-xl font-bold text-gray-800 mb-4">🔧 소개</h2>
       <div class="markdown-content" x-html="infoContent"></div>
     </div>
 
     <!-- 대상 사이트 및 리스트 -->
     <div class="settings-card">
       <button @click="showSites = !showSites" class="w-full expander-header">
-        <i :class="showSites ? 'bi bi-chevron-up' : 'bi bi-chevron-down'" class="mr-2"></i>
+        <i
+          :class="showSites ? 'bi bi-chevron-up' : 'bi bi-chevron-down'"
+          class="mr-2"
+        ></i>
         🏢 대상 사이트 및 리스트
       </button>
       <div x-show="showSites" class="expander-content">
@@ -97,45 +156,101 @@
     <div class="settings-card">
       <h2 class="text-xl font-bold text-gray-800 mb-6">🖥️ 시스템 정보</h2>
 
-      <!-- 첫 번째 섹션: 버전 정보 -->
-      <div class="settings-group">
-        <h3 class="font-semibold text-gray-700 mb-3">📦 버전 정보</h3>
-        <div class="info-row">
-          <div class="info-label">FastAPI 버전:</div>
-          <div class="info-value" x-text="systemInfo.fastapi_version || '-'"></div>
+      <!-- 첫 번째 행: 버전 정보 + UI 경로 정보 -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- 버전 정보 -->
+        <div class="settings-group">
+          <h3 class="font-semibold text-gray-700 mb-4">📦 버전 정보</h3>
+          <table class="info-table">
+            <tbody>
+              <tr>
+                <th>Application 버전</th>
+                <td x-text="systemInfo.version || '-'"></td>
+              </tr>
+              <tr>
+                <th>FastAPI 버전</th>
+                <td x-text="systemInfo.fastapi_version || '-'"></td>
+              </tr>
+              <tr>
+                <th>Python 버전</th>
+                <td x-text="systemInfo.python_version || '-'"></td>
+              </tr>
+              <tr>
+                <th>데이터베이스</th>
+                <td x-text="systemInfo.database_type || '-'"></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div class="info-row">
-          <div class="info-label">Python 버전:</div>
-          <div class="info-value" x-text="systemInfo.python_version || '-'"></div>
-        </div>
-        <div class="info-row">
-          <div class="info-label">데이터베이스:</div>
-          <div class="info-value" x-text="systemInfo.database_type || '-'"></div>
-        </div>
-        <div class="info-row">
-          <div class="info-label">Application Version:</div>
-          <div class="info-value" x-text="systemInfo.version || '-'"></div>
+
+        <!-- UI 경로 정보 -->
+        <div class="settings-group">
+          <h3 class="font-semibold text-gray-700 mb-4">📁 UI 경로 정보</h3>
+          <table class="info-table">
+            <tbody>
+              <tr>
+                <th>UI 기본 경로</th>
+                <td x-text="systemInfo.ui_base_dir || '-'"></td>
+              </tr>
+              <tr>
+                <th>UI 로그 디렉토리</th>
+                <td x-text="systemInfo.ui_log_dir || '-'"></td>
+              </tr>
+              <tr>
+                <th>UI 로그 파일</th>
+                <td x-text="systemInfo.ui_log_file || '-'"></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
-      <!-- 두 번째 섹션: 경로 정보 -->
-      <div class="settings-group">
-        <h3 class="font-semibold text-gray-700 mb-3">📁 경로 정보</h3>
-        <div class="info-row">
-          <div class="info-label">수집기 폴더:</div>
-          <div class="info-value" x-text="systemInfo.crawler_dir || '-'"></div>
+      <!-- 두 번째 행: Crawler 경로 정보 + 데이터 파일 경로 -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Crawler 경로 정보 -->
+        <div class="settings-group">
+          <h3 class="font-semibold text-gray-700 mb-4">📁 Crawler 경로 정보</h3>
+          <table class="info-table">
+            <tbody>
+              <tr>
+                <th>Crawler 기본 경로</th>
+                <td x-text="systemInfo.crawler_base_dir || '-'"></td>
+              </tr>
+              <tr>
+                <th>Crawler 로그 디렉토리</th>
+                <td x-text="systemInfo.crawler_log_dir || '-'"></td>
+              </tr>
+              <tr>
+                <th>Crawler 실행 디렉토리</th>
+                <td x-text="systemInfo.crawler_exe_dir || '-'"></td>
+              </tr>
+              <tr>
+                <th>Crawler 데이터 디렉토리</th>
+                <td x-text="systemInfo.crawler_data_dir || '-'"></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div class="info-row">
-          <div class="info-label">DB 폴더:</div>
-          <div class="info-value" x-text="systemInfo.db_dir || '-'"></div>
-        </div>
-        <div class="info-row">
-          <div class="info-label">첨부파일 폴더:</div>
-          <div class="info-value" x-text="systemInfo.file_dir || '-'"></div>
-        </div>
-        <div class="info-row">
-          <div class="info-label">로그파일 폴더:</div>
-          <div class="info-value" x-text="systemInfo.log_dir || '-'"></div>
+
+        <!-- 데이터 파일 경로 -->
+        <div class="settings-group">
+          <h3 class="font-semibold text-gray-700 mb-4">📁 데이터 파일 경로</h3>
+          <table class="info-table">
+            <tbody>
+              <tr>
+                <th>데이터베이스 파일</th>
+                <td x-text="systemInfo.db_path || '-'"></td>
+              </tr>
+              <tr>
+                <th>첨부파일 디렉토리</th>
+                <td x-text="systemInfo.attachs_dir || '-'"></td>
+              </tr>
+              <tr>
+                <th>YAML 설정 파일</th>
+                <td x-text="systemInfo.yaml_path || '-'"></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -143,25 +258,23 @@
 
   <!-- 탭 3: 시스템 History -->
   <div x-show="activeTab === 'history'">
-    <div class="settings-card">
-      <h2 class="text-xl font-bold text-gray-800 mb-4">📜 시스템 History</h2>
-      <div class="markdown-content" x-html="historyContent"></div>
+    <div class="bg-gray-50 rounded-lg p-6">
+      <h2 class="text-xl font-bold text-gray-800 mb-6">📜 시스템 History</h2>
+      <div x-html="historyContent"></div>
     </div>
   </div>
 </div>
-{% endblock %}
-
-{% block script %}
+{% endblock %} {% block script %}
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
   function settingsData() {
     return {
-      activeTab: 'info',
+      activeTab: "info",
       showSites: false,
       systemInfo: {},
-      infoContent: '',
-      historyContent: '',
-      sitesHtml: '',
+      infoContent: "",
+      historyContent: "",
+      sitesHtml: "",
 
       async init() {
         await this.loadSystemInfo();
@@ -172,22 +285,22 @@
 
       async loadSystemInfo() {
         try {
-          const response = await fetch('/api/v1/settings/system-info');
+          const response = await fetch("/api/v1/settings/system-info");
           if (response.ok) {
             this.systemInfo = await response.json();
           }
         } catch (error) {
-          console.error('시스템 정보 로드 실패:', error);
+          console.error("시스템 정보 로드 실패:", error);
         }
       },
 
       async loadInfo() {
         try {
-          const response = await fetch('/api/v1/settings/info');
+          const response = await fetch("/api/v1/settings/info");
           if (response.ok) {
             const data = await response.json();
             // marked 라이브러리를 사용하여 마크다운을 HTML로 변환
-            if (typeof marked !== 'undefined') {
+            if (typeof marked !== "undefined") {
               this.infoContent = marked.parse(data.content);
             } else {
               // marked가 없으면 <pre> 태그로 표시
@@ -195,51 +308,80 @@
             }
           }
         } catch (error) {
-          console.error('시스템 소개 로드 실패:', error);
-          this.infoContent = '시스템 소개를 불러올 수 없습니다.';
+          console.error("시스템 소개 로드 실패:", error);
+          this.infoContent = "시스템 소개를 불러올 수 없습니다.";
         }
       },
 
       async loadHistory() {
         try {
-          const response = await fetch('/api/v1/settings/history');
+          const response = await fetch("/api/v1/settings/history");
           if (response.ok) {
             const data = await response.json();
-            if (typeof marked !== 'undefined') {
-              this.historyContent = marked.parse(data.content);
-            } else {
-              this.historyContent = `<pre>${this.escapeHtml(data.content)}</pre>`;
-            }
+            // JSON 배열을 타임라인 HTML로 변환
+            this.historyContent = this.renderHistoryTimeline(data.items);
           }
         } catch (error) {
-          console.error('시스템 히스토리 로드 실패:', error);
-          this.historyContent = '시스템 히스토리를 불러올 수 없습니다.';
+          console.error("시스템 히스토리 로드 실패:", error);
+          this.historyContent = '<p class="text-gray-500">시스템 히스토리를 불러올 수 없습니다.</p>';
         }
+      },
+
+      renderHistoryTimeline(items) {
+        // 히스토리 항목이 없으면 메시지 표시
+        if (!items || items.length === 0) {
+          return '<p class="text-gray-500">히스토리 정보가 없습니다.</p>';
+        }
+
+        // 타임라인 HTML 생성
+        let html = '<div class="space-y-4">';
+        items.forEach((item) => {
+          html += `
+            <div class="flex items-start gap-4 p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+              <div class="flex-shrink-0">
+                <span class="inline-flex items-center px-3 py-1 text-sm font-semibold text-blue-700 bg-blue-100 rounded-full">
+                  ${item.version}
+                </span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-baseline gap-3 mb-1">
+                  <span class="text-sm font-medium text-gray-500">
+                    <i class="bi bi-calendar3 mr-1"></i>${item.date}
+                  </span>
+                </div>
+                <p class="text-base text-gray-800">${item.description}</p>
+              </div>
+            </div>
+          `;
+        });
+        html += '</div>';
+
+        return html;
       },
 
       async loadSites() {
         try {
-          const response = await fetch('/api/v1/settings/sites');
+          const response = await fetch("/api/v1/settings/sites");
           if (response.ok) {
             const data = await response.json();
             this.sitesHtml = data.html;
           }
         } catch (error) {
-          console.error('사이트 목록 로드 실패:', error);
-          this.sitesHtml = '사이트 목록을 불러올 수 없습니다.';
+          console.error("사이트 목록 로드 실패:", error);
+          this.sitesHtml = "사이트 목록을 불러올 수 없습니다.";
         }
       },
 
       escapeHtml(text) {
         const map = {
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#039;'
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;",
         };
-        return text.replace(/[&<>"']/g, m => map[m]);
-      }
+        return text.replace(/[&<>"']/g, (m) => map[m]);
+      },
     };
   }
 </script>

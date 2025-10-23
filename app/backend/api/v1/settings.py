@@ -57,17 +57,17 @@ async def get_info():
 @router.get("/history", response_model=dict)
 async def get_history():
     """
-    시스템 히스토리 콘텐츠 조회
+    시스템 히스토리 조회
 
     Returns:
-        {"content": "마크다운 내용"}
+        {"items": [{"date": "2025-10-23", "version": "v1.0.0", "description": "..."}]}
     """
     try:
-        content = get_history_content()
-        return {"content": content}
+        items = get_history_content()
+        return {"items": items}
     except Exception as e:
         logger.error(f"❌ 시스템 히스토리 로드 실패: {e}")
-        return {"content": f"로드 실패: {e}"}
+        return {"items": []}
 
 
 @router.get("/sites", response_model=dict)
