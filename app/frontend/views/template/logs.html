@@ -22,8 +22,7 @@
 {% endblock %} {% block content %}
 <div x-data="logsData()">
   <!-- 페이지 제목 -->
-  <h1 class="text-3xl font-bold text-gray-800 mb-2">📋 로그 관리</h1>
-  <p class="text-gray-600 mb-6">수집 로그와 시스템 로그 조회</p>
+  <h1 class="text-3xl font-bold text-gray-800 mb-6">📋 로그 관리, 수집 로그와 시스템 로그 조회</h1>
 
   <!-- 탭 네비게이션 -->
   <div class="bg-white border-b border-gray-200 mb-6">
@@ -51,56 +50,86 @@
       📋 수집-Crawler 로그 목록
     </h2>
 
-    <!-- 로그 날짜 선택 -->
-    <div class="mb-4">
-      <label class="block text-sm font-semibold text-gray-700 mb-2"
-        >📅 로그 날짜</label
-      >
-      <select
-        x-model="selectedDate"
-        @change="loadCrawlerLog()"
-        class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-        title="로그 날짜 선택"
-      >
-        <template x-for="dateOption in dates" :key="dateOption.date">
-          <option :value="dateOption.date" x-text="dateOption.label"></option>
-        </template>
-      </select>
-    </div>
+    <!-- 2:8 분할 레이아웃 -->
+    <div class="flex gap-4" style="min-height: 600px;">
+      <!-- 왼쪽 패널 (2) - 로그 파일 목록 -->
+      <div class="w-1/5 bg-gray-50 border border-gray-200 rounded-lg p-4 overflow-y-auto">
+        <h3 class="text-sm font-semibold text-gray-700 mb-3">로그 파일</h3>
 
-    <!-- 로딩 상태 -->
-    <div x-show="isLoading" class="text-center py-4">
-      <i class="bi bi-hourglass text-2xl text-blue-500"></i>
-      <p class="text-gray-600 mt-2">로그를 불러오는 중입니다...</p>
-    </div>
+        <!-- 로딩 상태 -->
+        <div x-show="isLoadingFiles" class="text-center py-4">
+          <i class="bi bi-hourglass text-lg text-blue-500"></i>
+          <p class="text-xs text-gray-600 mt-2">목록 로딩 중...</p>
+        </div>
 
-    <!-- 로그 파일 경로 -->
-    <div x-show="!isLoading && crawlerLog.path" class="mb-3">
-      <p class="text-sm text-gray-600">
-        <strong>로그 파일 경로:</strong>
-        <code
-          class="bg-gray-100 px-2 py-1 rounded"
-          x-text="crawlerLog.path"
-        ></code>
-      </p>
-    </div>
+        <!-- 파일 목록 -->
+        <div x-show="!isLoadingFiles" class="space-y-1">
+          <template x-for="file in crawlerLogFiles" :key="file.filename">
+            <button
+              type="button"
+              @click="selectLogFile(file)"
+              :class="selectedLogFile?.filename === file.filename ? 'bg-blue-100 text-blue-700 border-blue-300' : 'bg-white text-gray-700 hover:bg-gray-100'"
+              class="w-full text-left px-3 py-2 rounded border text-xs transition-colors"
+              :title="file.path"
+            >
+              <div class="font-medium truncate" x-text="file.filename"></div>
+              <div class="text-xs text-gray-500 mt-1" x-text="file.modified_time"></div>
+            </button>
+          </template>
 
-    <!-- 로그 내용 -->
-    <div
-      x-show="!isLoading"
-      class="log-content"
-      x-text="crawlerLog.content"
-    ></div>
+          <!-- 파일이 없을 때 -->
+          <div x-show="!isLoadingFiles && crawlerLogFiles.length === 0" class="text-center py-8 text-gray-500 text-sm">
+            로그 파일이 없습니다.
+          </div>
+        </div>
+      </div>
 
-    <!-- 다운로드 버튼 -->
-    <div x-show="!isLoading && crawlerLog.content" class="mt-4">
-      <button
-        @click="downloadFile(crawlerLog.content, crawlerLog.filename)"
-        class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
-      >
-        <i class="bi bi-download"></i>
-        📥 로그 파일 다운로드
-      </button>
+      <!-- 오른쪽 패널 (8) - 로그 내용 -->
+      <div class="w-4/5 bg-white border border-gray-200 rounded-lg overflow-hidden flex flex-col">
+        <!-- 로그 헤더 (파일 경로 및 다운로드) -->
+        <div x-show="selectedLogFile" class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+          <div class="flex-1 min-w-0">
+            <p class="text-xs text-gray-500 mb-1">로그 파일 경로</p>
+            <code class="text-sm text-gray-700 font-mono truncate block" x-text="crawlerLog.path"></code>
+          </div>
+          <button
+            type="button"
+            @click="downloadFile(crawlerLog.content, crawlerLog.filename)"
+            class="ml-4 p-2 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors flex-shrink-0"
+            title="로그 파일 다운로드"
+            x-show="crawlerLog.content"
+          >
+            <i class="bi bi-download text-xl"></i>
+          </button>
+        </div>
+
+        <!-- 로그 내용 -->
+        <div class="flex-1 overflow-y-auto p-4">
+          <!-- 로딩 상태 -->
+          <div x-show="isLoadingContent" class="text-center py-8">
+            <i class="bi bi-hourglass text-2xl text-blue-500"></i>
+            <p class="text-gray-600 mt-2">로그를 불러오는 중입니다...</p>
+          </div>
+
+          <!-- 로그 내용 표시 -->
+          <div
+            x-show="!isLoadingContent && crawlerLog.content"
+            class="log-content"
+            x-text="crawlerLog.content"
+          ></div>
+
+          <!-- 선택된 파일이 없을 때 -->
+          <div x-show="!isLoadingContent && !selectedLogFile" class="text-center py-12 text-gray-400">
+            <i class="bi bi-file-earmark-text text-5xl mb-4"></i>
+            <p>왼쪽에서 로그 파일을 선택하세요.</p>
+          </div>
+
+          <!-- 내용이 없을 때 -->
+          <div x-show="!isLoadingContent && selectedLogFile && !crawlerLog.content" class="text-center py-12 text-gray-400">
+            <p>로그 내용이 없습니다.</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -111,31 +140,34 @@
     </h2>
 
     <!-- 로딩 상태 -->
-    <div x-show="isLoading" class="text-center py-4">
+    <div x-show="isLoadingUI" class="text-center py-4">
       <i class="bi bi-hourglass text-2xl text-blue-500"></i>
       <p class="text-gray-600 mt-2">로그를 불러오는 중입니다...</p>
     </div>
 
     <!-- 로그 파일 경로 -->
-    <div x-show="!isLoading && uiLog.path" class="mb-3">
+    <div x-show="!isLoadingUI && uiLog.path" class="mb-3 flex items-center justify-between">
       <p class="text-sm text-gray-600">
         <strong>로그 파일 경로:</strong>
         <code class="bg-gray-100 px-2 py-1 rounded" x-text="uiLog.path"></code>
       </p>
+      <button
+        type="button"
+        @click="downloadFile(uiLog.content, uiLog.filename)"
+        class="ml-4 p-2 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors"
+        title="로그 파일 다운로드"
+        x-show="uiLog.content"
+      >
+        <i class="bi bi-download text-xl"></i>
+      </button>
     </div>
 
     <!-- 로그 내용 -->
-    <div x-show="!isLoading" class="log-content" x-text="uiLog.content"></div>
+    <div x-show="!isLoadingUI && uiLog.content" class="log-content" x-text="uiLog.content"></div>
 
-    <!-- 다운로드 버튼 -->
-    <div x-show="!isLoading && uiLog.content" class="mt-4">
-      <button
-        @click="downloadFile(uiLog.content, uiLog.filename)"
-        class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
-      >
-        <i class="bi bi-download"></i>
-        📥 로그 파일 다운로드
-      </button>
+    <!-- 내용이 없을 때 -->
+    <div x-show="!isLoadingUI && !uiLog.content" class="text-center py-12 text-gray-400">
+      <p>UI 로그가 없습니다.</p>
     </div>
   </div>
 </div>
@@ -144,9 +176,11 @@
   function logsData() {
     return {
       activeTab: "crawler",
-      dates: [],
-      selectedDate: "",
-      isLoading: false,
+      isLoadingFiles: false,
+      isLoadingContent: false,
+      isLoadingUI: false,
+      crawlerLogFiles: [],
+      selectedLogFile: null,
       crawlerLog: {
         content: "",
         path: "",
@@ -159,30 +193,35 @@
       },
 
       async init() {
-        await this.loadDates();
-        if (this.dates.length > 0) {
-          this.selectedDate = this.dates[0].date;
-          await this.loadCrawlerLog();
-        }
+        await this.loadCrawlerLogFiles();
         await this.loadUILog();
       },
 
-      async loadDates() {
+      async loadCrawlerLogFiles() {
+        this.isLoadingFiles = true;
         try {
-          const response = await fetch("/api/v1/logs/dates?days=7");
+          const response = await fetch("/api/v1/logs/crawler/files");
           if (response.ok) {
-            this.dates = await response.json();
+            this.crawlerLogFiles = await response.json();
+            // 첫 번째 파일 자동 선택
+            if (this.crawlerLogFiles.length > 0) {
+              await this.selectLogFile(this.crawlerLogFiles[0]);
+            }
           }
         } catch (error) {
-          console.error("로그 날짜 로드 실패:", error);
+          console.error("크롤러 로그 파일 목록 로드 실패:", error);
+          this.crawlerLogFiles = [];
+        } finally {
+          this.isLoadingFiles = false;
         }
       },
 
-      async loadCrawlerLog() {
-        this.isLoading = true;
+      async selectLogFile(file) {
+        this.selectedLogFile = file;
+        this.isLoadingContent = true;
         try {
           const response = await fetch(
-            `/api/v1/logs/crawler?date=${this.selectedDate}`
+            `/api/v1/logs/crawler/file?filename=${encodeURIComponent(file.filename)}`
           );
           if (response.ok) {
             this.crawlerLog = await response.json();
@@ -195,11 +234,12 @@
             filename: "",
           };
         } finally {
-          this.isLoading = false;
+          this.isLoadingContent = false;
         }
       },
 
       async loadUILog() {
+        this.isLoadingUI = true;
         try {
           const response = await fetch("/api/v1/logs/ui");
           if (response.ok) {
@@ -212,6 +252,8 @@
             path: "",
             filename: "",
           };
+        } finally {
+          this.isLoadingUI = false;
         }
       },
 
