@@ -19,6 +19,7 @@ my_logs/
 dist/
 build/
 dist_ui/
+*.spec
 *.db
 *.xlsx
 *.zip

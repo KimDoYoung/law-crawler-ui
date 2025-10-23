@@ -40,7 +40,7 @@
         "program": "${file}",
         "console": "integratedTerminal",
         "env": {
-          "LAW_CRAWLER_DIR": "c:/law-crawler",
+          "LAW_CRAWLER_MODE": "local",
           "PYTHONPATH": "${workspaceFolder}"
         }
       },

@@ -35,3 +35,16 @@
 📈 통계 분석 (Statistics)
 📋 로그 관리 (Log Management)
 ⚙️ 설정 (Settings)
+
+## 빌드
+
+- make_exe_ui20.sh 을 사용
+
+    dist/law-crawler-ui/
+    ├── law-crawler-ui.exe       # 메인 실행 파일
+    ├── .env.local                # 환경 설정 파일 (자동 복사됨)
+    ├── run.bat                   # Windows 실행 스크립트 (LAW_CRAWLER_MODE=local 설정)
+    ├── run.sh                    # Linux/Mac 실행 스크립트 (LAW_CRAWLER_MODE=local 설정)
+    ├── README.txt                # 사용 가이드
+    ├── _internal/                # 필요한 라이브러리
+    └── app/                      # 템플릿과 정적 파일  

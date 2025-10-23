@@ -1,4 +1,5 @@
 import os
+import sys
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -64,9 +65,17 @@ def add_event_handlers(app: FastAPI):
 
 def add_static_files(app: FastAPI):
     """정적 파일 설정"""
-    # static
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    static_files_path = os.path.join(BASE_DIR, "frontend", "public")
+    # PyInstaller로 빌드된 경우와 일반 실행을 구분
+    if getattr(sys, 'frozen', False):
+        # PyInstaller로 빌드된 경우
+        BASE_DIR = sys._MEIPASS
+        static_files_path = os.path.join(BASE_DIR, "app", "frontend", "public")
+    else:
+        # 일반 Python 실행
+        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        static_files_path = os.path.join(BASE_DIR, "frontend", "public")
+
+    logger.info(f"Static files path: {static_files_path}")
     app.mount("/public", StaticFiles(directory=static_files_path), name="public")
 
 
@@ -135,6 +144,14 @@ app = create_app()
 
 if __name__ == "__main__":
     import uvicorn
+    import argparse
+
+    # 커맨드라인 인자 파싱
+    parser = argparse.ArgumentParser(description="Law Crawler UI")
+    parser.add_argument("--host", type=str, default="0.0.0.0", help="Host address (default: 0.0.0.0)")
+    parser.add_argument("--port", type=int, default=8000, help="Port number (default: 8000)")
+    args = parser.parse_args()
 
     logger.info("Law Crawler UI version: " + config.VERSION)
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    logger.info(f"Starting server on {args.host}:{args.port}")
+    uvicorn.run(app, host=args.host, port=args.port)
