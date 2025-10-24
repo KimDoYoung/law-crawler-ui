@@ -5,6 +5,8 @@
 import os
 import sys
 import json
+import yaml
+from datetime import datetime
 from app.backend.data.db_util import yaml_info_to_html
 from app.backend.core.config import config
 
@@ -26,6 +28,33 @@ def _get_data_file_path(filename):
     else:
         # 일반 Python 실행
         return os.path.join("app", "data", filename)
+
+
+def _get_site_page_count():
+    """
+    YAML 파일에서 사이트 수와 페이지 수 계산
+
+    Returns:
+        tuple: (site_count, page_count)
+    """
+    try:
+        yaml_path = config.YAML_PATH
+        if not os.path.exists(yaml_path):
+            return (0, 0)
+
+        with open(yaml_path, 'r', encoding='utf-8') as f:
+            data = yaml.safe_load(f)
+
+        site_count = len(data) if data else 0
+        page_count = 0
+
+        for site_name, site_info in data.items():
+            pages = site_info.get('pages', [])
+            page_count += len(pages)
+
+        return (site_count, page_count)
+    except Exception as e:
+        return (0, 0)
 
 
 def get_system_info():
@@ -74,6 +103,7 @@ def get_system_info():
 def get_info_content():
     """
     시스템 소개 마크다운 내용 반환
+    _YYYY_MM_SITE_PAGE_COMMENT_ 플레이스홀더를 현재 날짜와 YAML 데이터로 치환
 
     Returns:
         마크다운 문자열
@@ -81,7 +111,19 @@ def get_info_content():
     try:
         file_path = _get_data_file_path("info.md")
         with open(file_path, "r", encoding="utf-8") as f:
-            return f.read()
+            content = f.read()
+
+        # 현재 날짜 (YYYY.MM 형식)
+        current_date = datetime.now().strftime("%Y.%m")
+
+        # YAML에서 사이트 수와 페이지 수 계산
+        site_count, page_count = _get_site_page_count()
+
+        # 플레이스홀더 치환
+        replacement = f"{current_date} 현재 {site_count}개 사이트 {page_count}개 페이지"
+        content = content.replace("_YYYY_MM_SITE_PAGE_COMMENT_", replacement)
+
+        return content
     except Exception as e:
         return f"info.md 파일을 불러올 수 없습니다: {e}"
 
@@ -94,7 +136,8 @@ def get_history_content():
         JSON 배열 (리스트)
     """
     try:
-        with open("app/data/history.json", "r", encoding="utf-8") as f:
+        file_path = _get_data_file_path("history.json")
+        with open(file_path, "r", encoding="utf-8") as f:
             return json.load(f)
     except Exception as e:
         return []

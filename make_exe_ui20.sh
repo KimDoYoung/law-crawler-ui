@@ -187,3 +187,28 @@ echo "   - README.txt             (사용 가이드)"
 echo "   - _internal/             (필요한 라이브러리)"
 echo "=========================================="
 echo ""
+
+# 9. c:/law-crawler-ui로 복사
+echo "📋 c:/law-crawler-ui 폴더로 배포 파일 복사 중..."
+if [ ! -d "c:/law-crawler-ui" ]; then
+    mkdir -p "c:/law-crawler-ui"
+    echo "   ✓ c:/law-crawler-ui 폴더 생성 완료"
+else
+    rm -rf c:/law-crawler-ui/*
+    echo "   ✓ c:/law-crawler-ui 폴더 내용 삭제 완료"
+fi
+cp -r ./dist/law-crawler-ui/* c:/law-crawler-ui/
+echo "   ✓ 배포 파일 복사 완료"
+echo ""
+
+echo "=========================================="
+echo "✅ 빌드 결과가 c:/law-crawler-ui/ 로 복사되었습니다"
+echo "=========================================="
+echo ""
+echo "🚀 실행 방법:"
+echo "   cd c:/law-crawler-ui"
+echo "   run.bat         (Windows, 기본 포트 8000)"
+echo "   run.bat 9000    (Windows, 포트 9000)"
+echo "   ./run.sh        (Linux/Mac, 기본 포트 8000)"
+echo "   ./run.sh 9000   (Linux/Mac, 포트 9000)"
+echo ""

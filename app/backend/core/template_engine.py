@@ -14,6 +14,7 @@ import os
 import re
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from app.backend.core.logger import get_logger
+from app.backend.core.config import config
 
 logger = get_logger(__name__)
 
@@ -32,6 +33,9 @@ env = Environment(
     loader=FileSystemLoader(template_dir),
     autoescape=select_autoescape(["html", "xml"]),
 )
+
+# 전역 변수 설정 (모든 템플릿에서 사용 가능)
+env.globals['version'] = config.VERSION
 
 
 def render_template(template_name, context={}):

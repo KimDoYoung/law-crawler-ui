@@ -368,6 +368,7 @@ def detail_static():
 def yaml_info_to_html():
     """
     yaml_info 테이블의 데이터를 HTML 테이블로 변환합니다.
+    사이트별로 얼룩말 패턴(zebra striping) 적용
     """
     query = """
         SELECT
@@ -383,15 +384,60 @@ def yaml_info_to_html():
         return "<p>데이터가 없습니다.</p>"
 
     html = """
-    <table border='1'>
-        <thead style='background-color: #f2f2f2;'>
+    <style>
+        .sites-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .sites-table thead th {
+            background-color: #3b82f6;
+            color: white;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #2563eb;
+        }
+        .sites-table tbody td {
+            padding: 0.625rem 1rem;
+            border: 1px solid #e5e7eb;
+        }
+        .sites-table tbody tr.site-color-0 {
+            background-color: #eff6ff;
+        }
+        .sites-table tbody tr.site-color-1 {
+            background-color: white;
+        }
+        .sites-table tbody tr:hover {
+            background-color: #dbeafe !important;
+        }
+        .sites-table a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        .sites-table a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <table class='sites-table'>
+        <thead>
             <tr><th>사이트명</th><th>페이지ID</th><th>URL</th></tr>
         </thead>
         <tbody>
     """
+
+    # 사이트별로 색상 인덱스 부여 (얼룩말 패턴)
+    prev_site_name = None
+    site_color_index = 0
+
     for _, row in df.iterrows():
+        # 사이트가 바뀌면 색상 인덱스 토글
+        if prev_site_name is not None and prev_site_name != row['site_name']:
+            site_color_index = 1 - site_color_index  # 0 <-> 1 토글
+        prev_site_name = row['site_name']
+
         detail_url = row["detail_url"] if row["detail_url"] else "#"
-        html += "<tr>"
+        html += f"<tr class='site-color-{site_color_index}'>"
         html += f"<td>{row['h_name']}</td>"
         html += f"<td>{row['desc']}</td>"
         html += f'<td><a href="{detail_url}" target="_blank">{detail_url}</a></td>'

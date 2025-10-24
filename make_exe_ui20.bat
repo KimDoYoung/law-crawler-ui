@@ -190,4 +190,28 @@ echo    - README.txt          (사용 가이드)
 echo    - _internal/          (필요한 라이브러리)
 echo ==========================================
 echo.
+
+REM 9. c:/law-crawler-ui로 복사
+echo 📋 c:/law-crawler-ui 폴더로 배포 파일 복사 중...
+if not exist "c:\law-crawler-ui" (
+    mkdir c:\law-crawler-ui
+    echo    ✓ c:/law-crawler-ui 폴더 생성 완료
+) else (
+    del /q c:\law-crawler-ui\*.* 2>nul
+    for /d %%p in (c:\law-crawler-ui\*) do rmdir /s /q "%%p" 2>nul
+    echo    ✓ c:/law-crawler-ui 폴더 내용 삭제 완료
+)
+xcopy /E /I /Y dist\law-crawler-ui\* c:\law-crawler-ui\ > nul
+echo    ✓ 배포 파일 복사 완료
+echo.
+
+echo ==========================================
+echo ✅ 빌드 결과가 c:/law-crawler-ui/ 로 복사되었습니다
+echo ==========================================
+echo.
+echo 🚀 실행 방법:
+echo    cd c:\law-crawler-ui
+echo    run.bat         (Windows, 기본 포트 8000)
+echo    run.bat 9000    (Windows, 포트 9000)
+echo.
 pause
