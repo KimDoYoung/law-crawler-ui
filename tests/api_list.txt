@@ -1,0 +1,45 @@
+# Law Crawler UI - API 목록
+# 형식: METHOD|ENDPOINT|설명
+# 주석 처리(#)하면 해당 API는 테스트 건너뜀
+
+# 대시보드 API
+GET|/api/v1/dashboard/metrics|대시보드 메트릭 조회
+GET|/api/v1/dashboard/data|대시보드 데이터 조회 (기본 period=today)
+GET|/api/v1/dashboard/data?period=3days|대시보드 데이터 조회 (3일)
+GET|/api/v1/dashboard/data?period=7days|대시보드 데이터 조회 (7일)
+# GET|/api/v1/dashboard/attachments/{site_code}/{page_code}/{real_seq}|첨부파일 조회 (실제 데이터 필요)
+
+# 검색 API
+GET|/api/v1/search/sites|검색 가능한 사이트 목록
+GET|/api/v1/search/results|검색 결과 (빈 결과)
+GET|/api/v1/search/results?keyword=law|키워드 검색 (영문)
+GET|/api/v1/search/results?keyword=test&page=1&pagesize=10|키워드 검색 (페이징)
+# GET|/api/v1/search/attachments/{site_code}/{page_code}/{real_seq}|첨부파일 조회 (실제 데이터 필요)
+
+# 통계 API
+GET|/api/v1/statistics/metrics|통계 메트릭 조회
+GET|/api/v1/statistics/sites|사이트별 통계
+GET|/api/v1/statistics/files|파일별 통계
+GET|/api/v1/statistics/detail|상세 통계
+GET|/api/v1/statistics/collection-period|수집 기간 정보
+
+# 로그 API
+GET|/api/v1/logs/dates|로그 날짜 목록 (기본 7일)
+GET|/api/v1/logs/dates?days=30|로그 날짜 목록 (30일)
+GET|/api/v1/logs/ui|UI 로그 내용
+GET|/api/v1/logs/crawler/files|Crawler 로그 파일 목록
+# GET|/api/v1/logs/crawler?date=2025-01-24|Crawler 로그 조회 (날짜 필수, 실제 날짜 필요)
+# GET|/api/v1/logs/crawler/file?filename=law_crawler_2025-01-24.log|Crawler 로그 파일 조회 (파일명 필수)
+
+# 설정 API
+GET|/api/v1/settings/system-info|시스템 정보
+GET|/api/v1/settings/info|시스템 소개
+GET|/api/v1/settings/history|변경 이력
+GET|/api/v1/settings/sites|대상 사이트 목록
+
+# 페이지 라우터 (HTML 응답)
+GET|/dashboard|대시보드 페이지
+GET|/search|검색 페이지
+GET|/statistics|통계 페이지
+GET|/logs|로그 관리 페이지
+GET|/settings|설정 페이지

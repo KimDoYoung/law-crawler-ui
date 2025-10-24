@@ -48,3 +48,30 @@
     ├── README.txt                # 사용 가이드
     ├── _internal/                # 필요한 라이브러리
     └── app/                      # 템플릿과 정적 파일  
+
+## 코드 테스트
+
+- 8004포트로 app을 실행한 후 테스트 프로그램을 실행해야 함
+
+1. page_contexts 폴더의 파일들 테스트
+
+```bash
+# 모든 테스트 실행
+python -m pytest tests/ -v
+
+# 특정 파일만 테스트
+python -m pytest tests/test_dashboard_context.py -v
+```
+
+2. api test
+
+```bash
+# 기본 실행
+pytest tests/test_api.py -v
+
+# 특정 포트
+BASE_URL=http://localhost:9000 pytest tests/test_api.py -v
+
+# HTML 리포트 생성
+pytest tests/test_api.py -v --html=report.html --self-contained-html
+````

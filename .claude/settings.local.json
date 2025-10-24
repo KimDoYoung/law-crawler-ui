@@ -6,7 +6,9 @@
       "Bash(python:*)",
       "Bash(dir:*)",
       "Bash(sqlite3:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(uv pip list:*)",
+      "Bash(pytest:*)"
     ],
     "deny": [],
     "ask": []

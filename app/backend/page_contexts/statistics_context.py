@@ -1,10 +1,8 @@
 """
 통계 분석 페이지 컨텍스트 제공 함수
 """
-from datetime import datetime, timedelta
 from app.backend.core.logger import get_logger
 from app.backend.data.db_util import (
-    total_site_attach_counts,
     site_static,
     site_static_filecount,
     detail_static,

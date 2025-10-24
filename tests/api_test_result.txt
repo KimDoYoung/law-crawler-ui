@@ -1,0 +1,148 @@
+=========================================
+Law Crawler UI - API 테스트 결과
+=========================================
+테스트 시간: 2025-10-24 16:07:52
+Base URL: http://localhost:8004
+
+❌ 
+   http://localhost:8004
+   HTTP 
+   응답: ...
+
+✅ 대시보드 메트릭 조회
+   http://localhost:8004/api/v1/dashboard/metrics
+   HTTP 200
+
+✅ 대시보드 데이터 조회 (기본 period=today)
+   http://localhost:8004/api/v1/dashboard/data
+   HTTP 200
+
+✅ 대시보드 데이터 조회 (3일)
+   http://localhost:8004/api/v1/dashboard/data?period=3days
+   HTTP 200
+
+✅ 대시보드 데이터 조회 (7일)
+   http://localhost:8004/api/v1/dashboard/data?period=7days
+   HTTP 200
+
+❌ 
+   http://localhost:8004
+   HTTP 
+   응답: ...
+
+✅ 검색 가능한 사이트 목록
+   http://localhost:8004/api/v1/search/sites
+   HTTP 200
+
+✅ 검색 결과 (빈 결과)
+   http://localhost:8004/api/v1/search/results
+   HTTP 200
+
+✅ 키워드 검색 (영문)
+   http://localhost:8004/api/v1/search/results?keyword=law
+   HTTP 200
+
+✅ 키워드 검색 (페이징)
+   http://localhost:8004/api/v1/search/results?keyword=test&page=1&pagesize=10
+   HTTP 200
+
+❌ 
+   http://localhost:8004
+   HTTP 
+   응답: ...
+
+✅ 통계 메트릭 조회
+   http://localhost:8004/api/v1/statistics/metrics
+   HTTP 200
+
+✅ 사이트별 통계
+   http://localhost:8004/api/v1/statistics/sites
+   HTTP 200
+
+✅ 파일별 통계
+   http://localhost:8004/api/v1/statistics/files
+   HTTP 200
+
+✅ 상세 통계
+   http://localhost:8004/api/v1/statistics/detail
+   HTTP 200
+
+✅ 수집 기간 정보
+   http://localhost:8004/api/v1/statistics/collection-period
+   HTTP 200
+
+❌ 
+   http://localhost:8004
+   HTTP 
+   응답: ...
+
+✅ 로그 날짜 목록 (기본 7일)
+   http://localhost:8004/api/v1/logs/dates
+   HTTP 200
+
+✅ 로그 날짜 목록 (30일)
+   http://localhost:8004/api/v1/logs/dates?days=30
+   HTTP 200
+
+✅ UI 로그 내용
+   http://localhost:8004/api/v1/logs/ui
+   HTTP 200
+
+✅ Crawler 로그 파일 목록
+   http://localhost:8004/api/v1/logs/crawler/files
+   HTTP 200
+
+❌ 
+   http://localhost:8004
+   HTTP 
+   응답: ...
+
+✅ 시스템 정보
+   http://localhost:8004/api/v1/settings/system-info
+   HTTP 200
+
+✅ 시스템 소개
+   http://localhost:8004/api/v1/settings/info
+   HTTP 200
+
+✅ 변경 이력
+   http://localhost:8004/api/v1/settings/history
+   HTTP 200
+
+✅ 대상 사이트 목록
+   http://localhost:8004/api/v1/settings/sites
+   HTTP 200
+
+❌ 
+   http://localhost:8004
+   HTTP 
+   응답: ...
+
+✅ 대시보드 페이지
+   http://localhost:8004/dashboard
+   HTTP 200
+
+✅ 검색 페이지
+   http://localhost:8004/search
+   HTTP 200
+
+✅ 통계 페이지
+   http://localhost:8004/statistics
+   HTTP 200
+
+✅ 로그 관리 페이지
+   http://localhost:8004/logs
+   HTTP 200
+
+✅ 설정 페이지
+   http://localhost:8004/settings
+   HTTP 200
+
+=========================================
+📊 테스트 결과 요약
+=========================================
+총 테스트: 32
+✅ 성공: 26
+❌ 실패: 6
+
+⚠️  일부 테스트 실패
