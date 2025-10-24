@@ -53,7 +53,7 @@ def _get_site_page_count():
             page_count += len(pages)
 
         return (site_count, page_count)
-    except Exception as e:
+    except Exception:
         return (0, 0)
 
 
@@ -139,7 +139,7 @@ def get_history_content():
         file_path = _get_data_file_path("history.json")
         with open(file_path, "r", encoding="utf-8") as f:
             return json.load(f)
-    except Exception as e:
+    except Exception:
         return []
 
 
