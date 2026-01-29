@@ -23,12 +23,24 @@
     1. tailwindcss
     2. alpine
 
+## fastapi 버젼
+
+- app/ 안에 작성되어 있음.
+- .env.local참조
+
+## fedora에서 ui 설치
+
+- docker 포기
+- target folder : ~/law-crawler/ui 하위에 app에 설치
+- web-deploy.sh을 만듬. target로 app/과 관련 파일들 복사
+
 ## streamlit 실행
 
+- ui/ 안에 작성되어 있음
 - run_ui.bat(window), run_ui.sh(git-baash, linux)를 실행
 - 환경변수 LAW_CRAWLER_EXE_DIR 가 설정되어 있어야한다.
 - 환경변수 LAW_CRAWLER_EXE_DIR는 law-crawler의 기본폴더를 지칭해야 한다.
-  
+
 ## 메뉴들
 
 🔍 데이터 조회 (Data Search)
@@ -40,14 +52,14 @@
 
 - make_exe_ui20.sh 을 사용
 
-    dist/law-crawler-ui/
-    ├── law-crawler-ui.exe       # 메인 실행 파일
-    ├── .env.local                # 환경 설정 파일 (자동 복사됨)
-    ├── run.bat                   # Windows 실행 스크립트 (LAW_CRAWLER_MODE=local 설정)
-    ├── run.sh                    # Linux/Mac 실행 스크립트 (LAW_CRAWLER_MODE=local 설정)
-    ├── README.txt                # 사용 가이드
-    ├── _internal/                # 필요한 라이브러리
-    └── app/                      # 템플릿과 정적 파일  
+  dist/law-crawler-ui/
+  ├── law-crawler-ui.exe # 메인 실행 파일
+  ├── .env.local # 환경 설정 파일 (자동 복사됨)
+  ├── run.bat # Windows 실행 스크립트 (LAW_CRAWLER_MODE=local 설정)
+  ├── run.sh # Linux/Mac 실행 스크립트 (LAW_CRAWLER_MODE=local 설정)
+  ├── README.txt # 사용 가이드
+  ├── \_internal/ # 필요한 라이브러리
+  └── app/ # 템플릿과 정적 파일
 
 ## 코드 테스트
 
@@ -74,4 +86,4 @@ BASE_URL=http://localhost:9000 pytest tests/test_api.py -v
 
 # HTML 리포트 생성
 pytest tests/test_api.py -v --html=report.html --self-contained-html
-````
+```

@@ -1,0 +1,206 @@
+kofia:
+  h_name: 금융투자협회
+  url: https://law.kofia.or.kr
+  pages:
+    - id: menu_4
+      desc: 규정 제개정예고
+      detail_url: https://law.kofia.or.kr/service/revisionNotice/revisionNoticeList.do
+    - id: menu_5
+      desc: 최신제개정예고
+      detail_url: https://law.kofia.or.kr/service/revision/revisionlist.do
+    - id: menu_6
+      desc: 서식정보
+      detail_url: https://law.kofia.or.kr/service/attach/attachlist.do
+fss:
+  h_name: 금융감독원
+  url: https://law.fss.or.kr
+  pages:
+    - id: menu_200488
+      desc: 최신 제개정 정보
+      detail_url: https://law.fss.or.kr/fss/job/lrgRegItnInfo/list.do?menuNo=200488
+    - id: menu_200489
+      desc: 세칙 제ㆍ개정정보
+      detail_url: https://law.fss.or.kr/fss/job/lrgRegItnPrvntc/list.do?menuNo=200489
+    - id: menu_200218
+      desc: 보도자료
+      detail_url: https://www.fss.or.kr/fss/bbs/B0000188/list.do?menuNo=200218
+fsc:
+  h_name: 금융위원회
+  url: https://www.fsc.go.kr
+  pages:
+    - id: po040200
+      desc: 금융위 소관규정/고시/공고/훈령
+      detail_url: https://www.fsc.go.kr/po040200
+    - id: po040301
+      desc: 입법예고/규정변경예고
+      detail_url: https://www.fsc.go.kr/po040301
+    - id: no010101
+      desc: 보도자료
+      detail_url: https://www.fsc.go.kr/no010101
+better:
+  h_name: 금융규제·법령해석포털
+  url: https://better.fsc.go.kr
+  pages:
+    - id: menu_11_74_195
+      desc: 공지사항
+      detail_url: https://better.fsc.go.kr/fsc_new/NoticeList.do?stNo=11&muNo=74&muGpNo=195
+    - id: menu_11_117_75
+      desc: 회신사례 통합조회
+      detail_url: https://better.fsc.go.kr/fsc_new/replyCase/TotalReplyList.do?stNo=11&muNo=117&muGpNo=75
+moleg:
+  h_name: 법제처
+  url: https://moleg.go.kr
+  pages:
+    - id: a10104010000
+      desc: 입법예고
+      detail_url: https://moleg.go.kr/lawinfo/makingList.mo?mid=a10104010000&currentPage=1&pageCnt=10&keyField=&keyWord=&stYdFmt=&edYdFmt=&lsClsCd=&cptOfiOrgCd=
+moef:
+  h_name: 기획제정부
+  url: https://www.moef.go.kr
+  pages:
+    - id: menu_7050300
+      desc: 입법·행정예고
+      detail_url: https://www.moef.go.kr/lw/lap/TbPrvntcList.do?bbsId=MOSFBBS_000000000055&menuNo=7050300
+    - id: menu_4010100
+      desc: 보도자료
+      detail_url: https://www.moef.go.kr/nw/nes/nesdta.do?bbsId=MOSFBBS_000000000028&menuNo=4010100
+    - id: menu_7090200
+      desc: 고시·공고·지침
+      detail_url: https://www.moef.go.kr/lw/denm/TbDenmList.do?bbsId=MOSFBBS_000000000120&menuNo=7090200
+taxlaw:
+  h_name: 국세법령정보시스템
+  url: https://taxlaw.nts.go.kr
+  pages:
+    - id: USESTI001M
+      desc: 최신개정법령
+      detail_url: https://taxlaw.nts.go.kr/st/USESTI001M.do
+    - id: USESTI002M
+      desc: 최신 훈령·고시
+      detail_url: https://taxlaw.nts.go.kr/st/USESTI002M.do
+lawgokr:
+  h_name: 국가법령정보센터
+  url: https://www.law.go.kr
+  pages:
+    - id: law_1_t1
+      desc: 법령공포법령
+      detail_url: https://www.law.go.kr/lsSc.do?menuId=1&subMenuId=23&tabMenuId=121
+    - id: law_1_t2
+      desc: 법령시행법령
+      detail_url: https://www.law.go.kr/lsSc.do?menuId=1&subMenuId=23&tabMenuId=121
+    - id: law_5_t1
+      desc: 행정규칙 규칙명
+      detail_url: https://www.law.go.kr/admRulSc.do?menuId=5&subMenuId=45&tabMenuId=203&query=
+lawmaking:
+  h_name: 정부입법지원센터
+  url: https://www.lawmaking.go.kr
+  pages:
+    - id: menu_2
+      desc: 최신 법령해석사례
+      detail_url: https://www.lawmaking.go.kr/nl4li/lsItptEmp/list?mode=all
+acrc:
+  h_name: 국민권익위원회
+  url: https://www.acrc.go.kr
+  pages:
+    - id: a10503030000
+      desc: 입법행정예고
+      detail_url: https://www.acrc.go.kr/board.es?mid=a10503030000&bid=19
+    - id: a10402010000
+      desc: 보도자료
+      detail_url: https://www.acrc.go.kr/board.es?mid=a10402010000&bid=4A
+moel:
+  h_name: 고용노동부
+  url: https://www.moel.go.kr
+  pages:
+    - id: revision
+      desc: 최신 제개정 정보
+      detail_url: https://www.moel.go.kr/info/lawinfo/revision/list.do
+    - id: lawmaking
+      desc: 입법·행정예고
+      detail_url: https://www.moel.go.kr/info/lawinfo/lawmaking/list.do
+    - id: instruction
+      desc: 최신 훈령·고시
+      detail_url: https://www.moel.go.kr/info/lawinfo/instruction/list.do
+    - id: report
+      desc: 보도자료
+      detail_url: https://www.moel.go.kr/news/enews/report/enewsList.do
+    - id: policydata
+      desc: 정책자료실
+      detail_url: https://www.moel.go.kr/policy/policydata/list.do
+
+insure4:
+  h_name: 4대사회보험정보연계센터
+  url: https://www.4insure.or.kr
+  pages:
+    - id: ntcn
+      desc: 기관별공지사항
+      detail_url: https://www.4insure.or.kr/pbiz/ntcn/selectInstNtcMttrList.do
+nts:
+  h_name: 국세청
+  url: https://www.nts.go.kr
+  pages:
+    - id: menu_2205
+      desc: 고시
+      detail_url: https://www.nts.go.kr/nts/na/ntt/selectNttList.do?mi=2205&bbsId=1120
+    - id: menu_2206
+      desc: 공고
+      detail_url: https://www.nts.go.kr/nts/na/ntt/selectNttList.do?mi=2206&bbsId=1122
+    - id: menu_6420
+      desc: 행정예고
+      detail_url: https://www.nts.go.kr/nts/na/ntt/selectNttList.do?mi=6420&bbsId=1102
+
+wetax:
+  h_name: Wetax
+  url: https://www.wetax.go.kr
+  pages:
+    - id: J030103M01
+      desc: 법령개정사항
+      detail_url: https://www.wetax.go.kr/tcp/loi/J030103M01.do
+    - id: J030201M01
+      desc: 지방세자료실
+      detail_url: https://www.wetax.go.kr/tcp/loi/J030201M01.do
+
+minimumwage:
+  h_name: 최저임금위원회
+  url: https://www.minimumwage.go.kr
+  pages:
+    - id: news
+      desc: 보도자료
+      detail_url: https://www.minimumwage.go.kr/customer/news/list.do
+    - id: promotion
+      desc: 안내자료
+      detail_url: https://www.minimumwage.go.kr/customer/promotion/list.do
+
+nps:
+  h_name: 국민연금공단
+  url: https://www.nps.or.kr
+  pages:
+    - id: MN24001492
+      desc: 법령정보
+      detail_url: https://www.nps.or.kr/pnsinfo/databbs/getOHAF0275M0List.do?menuId=MN24001492
+    - id: MN24000898
+      desc: 보도자료
+      detail_url: https://www.nps.or.kr/pnsgdnc/nscvrgdata/getOHAE0002M0List.do?menuId=MN24000898
+    - id: MN24000897
+      desc: 새소식
+      detail_url: https://www.nps.or.kr/pnsgdnc/newgdnc/getOHAE0001M0List.do?menuId=MN24000897
+    - id: MN24001000
+      desc: 기타자료
+      detail_url: https://www.nps.or.kr/pnsinfo/databbs/getOHAF0272M0List.do?menuId=MN24001000
+
+nhis_edi:
+  h_name: NHIS-EDI서비스
+  url: https://edi.nhis.or.kr
+  pages:
+    - id: psd
+      desc: 자료실
+      detail_url: https://edi.nhis.or.kr/homeapp/wep/f/retrievePsd.do
+    - id: news
+      desc: 공지사항
+      detail_url: https://edi.nhis.or.kr/homeapp/wep/g/retrieveNews.do
+comwel:
+  h_name: 근로복지공단
+  url: https://www.comwel.or.kr
+  pages:
+    - id: work
+      desc: 정보공개
+      detail_url: https://www.comwel.or.kr/comwel/info/data/work/work_lst.jsp
