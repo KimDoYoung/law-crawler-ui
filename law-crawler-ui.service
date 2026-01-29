@@ -10,7 +10,7 @@ WorkingDirectory=/home/kdy987/law-crawler/ui
 Environment="PATH=/home/kdy987/.local/bin:/usr/local/bin:/usr/bin"
 Environment="PYTHONPATH=/home/kdy987/law-crawler/ui"
 Environment="LAW_CRAWLER_MODE=fedora"
-ExecStart=/home/kdy987/.local/bin/uv run uvicorn app.backend.main:app --host 0.0.0.0 --port 8004
+ExecStart=/bin/sh -c 'source /home/kdy987/law-crawler/ui/.venv/bin/activate && uvicorn app.backend.main:app --host 0.0.0.0 --port 8004'
 Restart=always
 RestartSec=5
 

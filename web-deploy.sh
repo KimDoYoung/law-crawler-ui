@@ -26,6 +26,11 @@ cp ./uv.lock "$DEPLOY_DIR/"
 echo "⚙️  Copying .env.fedora..."
 cp ./.env.fedora "$DEPLOY_DIR/"
 
+# .env.fedora 복사
+echo "⚙️  Copying web-service.sh..."
+cp ./web-service.sh "$DEPLOY_DIR/"
+
+
 echo ""
 echo "✅ Deployment complete!"
 echo "📂 Files deployed to: $DEPLOY_DIR"
