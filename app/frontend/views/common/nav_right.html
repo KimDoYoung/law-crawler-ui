@@ -1,42 +1,112 @@
 <ul class="flex items-center gap-4">
-    <!-- 실시간 시계 -->
-    <li class="flex items-center gap-2 px-3 py-1 bg-white rounded-lg shadow-sm">
-        <i class="bi bi-clock text-blue-500 text-lg"></i>
-        <span id="current-time" class="text-sm text-gray-700 font-medium">2025-01-01 (월) 00:00:00</span>
-    </li>
+  <!-- 최근 수집 시각 -->
+  <li class="flex items-center gap-2 px-3 py-1 bg-white rounded-lg shadow-sm">
+    <i class="bi bi-clock text-blue-500 text-lg"></i>
+    <span class="text-sm text-gray-600 font-medium">최근 수집시각:</span>
+    <span id="last-crawling-time" class="text-sm text-gray-700 font-bold"
+      >-</span
+    >
+  </li>
 
-    <!-- 시스템 상태 -->
-    <li class="flex items-center gap-2 px-3 py-1 bg-white rounded-lg shadow-sm">
-        <i class="bi bi-check-circle-fill text-green-500 text-lg"></i>
-        <span class="text-sm text-gray-700 font-medium">크롤러 정상</span>
-    </li>
+  <!-- 크롤러 상태 -->
+  <li class="flex items-center gap-2 px-3 py-1 bg-white rounded-lg shadow-sm">
+    <i
+      id="crawler-status-icon"
+      class="bi bi-check-circle-fill text-green-500 text-lg"
+    ></i>
+    <span id="crawler-status-text" class="text-sm text-gray-700 font-medium"
+      >크롤러 정상</span
+    >
+  </li>
 </ul>
 
 <script>
-  // 실시간 시계 업데이트
-  function updateClock() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-
-    const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
-    const dayOfWeek = daysOfWeek[now.getDay()];
-
-    const timeString = `${year}-${month}-${day} (${dayOfWeek}) ${hours}:${minutes}:${seconds}`;
-
-    const timeElement = document.getElementById('current-time');
+  // UI 업데이트 (공통 로직)
+  function updateUI(data) {
+    // 최근 수집 시각 업데이트
+    const timeElement = document.getElementById("last-crawling-time");
     if (timeElement) {
-      timeElement.textContent = timeString;
+      timeElement.textContent = data.last_crawling_time || "-";
+    }
+
+    // 크롤러 상태 업데이트
+    const statusIcon = document.getElementById("crawler-status-icon");
+    const statusText = document.getElementById("crawler-status-text");
+
+    if (data.healthy === "ok") {
+      // 정상 상태
+      if (statusIcon) {
+        statusIcon.classList.remove(
+          "bi-exclamation-circle-fill",
+          "text-yellow-500",
+        );
+        statusIcon.classList.add("bi-check-circle-fill", "text-green-500");
+      }
+      if (statusText) {
+        statusText.textContent = "크롤러 정상";
+        statusText.classList.remove("text-yellow-600");
+        statusText.classList.add("text-green-600");
+      }
+    } else {
+      // 체크 필요 상태
+      if (statusIcon) {
+        statusIcon.classList.remove("bi-check-circle-fill", "text-green-500");
+        statusIcon.classList.add(
+          "bi-exclamation-circle-fill",
+          "text-yellow-500",
+        );
+      }
+      if (statusText) {
+        statusText.textContent = "크롤링 체크요망";
+        statusText.classList.remove("text-green-600");
+        statusText.classList.add("text-yellow-600");
+      }
     }
   }
 
-  // 페이지 로드 시 즉시 실행
-  updateClock();
+  // 크롤러 헬스 체크 API 호출
+  async function updateCrawlerHealth() {
+    try {
+      const response = await fetch("/api/v1/dashboard/crawler-health");
+      if (!response.ok) {
+        throw new Error("API 호출 실패");
+      }
 
-  // 1초마다 업데이트
-  setInterval(updateClock, 1000);
+      const data = await response.json();
+
+      // 캐시에 저장
+      sessionStorage.setItem(
+        "crawlerHealthData",
+        JSON.stringify(data),
+      );
+      sessionStorage.setItem(
+        "crawlerHealthTime",
+        Date.now().toString(),
+      );
+
+      updateUI(data);
+    } catch (error) {
+      console.error("크롤러 헬스 체크 실패:", error);
+    }
+  }
+
+  // 페이지 로드 시: 캐시된 데이터 먼저 표시
+  function initCrawlerHealth() {
+    const cachedData = sessionStorage.getItem("crawlerHealthData");
+    if (cachedData) {
+      try {
+        updateUI(JSON.parse(cachedData));
+      } catch (e) {
+        console.error("캐시 로드 실패:", e);
+      }
+    }
+    // 백그라운드 업데이트 즉시 시작
+    updateCrawlerHealth();
+  }
+
+  // 페이지 로드 시 캐시 먼저 표시
+  initCrawlerHealth();
+
+  // 5분마다 백그라운드 업데이트
+  setInterval(updateCrawlerHealth, 300000);
 </script>

@@ -517,6 +517,10 @@
         this.loadDashboardMetrics();
         this.selectedPeriod = "today"; // 오늘을 기본값으로 설정
         this.loadData("today"); // 오늘 데이터 로드
+        // 크롤러 헬스 체크 즉시 호출 (대시보드에서만)
+        if (typeof updateCrawlerHealth === 'function') {
+          updateCrawlerHealth();
+        }
       },
 
       async loadDashboardMetrics() {

@@ -12,6 +12,6 @@
   {
     "date": "2025-01-30",
     "version": "v1.0.2",
-    "description": "사소한 버그 수정 및 배포 스크립트 개선"
+    "description": "최근수집시각, 크롤러 health체크"
   }
 ]

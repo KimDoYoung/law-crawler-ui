@@ -2,6 +2,9 @@
 대시보드 API 엔드포인트
 """
 
+import os
+import re
+from pathlib import Path
 from fastapi import APIRouter, Query
 from app.backend.page_contexts.dashboard_context import (
     get_dashboard_metrics,
@@ -9,6 +12,7 @@ from app.backend.page_contexts.dashboard_context import (
 )
 from app.backend.data.db_util import attach_list
 from app.backend.core.logger import get_logger
+from app.backend.core.config import config
 
 logger = get_logger(__name__)
 
@@ -62,6 +66,96 @@ async def get_data(
     except Exception as e:
         logger.error(f"❌ 대시보드 데이터 조회 실패: {e}")
         return []
+
+
+@router.get("/crawler-health", response_model=dict)
+async def get_crawler_health():
+    """
+    크롤러 헬스 체크
+
+    Returns:
+        - healthy: 'ok' (정상) 또는 'check' (오류 발생)
+        - last_crawling_time: 마지막 크롤링 시간
+        - error_message: 오류 메시지 (있는 경우만)
+    """
+    try:
+        if not config.CRAWLER_LOG_DIR:
+            return {
+                "healthy": "check",
+                "last_crawling_time": None,
+                "error_message": "로그 디렉토리가 설정되지 않았습니다."
+            }
+
+        log_dir = Path(config.CRAWLER_LOG_DIR)
+        if not log_dir.exists():
+            return {
+                "healthy": "check",
+                "last_crawling_time": None,
+                "error_message": "로그 디렉토리를 찾을 수 없습니다."
+            }
+
+        # 가장 최근 로그 파일 찾기 (law_crawler_*.log 패턴)
+        log_files = sorted(
+            log_dir.glob("law_crawler_*.log"),
+            key=lambda x: x.stat().st_mtime,
+            reverse=True
+        )
+
+        if not log_files:
+            return {
+                "healthy": "check",
+                "last_crawling_time": None,
+                "error_message": "로그 파일을 찾을 수 없습니다."
+            }
+
+        latest_log = log_files[0]
+        logger.info(f"최근 로그 파일: {latest_log}")
+
+        # 로그 파일 읽기
+        has_error = False
+        last_timestamp = None
+
+        try:
+            with open(latest_log, 'r', encoding='utf-8', errors='ignore') as f:
+                lines = f.readlines()
+
+                # 마지막 라인의 시각 추출
+                for line in reversed(lines):
+                    if line.strip():
+                        # 로그 형식: [시간] [로그레벨] 메시지
+                        # 예: 2025-01-30 10:30:45,123 - INFO - message
+                        match = re.match(r'(\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2})', line)
+                        if match:
+                            last_timestamp = match.group(1)
+                            break
+
+                # ERROR 검색
+                for line in lines:
+                    if 'ERROR' in line or 'Exception' in line:
+                        has_error = True
+                        break
+
+        except Exception as e:
+            logger.error(f"로그 파일 읽기 실패: {e}")
+            return {
+                "healthy": "check",
+                "last_crawling_time": None,
+                "error_message": f"로그 파일 읽기 실패: {str(e)}"
+            }
+
+        return {
+            "healthy": "check" if has_error else "ok",
+            "last_crawling_time": last_timestamp,
+            "error_detected": has_error
+        }
+
+    except Exception as e:
+        logger.error(f"크롤러 헬스 체크 실패: {e}")
+        return {
+            "healthy": "check",
+            "last_crawling_time": None,
+            "error_message": f"헬스 체크 실패: {str(e)}"
+        }
 
 
 @router.get("/attachments/{site_code}/{page_code}/{real_seq}")
