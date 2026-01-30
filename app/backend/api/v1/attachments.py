@@ -1,9 +1,9 @@
 """
 첨부파일 다운로드 API 엔드포인트
 """
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Path
 from fastapi.responses import FileResponse
-from pathlib import Path
+from pathlib import Path as PathlibPath
 from app.backend.core.config import config
 from app.backend.core.logger import get_logger
 
@@ -12,15 +12,13 @@ logger = get_logger(__name__)
 router = APIRouter(prefix="/attachments", tags=["attachments"])
 
 
-@router.get("/{site_code}/{page_code}/{real_seq}/{filename}")
-async def download_attachment(site_code: str, page_code: str, real_seq: str, filename: str):
+@router.get("/{save_folder:path}/{filename}")
+async def download_attachment(save_folder: str = Path(...), filename: str = Path(...)):
     """
     첨부파일 다운로드
 
     Args:
-        site_code: 사이트 코드
-        page_code: 페이지 코드
-        real_seq: 시퀀스 번호
+        save_folder: 저장 폴더 경로 (예: kofia/menu_4)
         filename: 파일명
 
     Returns:
@@ -28,9 +26,9 @@ async def download_attachment(site_code: str, page_code: str, real_seq: str, fil
     """
     try:
         # 첨부파일 경로 구성
-        # LAW_CRAWLER_DIR/Attaches/{site_code}/{page_code}_{real_seq}/{filename}
-        attach_base = Path(config.ATTACHS_DIR)
-        file_path = attach_base / site_code / f"{page_code}_{real_seq}" / filename
+        # LAW_CRAWLER_DIR/Attaches/{save_folder}/{filename}
+        attach_base = PathlibPath(config.ATTACHS_DIR)
+        file_path = attach_base / save_folder / filename
 
         logger.info(f"첨부파일 다운로드 요청: {file_path}")
 

@@ -38,7 +38,7 @@
         "PYTHONPATH": "${workspaceFolder}",
         "LAW_CRAWLER_MODE": "fedora"
       },
-      "args": ["app.backend.main:app", "--port", "8004"],
+      "args": ["app.backend.main:app", "--port", "8804"],
       "jinja": true,
       "justMyCode": false,
       "console": "integratedTerminal"

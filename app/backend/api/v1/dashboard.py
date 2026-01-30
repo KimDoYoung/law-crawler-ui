@@ -83,7 +83,8 @@ async def get_attachments(site_code: str, page_code: str, real_seq: str):
 
         for _, attach_row in attach_df.iterrows():
             save_file_name = attach_row.get("save_file_name", "")
-            attach_url = f"/api/v1/attachments/{site_code}/{page_code}/{real_seq}/{save_file_name}"
+            save_folder = attach_row.get("save_folder", "")
+            attach_url = f"/api/v1/attachments/{save_folder}/{save_file_name}"
 
             attachments_data.append({
                 "name": save_file_name,
