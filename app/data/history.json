@@ -3,5 +3,15 @@
     "date": "2025-10-23",
     "version": "v1.0.0",
     "description": "FastAPI로 재개발"
+  },
+  {
+    "date": "2026-01-29",
+    "version": "v1.0.1",
+    "description": "리눅스 서버로 배포 이전"
+  },
+  {
+    "date": "2025-01-30",
+    "version": "v1.0.2",
+    "description": "사소한 버그 수정 및 배포 스크립트 개선"
   }
 ]

@@ -31,6 +31,8 @@
 ## fedora에서 ui 설치
 
 - docker 포기
+- .env.fedora 사용
+- history.json수정
 - target folder : ~/law-crawler/ui 하위에 app에 설치
 - web-deploy.sh을 만듬. target로 app/과 관련 파일들 복사
 - web-service.sh로 stop start 할 수 있음.
