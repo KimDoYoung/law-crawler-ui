@@ -1,5 +1,6 @@
-from dotenv import load_dotenv
 import os
+
+from dotenv import load_dotenv
 
 
 class Config:
@@ -32,12 +33,13 @@ class Config:
         if not crawler_base_dir:
             raise ValueError("LAW_CRAWLER_DIR 환경 변수가 설정되어 있지 않습니다.")
         self.CRAWLER_BASE_DIR = crawler_base_dir
-        self.CRAWLER_LOG_DIR = os.getenv(
-            "CRAWLER_LOG_DIR", self.CRAWLER_BASE_DIR + "/logs"
-        )
+
         self.CRAWLER_EXE_DIR = os.getenv(
             "CRAWLER_EXE_DIR", self.CRAWLER_BASE_DIR + "/exe"
         )
+        # log dir
+        self.CRAWLER_LOG_DIR = os.getenv("CRAWLER_LOG_DIR")
+
         self.CRAWLER_DATA_DIR = os.getenv(
             "CRAWLER_DATA_DIR", self.CRAWLER_BASE_DIR + "/data"
         )
