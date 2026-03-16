@@ -1,11 +1,9 @@
 from fastapi import APIRouter, Query, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 
-
 from app.backend.core.config import config
-from app.backend.core.template_engine import render_template
-
 from app.backend.core.logger import get_logger
+from app.backend.core.template_engine import render_template
 from app.backend.page_contexts.context_registry import PAGE_CONTEXT_PROVIDERS
 
 logger = get_logger(__name__)
@@ -22,11 +20,16 @@ def display_root(request: Request):
 @router.get("/dashboard", response_class=HTMLResponse, include_in_schema=False)
 async def display_dashboard(request: Request):
     """대시보드 (메인 페이지)"""
-
+    # 홈페이지 contact unread count 체크 기능 추가
     context = {
         "request": request,
         "page_path": "dashboard",
-        "data": {"title": "법규관련 데이터수집 현황"},
+        "data": {
+            "title": "법규관련 데이터수집 현황",
+            "contact_unread_count": get_contact_unread_count(
+                config.UI_BASE_DIR + "/homepage-contact-unread.json"
+            ),
+        },
     }
     return render_template("template/dashboard.html", context)
 
@@ -38,7 +41,12 @@ async def display_search(request: Request):
     context = {
         "request": request,
         "page_path": "search",
-        "data": {"title": "데이터 조회"},
+        "data": {
+            "title": "데이터 조회",
+            "contact_unread_count": get_contact_unread_count(
+                config.UI_BASE_DIR + "/homepage-contact-unread.json"
+            ),
+        },
     }
     return render_template("template/search.html", context)
 
@@ -50,7 +58,12 @@ async def display_statistics(request: Request):
     context = {
         "request": request,
         "page_path": "statistics",
-        "data": {"title": "통계 분석"},
+        "data": {
+            "title": "통계 분석",
+            "contact_unread_count": get_contact_unread_count(
+                config.UI_BASE_DIR + "/homepage-contact-unread.json"
+            ),
+        },
     }
     return render_template("template/statistics.html", context)
 
@@ -62,7 +75,12 @@ async def display_logs(request: Request):
     context = {
         "request": request,
         "page_path": "logs",
-        "data": {"title": "로그 관리"},
+        "data": {
+            "title": "로그 관리",
+            "contact_unread_count": get_contact_unread_count(
+                config.UI_BASE_DIR + "/homepage-contact-unread.json"
+            ),
+        },
     }
     return render_template("template/logs.html", context)
 
@@ -74,7 +92,12 @@ async def display_settings(request: Request):
     context = {
         "request": request,
         "page_path": "settings",
-        "data": {"title": "시스템 설정"},
+        "data": {
+            "title": "시스템 설정",
+            "contact_unread_count": get_contact_unread_count(
+                config.UI_BASE_DIR + "/homepage-contact-unread.json"
+            ),
+        },
     }
     return render_template("template/settings.html", context)
 
@@ -122,3 +145,16 @@ async def page(
     template_page = f"template/{page_path}.html"
     logger.debug(f"template_page 호출됨: {template_page}")
     return render_template(template_page, context)
+
+
+def get_contact_unread_count(homepage_check_path: str) -> int:
+    """홈페이지 문의 미확인 갯수 반환"""
+    try:
+        with open(homepage_check_path, "r") as f:
+            import json
+
+            homepage_data = json.load(f)
+            return homepage_data.get("contact-unread-count", 0)
+    except Exception as e:
+        logger.error(f"❌ 홈페이지 contact unread count 체크 실패: {e}")
+        return 0

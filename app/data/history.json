@@ -13,5 +13,10 @@
     "date": "2025-01-30",
     "version": "v1.0.2",
     "description": "최근수집시각, 크롤러 health체크"
+  },
+  {
+    "date": "2026-03-16",
+    "version": "v1.0.3",
+    "description": "홈페이지의 contact unread count 체크 기능 추가"
   }
 ]

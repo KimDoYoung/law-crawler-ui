@@ -8,6 +8,23 @@
     >
   </li>
 
+  <!-- 홈페이지 문의 갯수 (Jinja2 조건문) -->
+  {% if data.contact_unread_count is defined and data.contact_unread_count > 0
+  %}
+  <li
+    id="contact-unread-li"
+    class="flex items-center gap-2 px-3 py-1 bg-white rounded-lg shadow-sm bg-red-100"
+  >
+    <i class="bi bi-envelope-fill text-red-500 text-lg"></i>
+    <span class="text-sm font-medium" id="contact-unread-label"
+      >홈페이지 문의 갯수:
+      <span id="contact-unread-count"
+        >{{ data.contact_unread_count }}</span
+      ></span
+    >
+  </li>
+  {% endif %}
+
   <!-- 크롤러 상태 -->
   <li class="flex items-center gap-2 px-3 py-1 bg-white rounded-lg shadow-sm">
     <i
@@ -22,6 +39,7 @@
 
 <script>
   // UI 업데이트 (공통 로직)
+
   function updateUI(data) {
     // 최근 수집 시각 업데이트
     const timeElement = document.getElementById("last-crawling-time");
@@ -62,6 +80,27 @@
         statusText.classList.add("text-yellow-600");
       }
     }
+
+    // 홈페이지 문의 갯수 표시
+    const contactUnreadLi = document.getElementById("contact-unread-li");
+    const contactUnreadCount = document.getElementById("contact-unread-count");
+    if (
+      typeof data.contact_unread_count === "number" &&
+      contactUnreadLi &&
+      contactUnreadCount
+    ) {
+      if (data.contact_unread_count > 0) {
+        contactUnreadCount.textContent = data.contact_unread_count;
+        contactUnreadLi.style.display = "flex";
+        contactUnreadLi.classList.add("bg-red-100");
+        contactUnreadCount.classList.add("text-red-600", "font-bold");
+      } else {
+        contactUnreadLi.style.display = "none";
+        contactUnreadCount.textContent = "0";
+        contactUnreadLi.classList.remove("bg-red-100");
+        contactUnreadCount.classList.remove("text-red-600", "font-bold");
+      }
+    }
   }
 
   // 크롤러 헬스 체크 API 호출
@@ -75,14 +114,8 @@
       const data = await response.json();
 
       // 캐시에 저장
-      sessionStorage.setItem(
-        "crawlerHealthData",
-        JSON.stringify(data),
-      );
-      sessionStorage.setItem(
-        "crawlerHealthTime",
-        Date.now().toString(),
-      );
+      sessionStorage.setItem("crawlerHealthData", JSON.stringify(data));
+      sessionStorage.setItem("crawlerHealthTime", Date.now().toString());
 
       updateUI(data);
     } catch (error) {
