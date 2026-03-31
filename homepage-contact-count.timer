@@ -1,0 +1,10 @@
+[Unit]
+Description=Run homepage-contact-count hourly on weekdays
+
+[Timer]
+# 월-금, 09:00부터 18:00까지 매 정각 실행
+OnCalendar=Mon..Fri 09..18:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
