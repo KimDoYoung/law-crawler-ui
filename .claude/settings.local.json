@@ -8,7 +8,11 @@
       "Bash(sqlite3:*)",
       "Bash(cat:*)",
       "Bash(uv pip list:*)",
-      "Bash(pytest:*)"
+      "Bash(pytest:*)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(.venv/bin/python3 -c ':*)",
+      "Bash(xxd /home/kdy987/law-crawler/ui/.env.fedora)"
     ],
     "deny": [],
     "ask": []
