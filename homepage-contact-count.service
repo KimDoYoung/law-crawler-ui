@@ -3,5 +3,5 @@ Description=Update homepage contact unread count
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash /home/kdy987/law-crawler/homepage-contact-count.sh
+ExecStart=/bin/bash /home/kdy987/law-crawler/ui/homepage-contact-count.sh
 User=kdy987
